@@ -1,0 +1,249 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* The two brand curves, published as custom properties so plain CSS can use
+       the same easing the Tailwind utilities and Framer Motion do. `--ease-state`
+       was being referenced by the FAQ tick before it existed anywhere, so that
+       transition was running on the hand-typed fallback next to it, which is a
+       brand value living outside tokens.json. Both come through Tailwind's theme,
+       which reads tokens.json. */
+    --ease-settle: theme('transitionTimingFunction.settle');
+    --ease-state: theme('transitionTimingFunction.state');
+  }
+
+  html {
+    scroll-behavior: smooth;
+    /* The page has two grounds, charcoal and off-white, and they are compositional
+       rather than a light and dark mode. Telling the browser `light` stops form
+       controls and scrollbars from theming themselves against us. */
+    color-scheme: light;
+  }
+
+  /* The nav is sticky, so an anchor jump has to clear it. */
+  :target {
+    scroll-margin-top: 6rem;
+  }
+
+  body {
+    background: var(--ground-dark);
+    color: var(--tier-dark-2); /* Off-White */
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* One focus treatment, on both grounds. Never removed. */
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  ::selection {
+    background: var(--accent);
+    color: var(--ground-light);
+  }
+}
+
+/* The left margin the three post families all hang their type off.
+   Deliberately outside @layer utilities: Tailwind tree-shakes that layer and was
+   dropping this rule. The two numbers come from the same places the rest of the
+   page does, through Tailwind's theme. */
+.frame {
+  width: 100%;
+  max-width: theme('maxWidth.page');
+  margin-inline: auto;
+  padding-inline: clamp(1.25rem, 5vw, theme('spacing.frame'));
+}
+
+/* Mist moving across the summit.
+   The free alternative to a generated hero video. Two faint off-white clouds
+   drifting across the photograph in opposite directions, which is weather passing
+   over stone rather than a pan or a zoom across a still. That distinction is the
+   brand's own motion test: a ken-burns push could belong to any site, weather on
+   a cairn could not.
+
+   RETUNED 2026-09-20. The first values were 7% over 74 seconds, which measured
+   0.02px per second at the ends of the cycle and was invisible. Two causes, both
+   mine: the amplitude was far too small, and ease-in-out parks the motion at both
+   ends of an alternating animation. The easing stays, because it is what hides
+   the turnaround, but the travel is now roughly 10% over 40 seconds, which lands
+   around 15px a second at mid cycle. The clouds also breathe, thickening and
+   thinning on a different period, because that reads as weather far more than
+   translation alone does.
+
+   Transform and opacity only, so it stays on the compositor, and the whole block
+   is gated behind prefers-reduced-motion. */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes cairn-mist-a {
+    from {
+      transform: translate3d(-10%, -1%, 0);
+    }
+    to {
+      transform: translate3d(10%, 3%, 0);
+    }
+  }
+
+  @keyframes cairn-mist-b {
+    from {
+      transform: translate3d(9%, 2%, 0);
+    }
+    to {
+      transform: translate3d(-9%, -3%, 0);
+    }
+  }
+
+  @keyframes cairn-mist-breathe {
+    from {
+      opacity: 0.5;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .mist-a {
+    animation:
+      cairn-mist-a 40s ease-in-out infinite alternate,
+      cairn-mist-breathe 26s ease-in-out infinite alternate;
+  }
+
+  .mist-b {
+    animation:
+      cairn-mist-b 54s ease-in-out infinite alternate,
+      cairn-mist-breathe 34s ease-in-out -12s infinite alternate;
+  }
+}
+
+/* The hero entrance.
+   CSS rather than Framer Motion, and the reason is worth keeping. This page is a
+   static export, so the hero's markup is painted long before React hydrates. When
+   the rise was a JS animation the sequence on a throttled phone was: the browser
+   paints the finished hero at first contentful paint, React hydrates two seconds
+   later, `useEntrance` flips, Framer mounts the elements at opacity 0, and the
+   copy the reader was already looking at disappeared and faded back in a second
+   after that. Measured, not theorised: largest contentful paint was 3.5s and the
+   whole of it was render delay, with zero load delay and zero load time. The
+   bytes had been there the entire time.
+
+   A CSS animation starts at first paint, so there is no window where finished
+   content is withdrawn. It is also time based rather than frame based, which
+   means it completes in a background tab instead of stalling at its `from` state
+   -- the failure `useEntrance` exists to catch. So above the fold, this is both
+   the faster mechanism and the safer one.
+
+   `backwards` fill, not `forwards`: the hidden state applies during the delay and
+   the element returns to its own styles at the end, so nothing is left owned by
+   an animation. The whole block is gated behind prefers-reduced-motion, and a
+   browser matching neither query simply gets the resting state. */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes cairn-rise {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 16px, 0);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes cairn-word {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 0.42em, 0);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .rise {
+    animation: cairn-rise 700ms var(--ease-state) backwards;
+  }
+
+  .rise-word {
+    animation: cairn-word 600ms var(--ease-state) backwards;
+  }
+}
+
+/* Outside the query, because the words have to sit the same way whether or not
+   they animate. A transform needs a block box and an inline span has none. */
+.rise-word {
+  display: inline-block;
+}
+
+/* FAQ rows.
+   The open and close animation is progressive enhancement over native <details>.
+   `interpolate-size: allow-keywords` is what makes height animatable from 0 to
+   auto; without it there is nothing to transition and the row just opens, which
+   is what <details> does everywhere anyway. Guarded so non-supporting browsers
+   are never left with a collapsed row they cannot read. */
+.faq-row summary::-webkit-details-marker {
+  display: none;
+}
+
+/* Plus becomes minus. Scale rather than swapping glyphs, so there is one shape. */
+.faq-tick {
+  transition: transform 200ms var(--ease-state, cubic-bezier(0.4, 0, 0.2, 1));
+  transform-origin: center;
+}
+
+.faq-row[open] .faq-tick {
+  transform: scaleY(0);
+}
+
+@supports (interpolate-size: allow-keywords) {
+  :root {
+    interpolate-size: allow-keywords;
+  }
+
+  .faq-row::details-content {
+    block-size: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition:
+      block-size 260ms ease,
+      content-visibility 260ms allow-discrete,
+      opacity 200ms ease;
+  }
+
+  .faq-row[open]::details-content {
+    block-size: auto;
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  /* Framer Motion handles its own reduced-motion path through useReducedMotion.
+     This catches CSS transitions and anything that slips past it. */
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    /* Delays too. Zeroing only the duration leaves a `backwards` fill holding an
+       element at its hidden `from` state for the whole delay, so a reader who
+       asked for less motion would get a longer blank than one who did not. */
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
