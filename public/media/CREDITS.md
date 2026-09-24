@@ -71,48 +71,118 @@ permission and the same filenames.
 
 ---
 
-## Planned: hero-cairn-loop.mp4
+## hero-loop-1928.mp4
 
-Not generated. Written 2026-09-20 so the spend is a single decision rather than a
-round of prompt drafting once credits exist.
+The hero loop. 1928x1076, 10 seconds, silent, H.264, 12.2 MB.
 
-**Model: Kling v3.0, `pro`, 5 seconds, silent, 16:9. 8.75 credits.**
-
-Seedance 2.5 was the model originally named and it is four times the price for
-the same five seconds: 35 credits at 720p against Kling's 8.75. Preflighted, not
-estimated. Kling also takes a start frame **and** an end frame, and Seedance's
-`omni_reference` mode takes only a start. That matters more than the price here:
-a hero loops forever, so feeding the same still to both ends is what stops the
-loop point from visibly cutting.
-
-**Both frames: `hero-cairn-2400.webp`**, roles `start_image` and `end_image`.
+| | |
+|---|---|
+| Origin | Generated, not filmed |
+| Model | Kling v3.0, `pro`, 10s, sound off, 16:9, via the Higgsfield MCP server |
+| Generated | 2026-09-23 |
+| Cost | 17.5 credits. Four generations were run in total; this is the second |
+| Inputs | `hero-cairn-2400.webp` as **both** `start_image` and `end_image` |
 
 ### Prompt
 
-> Slow, continuous atmospheric motion in a still landscape. The sea of cloud
-> below drifts gently and billows very slowly. Thin mist curls up around the base
-> of the cliff and thins out again. The grass on the plateau moves a little in
-> the wind. Light shifts almost imperceptibly as cloud passes in front of the sun.
-> The walker stands still, looking out over the cloud, shifting weight only
-> slightly. The stone cairn does not move at all. The camera is nearly locked off
-> with only the faintest drift. No zoom, no cut, no pan, no camera shake, no new
-> subjects entering frame, no birds, no text. Calm, quiet, cinematic, and it must
-> return to where it started.
+> A locked-off shot of a stone cairn on a clifftop above a sea of cloud. The
+> cloud fills the lower half of the frame and flows steadily from right to left,
+> the way slow weather actually moves: individual cloud banks visibly travel
+> across the frame and billow softly as they go. Continuous and unhurried, never
+> fast, never turbulent. Thin mist rises up the cliff face, thickens, and thins
+> away again. The grass on the plateau ripples in a light steady wind. Sunlight
+> warms and cools a little as cloud passes across it. The single standing figure
+> does not walk and does not turn around: they stay exactly where they are,
+> looking out over the cloud. The stone cairn is completely motionless, every
+> stone fixed in place. The camera does not move, zoom, pan or shake. No cuts, no
+> new subjects entering frame, no birds, no text. Calm and cinematic. The cloud
+> motion continues through the whole shot and the last frame matches the first so
+> it loops seamlessly.
 
-The last clause is load bearing. With a matched start and end frame the model
-still needs telling that the motion resolves rather than travels.
+### Measured, not eyeballed
 
-### What to check before accepting it
+Motion between the first frame and the midpoint, as the percentage of pixels
+changing by more than 8 levels:
 
-1. **The loop point.** Play it twice through and watch the seam.
-2. **The cairn.** If the stones drift or re-form, it is unusable. That is the one
-   object on the page the brand cannot have behaving like a generated artifact.
-3. **The walker.** Standing and looking out is believable. Walking, or turning to
-   face camera, breaks the faceless rule.
-4. **Contrast.** The current grade is `saturate(0.55) contrast(1.02)
-   brightness(0.72)` and the phone lede sits at 4.77 against a 4.5 floor. A video
-   is brighter in some frames than the still it came from, so re-measure against
-   the brightest frame, not the first one.
-5. **Weight.** The still set is 196 KB. A 5s 1080p loop will be an order of
-   magnitude more, and the hero is the LCP element. Budget for a poster frame and
-   `preload="none"` if it lands heavy.
+| region | moved |
+|---|---|
+| sky | 0% |
+| cloud sea | 8.5% |
+| ground and grass | 30.2% |
+| cairn stones | 5.9% |
+
+Loop seam, first frame against last: 0% to 0.4% across every region. It loops
+cleanly.
+
+**The cairn was checked on edges, not pixels.** A raw pixel diff read 82% changed
+on an earlier take and looked like the stones re-forming; it was mist passing
+over them. Sobel edge maps, contrast-normalised so fog cannot affect the result,
+then cross-correlated: the stone edges hold position to within one or two pixels
+for the whole clip. **Use that method, not a pixel diff, on any future take.**
+
+### Three things that were learned the expensive way
+
+**Matched start and end frames force a there-and-back motion.** If the last frame
+must equal the first, anything that travels has to travel back. The first attempt
+resolved that by not moving at all: 0% of sky pixels changed, 0.1% of cloud. This
+one ping-pongs instead, reversing around the five second mark, about 1 to 2 px per
+second on a 1928px frame. That reversal is the price of a seamless loop and it is
+not fixable by prompting.
+
+**Ten seconds, not five.** The first attempt was five seconds and froze. Matched
+endpoints leave no room to travel and return in that time.
+
+**Dropping the end frame gives real one-way flow and costs the scene.** A third
+take with `start_image` only reached 49.6% of cloud pixels moving with no
+reversal, but nothing then anchored the frame: the camera pushed in, exposure
+climbed 67% in the sky, and the walker drifted. A fourth take ended on the
+approved still with a hiker walking in, and had almost no cloud motion at all
+plus a 1.1% push-in. The end frame is doing two jobs, the loop and the anchor,
+and removing it loses both.
+
+### Resolution: ship the full 1928, do not downscale
+
+Shipped briefly at 960 for desktop and 640 for phones, on the reasoning that the
+grade and scrims hide compression. That was tested at `deviceScaleFactor: 1`,
+which is a display nobody owns. On real hardware:
+
+| | source | upscale |
+|---|---|---|
+| phone, DPR 3 | 640x356 | **7.11x** |
+| phone, DPR 3 | 1928x1076 | 2.35x |
+| desktop, DPR 2 | 960x536 | **3.36x** |
+| desktop, DPR 2 | 1928x1076 | 1.49x |
+| the still, for comparison | 900x1400 portrait | 1.81x phone, 2.24x desktop |
+
+**A 16:9 clip in a portrait hero is scaled to cover by its height, not its
+width.** The phone box is 2532 device pixels tall and the video is 1076 tall.
+Width was never the constraint, so sizing against it produced a seventh-resolution
+hero that visibly fell off the moment the video replaced the still.
+
+Cropping to portrait would not fix this: it removes width, and height is what
+binds. It would cut the file size by about two thirds for identical sharpness,
+because the browser already discards roughly 74% of each frame, but that needs a
+toolchain this machine does not have. `avconvert`, which ships with macOS, can
+scale but not crop.
+
+Re-encodes measured with `avconvert`: 1280x716 is 8.1 MB, 960x536 is 5.2 MB,
+640x356 is 2.6 MB, HEVC at 1080p is 7.6 MB and was rejected for patchy Chrome
+support. At DPR 2 the 1280 lands at 2.25x, the same upscale as the still, so it
+costs 8 MB to match a 56 KB photograph rather than beat it.
+
+**To sharpen the phone further needs vertical pixels**, which means a 9:16
+generation. Reframing the existing clip was priced and is poor value: 33 credits
+at 480p, 48 at 720p, 93 at 1080p, against 17.5 for a fresh generation, and
+reframe invents new edges rather than adding resolution.
+
+### How it is used
+
+`HeroVideo` mounts it over the still after hydration, fades it in, and honours
+`prefers-reduced-motion`. The still is the LCP element and always paints first;
+if the video never loads, the hero is the photograph. The grade is duplicated
+onto the video so the handover is invisible.
+
+**Contrast was re-measured against the video, not inherited from the still.** A
+video is brighter in some frames than the frame it came from. Mean luminance
+across the clip moves by about 1 level out of 255, so the still's numbers hold,
+but re-measure against the brightest frame if the grade is ever lightened.

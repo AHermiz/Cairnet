@@ -5,6 +5,23 @@ import { useEffect, useState } from 'react';
 /**
  * The hero loop, layered over the still.
  *
+ * **One source, at full resolution.** A previous version shipped two small
+ * encodes, 960 for desktop and 640 for phones, on the reasoning that the hero is
+ * graded down to 0.72 brightness under three scrims so compression would not
+ * show. That reasoning was tested at `deviceScaleFactor: 1`, which is a display
+ * nobody owns, and it was wrong twice over.
+ *
+ * Measured on real device pixel ratios:
+ *
+ *   phone,   DPR 3   640x356 upscaled 7.11x   (the still: 1.81x)
+ *   desktop, DPR 2   960x536 upscaled 3.36x   (the still: 2.24x)
+ *
+ * The second mistake is the instructive one. A 16:9 clip inside a portrait hero
+ * is scaled to cover by its HEIGHT, not its width: the phone box is 2532 device
+ * pixels tall and the video is 356 pixels tall. Width was never the constraint,
+ * so sizing against it produced a seventh-resolution hero that visibly fell off
+ * the moment the video replaced the still.
+ *
  * **The still is the hero, the video is an enhancement.** The photograph is the
  * LCP element on this page and it is 44 KB; the loop is 3.9 MB. If the video
  * were the thing the page renders, mobile would pay ninety times the bytes for
@@ -13,19 +30,33 @@ import { useEffect, useState } from 'react';
  * and fades in once it can actually play. If it never loads, the hero is the
  * photograph and nothing is broken.
  *
- * Three gates before it loads a byte:
+ * One gate before it loads a byte:
  *
- * - **Desktop only.** Below 768px the still is an art-directed portrait crop and
- *   the loop is 16:9, so it would have to be cropped hard to fit; more to the
- *   point, a 3.9 MB autoplaying background on a phone connection is a cost the
- *   reader did not ask for.
  * - **Reduced motion is respected.** CSS cannot stop a video autoplaying, so
  *   this is the one piece of motion on the page that needs JavaScript to honour
  *   the preference.
- * - **After the page is idle.** `requestIdleCallback` keeps the download off the
- *   critical path entirely, so it cannot compete with the LCP image for
- *   bandwidth. The 1.2s timeout is the fallback for Safari, which has no idle
- *   callback.
+ *
+ * **It ran on desktop only until A asked for the phone too.** The two reasons
+ * for holding it back were real and both were judgement calls rather than
+ * limits: 3.9 MB autoplaying on phone data is a cost the reader did not choose,
+ * and the mobile still is an art-directed portrait crop while the loop is 16:9,
+ * so the video has to be cropped hard to fill a portrait viewport. The crop is
+ * handled by the same `object-position` the desktop still uses, which keeps the
+ * cairn in frame because the stack sits at roughly 38% of the video's width. The
+ * data cost stands and is A's to accept.
+ *
+ * **It used to wait for `requestIdleCallback` and no longer does.** The idea was
+ * to keep the download off the critical path, and the cost was measured rather
+ * than guessed: the request did not start until 2712ms, while the file itself
+ * took 335ms to arrive. Nearly three seconds of a ten second loop went by before
+ * anything moved, and the hero read as a still that twitched late. Mounting on
+ * the first effect starts it around 500ms instead.
+ *
+ * The LCP image is 44 KB and carries `fetchPriority="high"`; the video is a
+ * `<video>` element the browser schedules at low priority. On a slow connection
+ * they do now share bandwidth, which is the trade being made deliberately: the
+ * still is what paints either way, and if the loop arrives late it simply fades
+ * in late.
  *
  * The grade is duplicated from the `img` rather than shared, because the two
  * elements are siblings and there is nothing to inherit it from. If one changes
@@ -37,21 +68,7 @@ export default function HeroVideo({ src, className }: { src: string; className?:
 
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    if (!window.matchMedia('(min-width: 768px)').matches) return;
-
-    const start = () => setMount(true);
-    const ric = (window as typeof window & {
-      requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
-      cancelIdleCallback?: (id: number) => void;
-    }).requestIdleCallback;
-
-    if (ric) {
-      const id = ric(start, { timeout: 3000 });
-      return () => (window as typeof window & { cancelIdleCallback?: (id: number) => void })
-        .cancelIdleCallback?.(id);
-    }
-    const t = window.setTimeout(start, 1200);
-    return () => window.clearTimeout(t);
+    setMount(true);
   }, []);
 
   if (!mount) return null;

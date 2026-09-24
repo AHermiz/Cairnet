@@ -94,7 +94,7 @@ export default function Hero() {
           rather than the hero itself. Same grade as the image above, same crop
           origin, so the fade from one to the other is invisible. */}
       <HeroVideo
-        src="/media/hero-cairn-loop-v2.mp4"
+        src="/media/hero-loop-1928.mp4"
         className="absolute inset-0 h-full w-full object-cover object-[35%_center] [filter:saturate(0.55)_contrast(1.02)_brightness(0.72)]"
       />
 
