@@ -97,7 +97,7 @@ export const services = {
         included: [
           'Mapping how the job actually runs today, step by step',
           'Cutting the steps that don’t earn their place before anything gets automated',
-          'Building it in Make.com or Zapier',
+          'Building it so it runs in the background, connected to the tools you already use',
           'Testing it against your real data before it goes live',
           'Plain written documentation, so it’s no mystery once the person who set it up is gone',
           '30 days of fixes after launch',
@@ -110,13 +110,14 @@ export const services = {
     {
       name: 'Cairnet Front Desk',
       promise: 'Answers customers around the clock.',
-      body: 'An assistant trained on your own material, your pricing and your policies, with clear rules about what it must never say. Questions, bookings and quote requests, at 9pm on a Sunday.',
+      body: 'An assistant trained on your own material, your pricing and your policies, answering customers in a chat on your website or on the phone. Questions, bookings and quote requests, at 9pm on a Sunday.',
       detail: {
-        what: 'An assistant that answers the questions you get asked every week, using your own documents, pricing and policies. It sits where customers already reach you, usually on your website.',
+        what: 'Front Desk comes in two forms, and you can have either or both. A chat assistant on your website answers the questions you get asked every week. An AI receptionist picks up the phone on its own line, answers the same questions out loud, works out who’s serious, and books them into your calendar.',
         included: [
           'Training it on your documents, pricing and policies',
           'Rules about what it must never say, written with you',
-          'Setting it up on your website, or internally for your team',
+          'For chat: setting it up on your website, or internally for your team',
+          'For the phone: its own number, booking straight into your calendar',
           'Testing, then a round of refinements once you’ve seen it work',
           'Care every month: hosting, retraining when things change, and small tweaks',
         ],
