@@ -17,6 +17,10 @@
 export const EMAIL = 'contact@cairnetint.com';
 export const MAILTO = `mailto:${EMAIL}?subject=Assessment`;
 
+/** The same address with a service name as the subject, for the buttons inside the service cards. */
+export const mailtoFor = (subject: string) =>
+  `mailto:${EMAIL}?subject=${encodeURIComponent(subject)}`;
+
 /** One label per intent. This string is the only way the site asks for the sale. */
 export const CTA = 'Start with an assessment';
 
@@ -49,27 +53,76 @@ export const services = {
     'A written plan, in your hands within 2 business days.',
     'A call to walk you through it, and it’s yours to keep either way.',
   ],
+  /**
+   * Added 2026-09-24. The lede tells someone who knows what they want to "go
+   * straight to it", and until now the three cards led nowhere. Each one opens in
+   * place to say what it is and what's included, then offers an email with the
+   * service as the subject. Build times are left off until real engagements give
+   * us numbers, and prices stay off the site like everywhere else.
+   */
+  detailLabel: 'What’s included',
   items: [
     {
       name: 'Cairnet Assessment',
       promise: 'Where AI would genuinely help.',
       body: 'A clear read on how you work now, what’s eating your week, and what to do about it. Some of what we recommend won’t be AI at all, and we’ll say so.',
       frontDoor: true,
+      /** The whole card links here. Added 2026-09-24 so it's visible that it can be clicked. */
+      cue: 'See how an assessment runs',
     },
     {
       name: 'Cairnet Website',
       promise: 'Get found and look legitimate.',
       body: '5 to 7 pages that work on a phone, with the copy written for you and a booking or contact form wired up. New builds, refreshes, and showing up in local search.',
+      detail: {
+        what: 'A site that gets you found locally and looks like the real thing when someone checks you out. It can be a new build or a refresh of the site you have.',
+        included: [
+          '5 to 7 pages, built to work on a phone first',
+          'The copy, written for you from a conversation, so you’re not staring at a blank page',
+          'A contact form or online booking, set up and tested',
+          'The groundwork for local search, so you show up when someone nearby looks for what you do',
+          '2 rounds of revisions',
+          'An optional care plan afterward: hosting, updates, backups and small changes',
+        ],
+        ask: 'Ask about a website',
+        subject: 'Website',
+      },
     },
     {
       name: 'Cairnet Autopilot',
       promise: 'The repetitive work, handled.',
       body: 'The jobs done by hand every week that a machine should have been doing all along. We map what actually happens, cut it back to the steps that earn their place, then automate what’s left.',
+      detail: {
+        what: 'We take a job someone does by hand every week and make it run on its own. For example, a new lead goes straight into your contact list, or a form someone fills in turns into a task.',
+        included: [
+          'Mapping how the job actually runs today, step by step',
+          'Cutting the steps that don’t earn their place before anything gets automated',
+          'Building it in Make.com or Zapier',
+          'Testing it against your real data before it goes live',
+          'Plain written documentation, so it’s no mystery once the person who set it up is gone',
+          '30 days of fixes after launch',
+          'When a job runs across several people, we talk to each of them first, rebuild it, and then automate it, with training for the team',
+        ],
+        ask: 'Ask about Autopilot',
+        subject: 'Autopilot',
+      },
     },
     {
       name: 'Cairnet Front Desk',
       promise: 'Answers customers around the clock.',
       body: 'An assistant trained on your own material, your pricing and your policies, with clear rules about what it must never say. Questions, bookings and quote requests, at 9pm on a Sunday.',
+      detail: {
+        what: 'An assistant that answers the questions you get asked every week, using your own documents, pricing and policies. It sits where customers already reach you, usually on your website.',
+        included: [
+          'Training it on your documents, pricing and policies',
+          'Rules about what it must never say, written with you',
+          'Setting it up on your website, or internally for your team',
+          'Testing, then a round of refinements once you’ve seen it work',
+          'Care every month: hosting, retraining when things change, and small tweaks',
+        ],
+        ask: 'Ask about Front Desk',
+        subject: 'Front Desk',
+      },
     },
   ],
 };

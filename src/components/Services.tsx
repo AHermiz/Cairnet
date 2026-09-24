@@ -1,5 +1,7 @@
+import { ArrowDown } from 'lucide-react';
 import { services } from '@/lib/content';
 import Reveal from './Reveal';
+import ServiceDoor from './ServiceDoor';
 import ServiceGraphic from './ServiceGraphic';
 
 /**
@@ -18,10 +20,12 @@ import ServiceGraphic from './ServiceGraphic';
  * measures 4.48:1, comfortably past the 3:1 a graphic needs; on the charcoal
  * cards it would have been 2.5:1 and unusable.
  *
- * **No CTA in this section.** The nav and the hero already carry the one label
- * this site uses to ask for the sale, and the close asks again. A fourth copy
- * here would be the same intent competing with itself, and it would spend a
- * second red on furniture.
+ * **No assessment CTA in this section.** The nav and the hero already carry the
+ * one label this site uses to ask for the sale, and the close asks again. A
+ * fourth copy here would be the same intent competing with itself, and it would
+ * spend a second red on furniture. The assessment card links down to How it
+ * works instead, and the other three open in place (`ServiceDoor`) with a ghost
+ * button each that emails about that service. Added 2026-09-24.
  *
  * Body copy is Mist, never Stone. Stone is 4.72:1 on flat charcoal, which scrapes
  * past AA and reads as furniture, and on a raised surface it drops to 4.16:1 and
@@ -55,7 +59,7 @@ export default function Services() {
               assessment turns up, and means the card is only ever as tall as its
               own content. */}
           <Reveal index={0} className="lg:sticky lg:top-24 lg:self-start">
-            <article className="relative flex flex-col overflow-hidden rounded-brand bg-offwhite">
+            <article className="group relative flex flex-col overflow-hidden rounded-brand bg-offwhite">
               {/* The edge blaze. Statement family device, and the only red in
                   this section: it marks which of the four you start with. */}
               <span
@@ -96,27 +100,31 @@ export default function Services() {
               <p className="mt-7 text-sm font-bold text-charcoal">
                 Implementation is quoted separately.
               </p>
+
+              {/* The whole card is this link. Its ::after covers the card (above
+                  the blaze, hence z-20), so a click anywhere scrolls to How it
+                  works while the accessible name stays one short line rather than
+                  the whole card read aloud. */}
+              <a
+                href="#how-it-works"
+                className="mt-5 inline-flex items-center gap-2 self-start rounded-brand text-base font-bold text-charcoal underline decoration-stone underline-offset-4 transition-colors duration-200 ease-state after:absolute after:inset-0 after:z-20 after:content-[''] group-hover:decoration-charcoal focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-charcoal"
+              >
+                {frontDoor.cue}
+                <ArrowDown aria-hidden className="h-4 w-4" strokeWidth={2.5} />
+              </a>
               </div>
             </article>
           </Reveal>
 
           <div className="grid gap-6 lg:gap-8">
-            {rest.map((item, i) => (
-              <Reveal key={item.name} index={i + 1}>
-                <article className="h-full overflow-hidden rounded-brand border border-border">
-                  <ServiceGraphic
-                    service={i + 1}
-                    ground="dark"
-                    className="h-[120px] w-full bg-surface"
-                  />
-                  <div className="p-7 sm:p-8">
-                    <h3 className="text-xl font-bold tracking-claim text-offwhite">{item.name}</h3>
-                    <p className="mt-2 text-cta font-bold leading-snug text-mist">{item.promise}</p>
-                    <p className="mt-4 max-w-prose text-base leading-body text-mist">{item.body}</p>
-                  </div>
-                </article>
-              </Reveal>
-            ))}
+            {rest.map(
+              (item, i) =>
+                item.detail && (
+                  <Reveal key={item.name} index={i + 1}>
+                    <ServiceDoor item={item} index={i + 1} />
+                  </Reveal>
+                ),
+            )}
           </div>
         </div>
       </div>
