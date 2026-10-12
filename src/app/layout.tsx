@@ -15,9 +15,19 @@ const poppins = localFont({
   fallback: ['system-ui', 'sans-serif'],
 });
 
+// Caveat, the brand's annotation face. On the site it sets one phrase in the
+// hero subline and nothing else, so it is a hand-written note on the claim
+// rather than a second voice for the page.
+const caveat = localFont({
+  src: [{ path: '../fonts/Caveat.ttf', weight: '400 700', style: 'normal' }],
+  variable: '--font-caveat',
+  display: 'swap',
+  fallback: ['cursive'],
+});
+
 const SITE = 'https://cairnetint.com';
 const DESCRIPTION =
-  "Most businesses don't need AI. They need one specific thing fixed. Cairnet finds that thing, then builds it. Assessments, websites, automation and customer answers for local businesses.";
+  "AI where it earns its place. Cairnet finds the steps worth taking, then builds them, and tells you when the answer isn't AI at all. Assessments, websites, automation and customer answers for local businesses.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE),
@@ -56,7 +66,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={poppins.variable}>
+    <html lang="en" className={`${poppins.variable} ${caveat.variable}`}>
       <body>
         <a
           href="#main"

@@ -58,6 +58,7 @@ module.exports = {
       fontFamily: {
         // One family, two weights. tokens.type.face names the browser-side family.
         sans: [`var(--font-${tokens.type.face.body.family.toLowerCase()})`, 'system-ui', 'sans-serif'],
+        hand: ['var(--font-caveat)', 'cursive'],
       },
       fontWeight: {
         normal: String(tokens.type.face.body.weight),

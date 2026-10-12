@@ -63,7 +63,10 @@ export default function WordsPullUp({
     <span className={`inline ${className}`}>
       {words.map((word, i) => (
         <Fragment key={`${word.text}-${i}`}>
-          {i > 0 ? ' ' : null}
+          {/* No space before a word that is only trailing punctuation, so a
+              segment can open with ", then" and the comma still sits on the
+              word before it. */}
+          {i > 0 && !/^[,.;:!?]/.test(word.text) ? ' ' : null}
           <span
             className={word.className ? `rise-word ${word.className}` : 'rise-word'}
             // Rounded, because float addition puts 0.32499999999999996s in the

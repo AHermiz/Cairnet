@@ -31,11 +31,11 @@ export const nav = [
 ];
 
 export const hero = {
-  claimSetup: 'Most businesses don’t need AI.',
-  claimPayoffLead: 'They need ',
-  claimAccent: 'one specific thing',
-  claimPayoffRest: ' fixed.',
-  lede: 'We find that thing, then we build it. No jargon, no 6-month program, and no technology you’ll never touch again.',
+  claimSetup: 'AI where it earns its place.',
+  claimPayoffLead: 'We find ',
+  claimAccent: 'the steps worth taking',
+  claimPayoffRest: ', then build them.',
+  lede: 'We look at how your week actually runs, find the jobs worth fixing, and build the ones that pay you back in time or money. Some won’t be AI at all, and we’ll tell you that too. No jargon, no 6-month program. Just a clear fix for a problem, or a better way to run a process.',
 };
 
 export const services = {

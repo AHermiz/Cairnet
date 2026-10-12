@@ -212,7 +212,13 @@ export default function Hero() {
                 delay={0.5}
                 segments={[
                   { text: hero.claimPayoffLead.trim(), className: 'text-mist' },
-                  { text: hero.claimAccent },
+                  // Caveat runs small for its size, so 1.4em brings its
+                  // x-height level with the Poppins around it, and the tight
+                  // line height stops its ascenders opening up the line gap.
+                  {
+                    text: hero.claimAccent,
+                    className: 'font-hand text-[1.4em] leading-[0.8] tracking-normal',
+                  },
                   { text: hero.claimPayoffRest.trim(), className: 'text-mist' },
                 ]}
               />
