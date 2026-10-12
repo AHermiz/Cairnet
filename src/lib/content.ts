@@ -110,7 +110,7 @@ export const services = {
     {
       name: 'Cairnet Front Desk',
       promise: 'Answers customers around the clock.',
-      body: 'An assistant trained on your own material, your pricing and your policies, answering customers in a chat on your website or on the phone. Questions, bookings and quote requests, at 9pm on a Sunday.',
+      body: 'An assistant trained on your own material, your pricing and your policies, answering customers in a chat on your website or on the phone. Questions, bookings and quote requests at 9pm on a Sunday, all handled by AI.',
       detail: {
         what: 'Front Desk comes in two forms, and you can have either or both. A chat assistant on your website answers the questions you get asked every week. An AI receptionist picks up the phone on its own line, answers the same questions out loud, works out who’s serious, and books them into your calendar.',
         included: [
@@ -130,7 +130,7 @@ export const services = {
 
 export const howItWorks = {
   heading: 'How an assessment runs',
-  lede: 'Most owners already know something in their week is eating time they don’t have. What they don’t have is a free afternoon to work out which tools fix it, which ones are worth paying for, and which are a distraction with good marketing. That’s the whole job.',
+  lede: 'Most owners already know something in their week is eating hours they don’t have. What they don’t have is the time to work out whether AI is the solution or not, which tools fix it, which ones are worth paying for, and which are a distraction with good marketing. That’s the whole job.',
   /**
    * Added 2026-09-20. "How it works" sits right under the four services and was
    * reading as though an assessment is the only way in. It is the front door, not
