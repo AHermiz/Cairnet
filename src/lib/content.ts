@@ -65,7 +65,7 @@ export const services = {
     {
       name: 'Cairnet Assessment',
       promise: 'Where AI would genuinely help.',
-      body: 'A clear read on how you work now, what’s eating your week, and what to do about it. Some of what we recommend won’t be AI at all, and we’ll say so.',
+      body: 'A review of how your current workflows and processes actually run, where the time is going, and our honest take on how to improve them. Some of what we recommend won’t be AI at all, and we’ll say so.',
       frontDoor: true,
       /** The whole card links here. Added 2026-09-24 so it's visible that it can be clicked. */
       cue: 'See how an assessment runs',
@@ -193,7 +193,7 @@ export const faq = {
     },
     {
       q: 'What do I actually have to do?',
-      a: 'Talk for 30 minutes about how your week really goes, then read a report. That’s the whole ask. Nothing to fill in beforehand, no access to your systems, and nothing to prepare.',
+      a: 'Less than you’d think. For an assessment, it’s a 30-minute conversation and a report to read, with nothing to prepare. For anything we build, it’s a conversation about how the job runs today, access to the tools it needs to connect to, and a look at it before it goes live. We handle the rest.',
     },
     {
       q: 'Can we just do it ourselves afterward?',
