@@ -130,7 +130,7 @@ export const services = {
 
 export const howItWorks = {
   heading: 'How an assessment runs',
-  lede: 'Most owners already know something in their week is eating hours they don’t have. What they don’t have is the time to work out whether AI is the solution or not, which tools fix it, which ones are worth paying for, and which are a distraction with good marketing. That’s the whole job.',
+  lede: 'Most owners already know something in their week is eating hours they don’t have. What they don’t have is the time to work out whether AI is the solution or not, which tools fix it, which ones are worth paying for, and which are a distraction with good marketing. And that’s where we come in.',
   /**
    * Added 2026-09-20. "How it works" sits right under the four services and was
    * reading as though an assessment is the only way in. It is the front door, not
