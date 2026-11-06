@@ -202,7 +202,7 @@ filtered out of every search.
 | File | Shows | Photographer | Source |
 |---|---|---|---|
 | `step-01-conversation` | Two men talking over coffee, a laptop and a printed chart (A's pick, 2026-11-04) | Vitaly Gariev | [Unsplash](https://unsplash.com/photos/two-businessmen-discussing-charts-on-a-laptop-YR4zsA7QwRk) |
-| `step-02-research` | A desk with a laptop and papers at night | Yen Vu | [Unsplash](https://unsplash.com/photos/desk-with-laptop-books-and-papers-at-night-UlHSF20AHu0) |
+| `step-02-research` | Hands typing on a laptop, a monitor behind (A's pick, 2026-11-06) | Glenn Carstens-Peters | [Unsplash](https://unsplash.com/photos/person-using-macbook-pro-npxXWgQ33ZQ) |
 | `step-03-report` | Printed pages and a pen on a dark wooden desk | 2H Media | [Unsplash](https://unsplash.com/photos/a-wooden-table-topped-with-papers-and-a-pen-VnK5iT01HYQ) |
 | `step-04-walkthrough` | A man on the phone at his desk with a laptop (A's pick, 2026-11-04) | Vitaly Gariev | [Unsplash](https://unsplash.com/photos/man-talking-on-phone-at-desk-with-laptop-Gvvtc1rfCI8) |
 | `folder-assessment` | A brand questionnaire and a pen on a wooden desk (A's find) | 2H Media | [Unsplash](https://unsplash.com/photos/a-stack-of-papers-sitting-on-top-of-a-wooden-table-b-5ubnkM0LU) |
@@ -225,7 +225,7 @@ a café menu and a newspaper's stock tables for the report; a bakery's own sign
 and Google Maps showing a named shop, which put another business on the page; a
 "we're open" sign that also carried a "love is love" print; a man on a video
 call who could read as A; a notepad that turned out to be a shopping list; anything showing a carmaker's logo or a Tesla screen;
-an Unsplash+ image of a video call (Getty, not covered by the free licence); and the human-and-robot-hand image, which is the stock picture of "AI" and
+an Unsplash+ image of a video call (Getty, not covered by the free licence); Yen Vu's desk with a laptop and papers at night, the first research photo, replaced by A on 2026-11-06 (`unsplash.com/photos/UlHSF20AHu0`); and the human-and-robot-hand image, which is the stock picture of "AI" and
 undercuts "AI where it earns its place". Autopilot was the hard one: messy
 desks and dominoes said the wrong thing, and no free photo says "cruise
 control" or "autopilot" outright. The cockpit was A's find.
