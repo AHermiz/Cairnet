@@ -7,7 +7,8 @@
  * a line is new it follows the same rules. No dashes as punctuation, American
  * spelling, contractions by default, typographic apostrophes rather than straight
  * ticks, nothing that signals headcount or that there is no first client yet, and
- * no prices.
+ * no prices. The one exception is `book`: the booking page takes payment, so the
+ * assessment's fee has to be on it (A, 2026-11-02). It appears nowhere else.
  *
  * The source files were written before the contraction rule landed in
  * voice/style-guide.md on 2026-09-16, so their long forms are contracted here.
@@ -15,27 +16,55 @@
  */
 
 export const EMAIL = 'contact@cairnetint.com';
-export const MAILTO = `mailto:${EMAIL}?subject=Assessment`;
 
-/** The same address with a service name as the subject, for the buttons inside the service cards. */
-export const mailtoFor = (subject: string) =>
-  `mailto:${EMAIL}?subject=${encodeURIComponent(subject)}`;
+/**
+ * Booking, added 2026-11-02 (spec: projects/Cairnet/site-booking-spec.md in the
+ * second brain). Every "Start with an assessment" button goes to the booking page,
+ * where the assessment is booked and paid in one step. The service cards go to the
+ * 15-minute questions call on the same page, because someone who already knows
+ * what they want built has questions, not an assessment to book.
+ */
+export const BOOK = '/book/';
+export const QUESTIONS_CALL = '/book/#questions-call';
 
 /** One label per intent. This string is the only way the site asks for the sale. */
 export const CTA = 'Start with an assessment';
 
+/**
+ * The 15-minute call, in the nav beside the sections (A, 2026-11-02). "Start with
+ * an assessment" alone didn't say that booking lives behind it, so the nav gets a
+ * second way in: a call to ask questions first. Labelled "Book a call" rather than
+ * "Booking" so it can't be read as booking the assessment, and kept out of `nav`
+ * because the footer lists `nav` under "On this page".
+ */
+export const navCall = { label: 'Book a call', href: QUESTIONS_CALL };
+
+/** Rooted at `/` so they still work from the booking page. On the home page they only scroll. */
 export const nav = [
-  { label: 'Where to start', href: '#services' },
-  { label: 'How it works', href: '#how-it-works' },
-  { label: 'Questions', href: '#questions' },
+  { label: 'Where to start', href: '/#services' },
+  { label: 'How it works', href: '/#how-it-works' },
+  { label: 'Questions', href: '/#questions' },
 ];
+
+/**
+ * The lede in three parts so the hero can drop the middle sentence on phones
+ * (A, 2026-11-03). Full length, it covered most of the portrait hero. `lede`
+ * stays whole for everything that reads it as one line.
+ */
+const heroLede = {
+  ledeOpen:
+    'We look at how your week actually runs, find the jobs worth fixing, and build the ones that pay you back in time or money.',
+  ledeAside: 'Some won’t be AI at all, and we’ll tell you that too.',
+  ledeClose: 'No jargon, no 6-month program. Just a clear fix for a problem, or a better way to run a process.',
+};
 
 export const hero = {
   claimSetup: 'AI where it earns its place.',
   claimPayoffLead: 'We find ',
   claimAccent: 'the steps worth taking,',
   claimPayoffRest: ' then build them.',
-  lede: 'We look at how your week actually runs, find the jobs worth fixing, and build the ones that pay you back in time or money. Some won’t be AI at all, and we’ll tell you that too. No jargon, no 6-month program. Just a clear fix for a problem, or a better way to run a process.',
+  ...heroLede,
+  lede: `${heroLede.ledeOpen} ${heroLede.ledeAside} ${heroLede.ledeClose}`,
 };
 
 export const services = {
@@ -56,11 +85,18 @@ export const services = {
   /**
    * Added 2026-09-24. The lede tells someone who knows what they want to "go
    * straight to it", and until now the three cards led nowhere. Each one opens in
-   * place to say what it is and what's included, then offers an email with the
-   * service as the subject. Build times are left off until real engagements give
-   * us numbers, and prices stay off the site like everywhere else.
+   * place to say what it is and what's included, then offers the 15-minute
+   * questions call (an email with the service as the subject until 2026-11-02).
+   * Build times are left off until real engagements give us numbers, and prices
+   * stay off the site like everywhere else.
+   *
+   * Since 2026-11-02 each card is a folder and `included` is grouped into the
+   * files inside it, three per service so there are not twenty-odd to open. The
+   * lines are the same lines, word for word; only the file names are new.
    */
   detailLabel: 'What’s included',
+  /** The Assessment folder's middle file: steps 2 and 3 of How it works, plus what the report covers. A's file name, 2026-11-02. */
+  researchFile: 'The research and your report',
   items: [
     {
       name: 'Cairnet Assessment',
@@ -77,15 +113,29 @@ export const services = {
       detail: {
         what: 'A site that gets you found locally and looks like the real thing when someone checks you out. It can be a new build or a refresh of the site you have.',
         included: [
-          '5 to 7 pages, built to work on a phone first',
-          'The copy, written for you from a conversation, so you’re not staring at a blank page',
-          'A contact form or online booking, set up and tested',
-          'The groundwork for local search, so you show up when someone nearby looks for what you do',
-          '2 rounds of revisions',
-          'An optional care plan afterward: hosting, updates, backups and small changes',
+          {
+            file: 'What we build',
+            lines: [
+              '5 to 7 pages, built to work on a phone first',
+              'The copy, written for you from a conversation, so you’re not staring at a blank page',
+              'A contact form or online booking, set up and tested',
+            ],
+          },
+          {
+            file: 'Getting found',
+            lines: [
+              'The groundwork for local search, so you show up when someone nearby looks for what you do',
+            ],
+          },
+          {
+            file: 'After launch',
+            lines: [
+              '2 rounds of revisions',
+              'An optional care plan afterward: hosting, updates, backups and small changes',
+            ],
+          },
         ],
         ask: 'Ask about a website',
-        subject: 'Website',
       },
     },
     {
@@ -95,16 +145,30 @@ export const services = {
       detail: {
         what: 'We take a job someone does by hand every week and make it run on its own. For example, a new lead goes straight into your contact list, or a form someone fills in turns into a task.',
         included: [
-          'Mapping how the job actually runs today, step by step',
-          'Cutting the steps that don’t earn their place before anything gets automated',
-          'Building it so it runs in the background, connected to the tools you already use',
-          'Testing it against your real data before it goes live',
-          'Plain written documentation, so it’s no mystery once the person who set it up is gone',
-          '30 days of fixes after launch',
-          'When a job runs across several people, we talk to each of them first, rebuild it, and then automate it, with training for the team',
+          {
+            file: 'Before we build',
+            lines: [
+              'Mapping how the job actually runs today, step by step',
+              'Cutting the steps that don’t earn their place before anything gets automated',
+              'When a job runs across several people, we talk to each of them first, rebuild it, and then automate it, with training for the team',
+            ],
+          },
+          {
+            file: 'The build',
+            lines: [
+              'Building it so it runs in the background, connected to the tools you already use',
+              'Testing it against your real data before it goes live',
+            ],
+          },
+          {
+            file: 'After it’s live',
+            lines: [
+              'Plain written documentation, so it’s no mystery once the person who set it up is gone',
+              '30 days of fixes after launch',
+            ],
+          },
         ],
         ask: 'Ask about Autopilot',
-        subject: 'Autopilot',
       },
     },
     {
@@ -114,15 +178,29 @@ export const services = {
       detail: {
         what: 'Front Desk comes in two forms, and you can have either or both. A chat assistant on your website answers the questions you get asked every week. An AI receptionist picks up the phone on its own line, answers the same questions out loud, works out who’s serious, and books them into your calendar.',
         included: [
-          'Training it on your documents, pricing and policies',
-          'Rules about what it must never say, written with you',
-          'For chat: setting it up on your website, or internally for your team',
-          'For the phone: its own number, booking straight into your calendar',
-          'Testing, then a round of refinements once you’ve seen it work',
-          'Care every month: hosting, retraining when things change, and small tweaks',
+          {
+            file: 'Teaching it your business',
+            lines: [
+              'Training it on your documents, pricing and policies',
+              'Rules about what it must never say, written with you',
+            ],
+          },
+          {
+            file: 'What it does',
+            lines: [
+              'For chat: setting it up on your website, or internally for your team',
+              'For the phone: its own number, booking straight into your calendar',
+            ],
+          },
+          {
+            file: 'Testing and care',
+            lines: [
+              'Testing, then a round of refinements once you’ve seen it work',
+              'Care every month: hosting, retraining when things change, and small tweaks',
+            ],
+          },
         ],
         ask: 'Ask about Front Desk',
-        subject: 'Front Desk',
       },
     },
   ],
@@ -180,6 +258,11 @@ export const howItWorks = {
     'You could take that report and do every bit of it yourself. That’s a real option, and it’s written so you can. It is also a second job. Working out which tools, learning them, and getting them running takes exactly the time you were trying to get back.',
 };
 
+/**
+ * `link` turns the first match of `text` inside the answer into a link. Only the
+ * cost answer has one (spec: it points at `/book`, where the number is), so the
+ * price itself stays off the home page.
+ */
 export const faq = {
   heading: 'Questions people ask first',
   items: [
@@ -189,7 +272,12 @@ export const faq = {
     },
     {
       q: 'What does it cost?',
-      a: 'The assessment is a flat fee and you’ll know the number before you book anything. Everything after it is quoted separately, and those prices are written into your report. So by the time we’re on the walkthrough call, you already know what you’re looking at.',
+      a: 'The assessment is a flat fee, and the number is on the booking page, so you see it before you book anything. Everything after it is quoted separately, and those prices are written into your report. So by the time we’re on the walkthrough call, you already know what you’re looking at.',
+      link: { text: 'booking page', href: BOOK },
+    },
+    {
+      q: 'Can I ask questions before I pay?',
+      a: 'Yes. Book a 15-minute call from the booking page and ask us anything: what Cairnet does, whether AI makes sense for a business like yours, something in your business you’ve been wondering about, or how the assessment works. There’s no charge for it, and nothing gets booked or paid until you decide. It’s a conversation, not the assessment. The written plan for your business, with the costs and the order to do things in, comes out of the assessment.',
     },
     {
       q: 'What do I actually have to do?',
@@ -218,4 +306,50 @@ export const closing = {
 export const footer = {
   tagline: 'Your next move, marked in stone.',
   area: 'Based in the GTA, available anywhere a call reaches.',
+};
+
+/**
+ * The booking page. Price, what's included, the refund line, then the calendar.
+ * The refund rule is A's (2026-11-05): a full refund with at least 24 hours'
+ * notice, because A sets time aside to prep for each call. It replaces the
+ * 2026-11-02 "any time before" rule and matches Cal.com's refund policy
+ * (1 calendar day). A no-show gets one more call, after which the fee isn't
+ * refundable. Recording is said up front because the intake is recorded by rule.
+ */
+export const book = {
+  title: 'Book your assessment',
+  heading: 'Book your assessment.',
+  lede: 'Pick a time for the 30-minute conversation and pay when you book. No emails back and forth to find a slot.',
+  price: '$799.99',
+  priceNote: 'CAD, one flat fee for the whole assessment.',
+  refund: 'Cancel at least 24 hours before your 30-minute assessment conversation for a full refund, and reschedule as often as you need to, up to 24 hours before.',
+  fineprint: [
+    'Inside 24 hours, the fee isn’t refunded. Miss the call without telling us and we’ll book you in once more, at no extra cost. After a missed call, the fee isn’t refundable.',
+    'We record the 30-minute conversation so the report gets your words right.',
+  ],
+  questions: {
+    heading: 'Ask us anything.',
+    body: 'Book a 15-minute call and ask whatever’s on your mind: what Cairnet does, whether AI is worth it for a business like yours, something in your business you’ve been wondering about, or how the assessment works. It’s a conversation, not the assessment, so there’s no charge for it, and nothing gets booked or paid until you decide.',
+    cta: 'Book a 15-minute call',
+  },
+  /**
+   * The two things on the calendar are different in kind, not in length: one is
+   * the paid assessment, the other is a short call to ask anything. A's point
+   * (2026-11-02) was that two tabs reading "30 minutes" and "15 minutes" look
+   * like the same call in two sizes, so each tab and panel says what it is and
+   * what it costs. The short call matches its Cal.com name, "Ask us anything"
+   * (A, 2026-11-04), and is open to any question, not only ones about the assessment.
+   */
+  tabs: {
+    assessment: { label: 'Book the assessment', note: '$799.99, starts with a 30-minute conversation' },
+    questions: { label: 'Ask us anything', note: '15 minutes, no charge' },
+  },
+  panels: {
+    assessment:
+      'This books and pays for the assessment. The 30-minute conversation is its first step, then your written report and a call to walk you through it.',
+    questions:
+      'A short call to ask us anything, whether or not you ever book the assessment. Nothing gets booked or paid on this one.',
+  },
+  fallback: 'Calendar not loading?',
+  fallbackLink: 'Open it on Cal.com',
 };

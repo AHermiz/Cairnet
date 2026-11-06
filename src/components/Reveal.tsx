@@ -1,19 +1,27 @@
 'use client';
 
-import { ReactNode } from 'react';
-import { motion } from 'framer-motion';
-import { ease } from '@/lib/tokens';
+import { CSSProperties, ReactNode, useEffect, useRef, useState } from 'react';
 import { useEntrance } from '@/lib/useEntrance';
+import './Reveal.css';
 
 /**
  * Scroll triggered reveal for anything below the fold.
  *
+ * **CSS and an IntersectionObserver, not Framer Motion (2026-11-02).** The same
+ * trade the hero made: Framer was hydrating on every section for a fade, and the
+ * mobile Lighthouse score was paying for it. The observer only flips an
+ * attribute; the movement is a CSS transition in Reveal.css.
+ *
  * Same contract as the hero: the resting state is the default, and the movement
  * is added on top only when the document is genuinely visible and the reader has
- * not asked for reduced motion. `whileInView` alone almost handles that, since
- * scrolling to something implies looking at it, but a tall viewport can have a
- * section already in frame on load, and then a hidden document leaves it at
- * opacity 0 forever. `useEntrance` closes that case.
+ * not asked for reduced motion. Server render and first paint draw the content
+ * in place; `useEntrance` decides whether it may be hidden to be revealed, so a
+ * background tab or a prerenderer never sees an empty section.
+ *
+ * The observer's negative bottom margin holds the reveal back until the element
+ * is properly into frame, independent of how tall it is. A threshold would not:
+ * it is a fraction of the ELEMENT, so the 599px front-door card once needed 150px
+ * on screen while the cards beside it needed 57px.
  *
  * `index` staggers siblings. Staggering one list is legitimate; the tell is the
  * same entrance applied uniformly to every section on the page, so the sections
@@ -32,26 +40,34 @@ export default function Reveal({
   y?: number;
   stagger?: number;
 }) {
+  const ref = useRef<HTMLDivElement>(null);
   const mayAnimate = useEntrance();
+  const [seen, setSeen] = useState(false);
 
-  if (!mayAnimate) return <div className={className}>{children}</div>;
+  useEffect(() => {
+    if (!mayAnimate || seen) return;
+    const el = ref.current;
+    if (!el || typeof IntersectionObserver === 'undefined') return setSeen(true);
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((e) => e.isIntersecting)) return;
+        io.disconnect();
+        setSeen(true);
+      },
+      { rootMargin: '0px 0px -80px 0px' },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [mayAnimate, seen]);
 
   return (
-    <motion.div
-      className={className}
-      initial={{ opacity: 0, y }}
-      whileInView={{ opacity: 1, y: 0 }}
-      // `amount` is a fraction of the ELEMENT, not of the viewport, so a tall
-      // element needs proportionally more of itself on screen before it fires.
-      // At 0.25 the 599px front-door card needed 150px visible while the 227px
-      // cards beside it needed 57px, so the most important card on the page was
-      // still blank while its neighbours had appeared. `some` fires as soon as
-      // any part enters; the negative bottom margin holds it back until the
-      // element is properly into frame, independent of how tall it is.
-      viewport={{ once: true, amount: 'some', margin: '0px 0px -80px 0px' }}
-      transition={{ duration: 0.6, delay: index * stagger, ease: ease.state }}
+    <div
+      ref={ref}
+      className={className ? `reveal ${className}` : 'reveal'}
+      data-reveal={mayAnimate && !seen ? 'pending' : undefined}
+      style={{ '--reveal-y': `${y}px`, transitionDelay: `${index * stagger}s` } as CSSProperties}
     >
       {children}
-    </motion.div>
+    </div>
   );
 }

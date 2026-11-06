@@ -1,6 +1,6 @@
 import { ArrowRight } from 'lucide-react';
 import HeroVideo from './HeroVideo';
-import { CTA, MAILTO, hero } from '@/lib/content';
+import { BOOK, CTA, hero } from '@/lib/content';
 import WordsPullUp from './WordsPullUp';
 
 /**
@@ -191,7 +191,10 @@ export default function Hero() {
         <div className="frame grid grid-cols-12 items-end gap-x-0 gap-y-8 lg:gap-x-gutter">
           <h1 className="col-span-12 lg:col-span-7">
             <span className="block text-[clamp(2.5rem,5.4vw,4.5rem)] font-bold leading-[1.02] tracking-claim text-offwhite">
-              <WordsPullUp segments={[{ text: hero.claimSetup }]} delay={0.1} />
+              {/* Delays and staggers compressed 2026-11-02 so the whole entrance,
+                  button included, lands by about 1s instead of 1.9s. The sale
+                  button was not there to press for nearly two seconds. */}
+              <WordsPullUp segments={[{ text: hero.claimSetup }]} delay={0.05} stagger={0.045} />
             </span>
           </h1>
 
@@ -209,7 +212,8 @@ export default function Hero() {
                 solid fill it controls. */}
             <p className="text-claim font-bold leading-claim tracking-claim text-offwhite">
               <WordsPullUp
-                delay={0.5}
+                delay={0.25}
+                stagger={0.035}
                 segments={[
                   { text: hero.claimPayoffLead.trim(), className: 'text-mist' },
                   // Caveat runs small for its size, so 1.4em brings its
@@ -225,18 +229,22 @@ export default function Hero() {
             </p>
 
             <p
-              className="rise max-w-[42ch] text-base leading-body text-mist"
-              style={{ animationDelay: '1.05s' }}
+              className="rise max-w-[42ch] text-base leading-body text-offwhite"
+              style={{ animationDelay: '0.4s' }}
             >
-              {hero.lede}
+              {hero.ledeOpen}{' '}
+              {/* Hidden below md, where the portrait crop starts: the full lede
+                  covered most of the hero on a phone. */}
+              <span className="max-md:hidden">{hero.ledeAside} </span>
+              {hero.ledeClose}
             </p>
 
             <div
               className="rise flex flex-wrap items-center gap-4"
-              style={{ animationDelay: '1.2s' }}
+              style={{ animationDelay: '0.5s' }}
             >
               <a
-                href={MAILTO}
+                href={BOOK}
                 className="group inline-flex items-center gap-3 rounded-brand bg-signal py-1.5 pl-6 pr-1.5 text-cta font-bold text-offwhite transition-[gap,filter,transform] duration-200 ease-state hover:gap-4 hover:brightness-95 active:scale-[0.98]"
               >
                 {CTA}

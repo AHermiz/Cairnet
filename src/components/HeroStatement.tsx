@@ -2,7 +2,7 @@
 
 import { motion, useReducedMotion } from 'framer-motion';
 import { ease, frames } from '@/lib/tokens';
-import { CTA, MAILTO, hero } from '@/lib/content';
+import { BOOK, CTA, hero } from '@/lib/content';
 import CairnMark from './CairnMark';
 import Button from './Button';
 
@@ -50,7 +50,7 @@ export default function Hero() {
           <p className="mt-tight max-w-[46ch] text-base leading-body text-mist">{hero.lede}</p>
 
           <div className="mt-tight flex flex-wrap items-center gap-4">
-            <Button href={MAILTO}>{CTA}</Button>
+            <Button href={BOOK}>{CTA}</Button>
             <Button href="#how-it-works" variant="ghost">
               See how it works
             </Button>

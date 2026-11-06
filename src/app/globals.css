@@ -12,6 +12,7 @@
        which reads tokens.json. */
     --ease-settle: theme('transitionTimingFunction.settle');
     --ease-state: theme('transitionTimingFunction.state');
+    --ease-state-reverse: theme('transitionTimingFunction.state-reverse');
   }
 
   html {
@@ -171,12 +172,16 @@
     }
   }
 
+  /* 500ms, down from 700 and 600, with the delays in Hero.tsx compressed to
+     match. The sequence used to finish at 1.9s, so the sale button was not there
+     to press for nearly two seconds (apple-design, Response). It now lands by
+     about 1s and still reads word by word. */
   .rise {
-    animation: cairn-rise 700ms var(--ease-state) backwards;
+    animation: cairn-rise 500ms var(--ease-state) backwards;
   }
 
   .rise-word {
-    animation: cairn-word 600ms var(--ease-state) backwards;
+    animation: cairn-word 500ms var(--ease-state) backwards;
   }
 }
 
@@ -184,6 +189,57 @@
    they animate. A transform needs a block box and an inline span has none. */
 .rise-word {
   display: inline-block;
+}
+
+/* The nav as a material (apple-design, Materials).
+   Translucent charcoal with the page blurred under it, rather than a near-opaque
+   bar. 82%, not lower: over the off-white sections the bar composites to about
+   #444, where Mist nav links measure 5.8:1; at 76% they were 4.7:1, too close
+   to the 4.5 floor. The blur fades in with the tint instead of snapping on, so the bar arrives
+   as a surface, and the 1px Slate rule under it became a soft edge: a faint
+   off-white hairline where light catches the top of the material, and a shadow
+   that only shows where content passes underneath. Colours come from the token
+   variables, mixed, so no hex is typed here. Was Framer Motion animating
+   background and border; it is plain CSS now and the component only sets
+   `data-lifted`. */
+.nav-material {
+  background-color: color-mix(in srgb, var(--ground-dark) 0%, transparent);
+  -webkit-backdrop-filter: blur(0px) saturate(100%);
+  backdrop-filter: blur(0px) saturate(100%);
+  box-shadow: 0 1px 0 transparent, 0 10px 24px -14px transparent;
+  transition:
+    background-color 240ms var(--ease-state),
+    -webkit-backdrop-filter 240ms var(--ease-state),
+    backdrop-filter 240ms var(--ease-state),
+    box-shadow 240ms var(--ease-state);
+}
+
+.nav-material[data-lifted] {
+  background-color: color-mix(in srgb, var(--ground-dark) 82%, transparent);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  backdrop-filter: blur(20px) saturate(160%);
+  box-shadow:
+    0 1px 0 color-mix(in srgb, var(--tier-dark-2) 7%, transparent),
+    0 10px 24px -14px rgb(0 0 0 / 0.55);
+}
+
+/* Readers who asked for less transparency or more contrast get a solid bar, and
+   the contrast case a defined edge in Stone rather than a shadow. */
+@media (prefers-reduced-transparency: reduce) {
+  .nav-material[data-lifted] {
+    background-color: var(--ground-dark);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+@media (prefers-contrast: more) {
+  .nav-material[data-lifted] {
+    background-color: var(--ground-dark);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    box-shadow: 0 1px 0 theme('colors.stone');
+  }
 }
 
 /* FAQ rows.
@@ -211,19 +267,26 @@
     interpolate-size: allow-keywords;
   }
 
+  /* The brand state curve, not plain `ease`, and mirrored on the way back: the
+     transition that runs is the one on the state being entered, so the closed
+     rule carries the reversed curve and closing retraces opening. */
   .faq-row::details-content {
     block-size: 0;
     overflow: hidden;
     opacity: 0;
     transition:
-      block-size 260ms ease,
+      block-size 260ms var(--ease-state-reverse),
       content-visibility 260ms allow-discrete,
-      opacity 200ms ease;
+      opacity 200ms var(--ease-state-reverse);
   }
 
   .faq-row[open]::details-content {
     block-size: auto;
     opacity: 1;
+    transition:
+      block-size 260ms var(--ease-state),
+      content-visibility 260ms allow-discrete,
+      opacity 200ms var(--ease-state);
   }
 }
 
@@ -245,5 +308,162 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* The phone menu (MobileMenu.tsx). Sterling Gate's GSAP timeline, redone as
+   transitions so the nav loads no animation library. Resting state first: the
+   menu is hidden and every piece sits where it ends up, so with reduced motion,
+   or no motion query at all, opening is a plain cut. The movement lives in the
+   no-preference block below. */
+.menu-overlay {
+  visibility: hidden;
+  pointer-events: none;
+}
+.menu-overlay[data-open] {
+  visibility: visible;
+  pointer-events: auto;
+}
+.menu-layer {
+  position: absolute;
+  inset: 0;
+}
+.menu-toggle-label > span {
+  height: 1.5em;
+  line-height: 1.5em;
+}
+.menu-toggle[data-open] .menu-toggle-label > span {
+  transform: translateY(-100%);
+}
+.menu-toggle[data-open] .menu-toggle-icon {
+  transform: rotate(135deg);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Closing: everything leaves together, and the overlay stays visible until the
+     panels are off screen. */
+  .menu-overlay {
+    transition: visibility 0s linear 420ms;
+  }
+  .menu-overlay[data-open] {
+    transition: visibility 0s;
+  }
+  .menu-layer {
+    transform: translate3d(101%, 0, 0);
+    transition: transform 420ms var(--ease-state);
+  }
+  .menu-link {
+    transform: translate3d(0, 140%, 0) rotate(10deg);
+    transform-origin: left top;
+    transition: transform 300ms var(--ease-state);
+  }
+  .menu-fade {
+    opacity: 0;
+    transform: translate3d(0, 50%, 0);
+    transition:
+      opacity 200ms var(--ease-state),
+      transform 200ms var(--ease-state);
+  }
+
+  /* Opening: the stones stack 120ms apart, the links rise 50ms apart once the
+     last panel is most of the way in, the booking button and details after. */
+  .menu-overlay[data-open] .menu-layer {
+    transform: none;
+    transition: transform 575ms var(--ease-settle) calc(var(--i) * 120ms);
+  }
+  .menu-overlay[data-open] .menu-link {
+    transform: none;
+    transition: transform 700ms var(--ease-settle) calc(590ms + var(--i) * 50ms);
+  }
+  .menu-overlay[data-open] .menu-fade {
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity 500ms var(--ease-settle) calc(900ms + var(--i) * 40ms),
+      transform 500ms var(--ease-settle) calc(900ms + var(--i) * 40ms);
+  }
+
+  .menu-toggle-label > span,
+  .menu-toggle-icon {
+    transition: transform 450ms var(--ease-settle);
+  }
+}
+
+/* The menu's hover and press effects, Sterling Gate's. The block behind a row
+   and its rolling label respond to hover only where the pointer can hover, so a
+   tap on a phone doesn't leave a row stuck in its hover state; touch gets the
+   block on press instead. Each link's shape set is matched with :has(). The pop
+   and drop curves are GSAP's back.out(1.7) and power2.in as cubic beziers,
+   Sterling's own, so they live here rather than in tokens.json. */
+.menu-link-bg {
+  transform: scaleY(0);
+  transform-origin: 50% 100%;
+}
+.menu-link-text {
+  text-shadow: 0 1.1em currentColor;
+}
+.menu-shape > * {
+  opacity: 0;
+  transform: scale(0.5) rotate(-10deg);
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+}
+.menu-link:active .menu-link-bg,
+.menu-link:focus-visible .menu-link-bg {
+  transform: none;
+}
+.menu-overlay:has(.menu-link[data-i='0']:focus-visible) .menu-shape[data-i='0'] > *,
+.menu-overlay:has(.menu-link[data-i='1']:focus-visible) .menu-shape[data-i='1'] > *,
+.menu-overlay:has(.menu-link[data-i='2']:focus-visible) .menu-shape[data-i='2'] > *,
+.menu-overlay:has(.menu-link[data-i='3']:focus-visible) .menu-shape[data-i='3'] > * {
+  opacity: 1;
+  transform: none;
+}
+
+@media (hover: hover) {
+  .menu-link:hover .menu-link-bg {
+    transform: none;
+  }
+  .menu-link:hover .menu-link-text {
+    transform: translateY(-1.1em);
+  }
+  .menu-toggle:hover .menu-toggle-turn {
+    transform: rotate(90deg);
+  }
+  .menu-overlay:has(.menu-link[data-i='0']:hover) .menu-shape[data-i='0'] > *,
+  .menu-overlay:has(.menu-link[data-i='1']:hover) .menu-shape[data-i='1'] > *,
+  .menu-overlay:has(.menu-link[data-i='2']:hover) .menu-shape[data-i='2'] > *,
+  .menu-overlay:has(.menu-link[data-i='3']:hover) .menu-shape[data-i='3'] > * {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .menu-link-bg,
+  .menu-link-text,
+  .menu-toggle-turn {
+    transition: transform 550ms var(--ease-settle);
+  }
+  .menu-link:hover .menu-link-text {
+    transition-delay: 100ms;
+  }
+  .menu-link:active .menu-link-bg {
+    transition-duration: 120ms;
+  }
+  /* Arriving: from half size, turned back 10 degrees, popping past full size
+     and settling, 80ms apart. Leaving: a 300ms fade back to that state. */
+  .menu-shape > * {
+    transition:
+      opacity 300ms cubic-bezier(0.55, 0.085, 0.68, 0.53),
+      transform 300ms cubic-bezier(0.55, 0.085, 0.68, 0.53);
+  }
+  .menu-overlay:has(.menu-link[data-i='0']:is(:hover, :focus-visible)) .menu-shape[data-i='0'] > *,
+  .menu-overlay:has(.menu-link[data-i='1']:is(:hover, :focus-visible)) .menu-shape[data-i='1'] > *,
+  .menu-overlay:has(.menu-link[data-i='2']:is(:hover, :focus-visible)) .menu-shape[data-i='2'] > *,
+  .menu-overlay:has(.menu-link[data-i='3']:is(:hover, :focus-visible)) .menu-shape[data-i='3'] > * {
+    transition:
+      opacity 600ms cubic-bezier(0.34, 1.56, 0.64, 1) calc(var(--j, 0) * 80ms),
+      transform 600ms cubic-bezier(0.34, 1.56, 0.64, 1) calc(var(--j, 0) * 80ms);
   }
 }

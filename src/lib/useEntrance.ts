@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useLayoutEffect, useState } from 'react';
-import { useReducedMotion } from 'framer-motion';
 
 /**
  * Says whether an entrance animation may run right now.
@@ -35,11 +34,12 @@ import { useReducedMotion } from 'framer-motion';
 const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 
 export function useEntrance(): boolean {
-  const reduce = useReducedMotion();
   const [ready, setReady] = useState(false);
 
   useIsomorphicLayoutEffect(() => {
-    if (reduce) return;
+    // Read straight from the media query rather than through Framer Motion's
+    // hook, so the sections that no longer use Framer do not pull it in for this.
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
     if (document.visibilityState === 'visible') {
       setReady(true);
@@ -51,7 +51,7 @@ export function useEntrance(): boolean {
     };
     document.addEventListener('visibilitychange', onVisible);
     return () => document.removeEventListener('visibilitychange', onVisible);
-  }, [reduce]);
+  }, []);
 
   return ready;
 }

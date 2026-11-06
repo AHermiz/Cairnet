@@ -13,7 +13,7 @@ import { EMAIL, footer, nav } from '@/lib/content';
  * The lockup rather than the bare mark, because this is the one place on the page
  * where the company's full name and descriptor should sit plainly.
  */
-export default function Footer() {
+export default function Footer({ navHeading = 'On this page' }: { navHeading?: string }) {
   const year = new Date().getFullYear();
 
   return (
@@ -33,7 +33,7 @@ export default function Footer() {
           </div>
 
           <nav aria-label="Footer">
-            <h2 className="text-sm font-bold text-offwhite">On this page</h2>
+            <h2 className="text-sm font-bold tracking-label text-offwhite">{navHeading}</h2>
             <ul className="mt-4 space-y-3">
               {nav.map((item) => (
                 <li key={item.href}>
@@ -49,7 +49,7 @@ export default function Footer() {
           </nav>
 
           <div>
-            <h2 className="text-sm font-bold text-offwhite">Get in touch</h2>
+            <h2 className="text-sm font-bold tracking-label text-offwhite">Get in touch</h2>
             <p className="mt-4">
               <a
                 href={`mailto:${EMAIL}`}

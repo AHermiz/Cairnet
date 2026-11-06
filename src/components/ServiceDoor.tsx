@@ -1,7 +1,7 @@
 'use client';
 
 import { MouseEvent, useId, useState } from 'react';
-import { mailtoFor, services } from '@/lib/content';
+import { QUESTIONS_CALL, services } from '@/lib/content';
 import Button from './Button';
 import ServiceGraphic from './ServiceGraphic';
 
@@ -9,7 +9,7 @@ type Item = {
   name: string;
   promise: string;
   body: string;
-  detail: { what: string; included: string[]; ask: string; subject: string };
+  detail: { what: string; included: string[]; ask: string };
 };
 
 /**
@@ -51,11 +51,15 @@ export default function ServiceDoor({ item, index }: { item: Item; index: number
   return (
     <article
       onClick={toggle}
-      className="group h-full cursor-pointer overflow-hidden rounded-brand border border-border transition-colors duration-200 ease-state hover:border-stone"
+      // Pressing the card answers on pointer-down, which is the only feedback a
+      // phone gets now that hover is gated to devices that hover. Not when the
+      // press is inside the open panel, where the reader is selecting text or
+      // pressing the email button rather than folding the card.
+      className="group h-full cursor-pointer overflow-hidden rounded-brand border border-border transition-colors duration-200 ease-state hover:border-stone contrast-more:border-stone [&:active:not(:has([data-door-panel]:active))]:border-stone [&:active:not(:has([data-door-panel]:active))]:bg-surface [&:active:not(:has([data-door-panel]:active))]:duration-100"
     >
       <ServiceGraphic service={index} ground="dark" className="h-[120px] w-full bg-surface" />
       <div className="p-7 sm:p-8">
-        <h3 className="text-xl font-bold tracking-claim text-offwhite">{item.name}</h3>
+        <h3 className="text-xl font-bold tracking-title text-offwhite">{item.name}</h3>
         <p className="mt-2 text-cta font-bold leading-snug text-mist">{item.promise}</p>
         <p className="mt-4 max-w-prose text-base leading-body text-mist">{item.body}</p>
 
@@ -101,7 +105,7 @@ export default function ServiceDoor({ item, index }: { item: Item; index: number
               </ul>
               {/* Ghost, never Signal: this section spends no red on buttons, and
                   the filled one stays the assessment's. */}
-              <Button href={mailtoFor(item.detail.subject)} variant="ghost" className="mt-7">
+              <Button href={QUESTIONS_CALL} variant="ghost" className="mt-7">
                 {item.detail.ask}
               </Button>
             </div>

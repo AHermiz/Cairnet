@@ -24,30 +24,50 @@ import Reveal from './Reveal';
  * section above this one is built out of columns, and a long row is both a
  * different rhythm and the right shape for a question.
  */
+const LINK =
+  'font-bold text-offwhite underline decoration-stone underline-offset-4 transition-colors duration-200 ease-state hover:decoration-offwhite';
+
+/** An answer with its optional link: the first match of `link.text` becomes an anchor. */
+function Answer({ text, link }: { text: string; link?: { text: string; href: string } }) {
+  const at = link ? text.indexOf(link.text) : -1;
+  if (!link || at < 0) return <>{text}</>;
+  return (
+    <>
+      {text.slice(0, at)}
+      <a href={link.href} className={LINK}>
+        {link.text}
+      </a>
+      {text.slice(at + link.text.length)}
+    </>
+  );
+}
+
 export default function Faq() {
   return (
-    <section id="questions" className="bg-offwhite py-frame text-charcoal">
+    <section id="questions" className="bg-charcoal py-frame text-offwhite">
       <div className="frame">
         <Reveal>
           <h2 className="max-w-prose text-3xl font-bold tracking-claim">{faq.heading}</h2>
         </Reveal>
 
-        <div className="mt-gutter border-t border-neutral-200">
+        <div className="mt-gutter border-t border-border">
           {faq.items.map((item, i) => (
             <Reveal key={item.q} index={i} stagger={0.05}>
-              <details className="faq-row group border-b border-neutral-200" open={i === 0}>
-                <summary className="flex cursor-pointer list-none items-start justify-between gap-gutter py-6 text-lg font-bold leading-snug transition-colors duration-200 ease-state hover:text-slate">
+              <details className="faq-row group border-b border-border" open={i === 0}>
+                <summary className="flex cursor-pointer list-none items-start justify-between gap-gutter py-6 text-lg font-bold leading-snug transition-colors duration-200 ease-state hover:text-mist active:text-mist active:duration-100">
                   <span className="max-w-[54ch]">{item.q}</span>
 
                   {/* Plus to minus. Two rounded rects, the brand's one shape. */}
                   <span aria-hidden className="relative mt-1 h-4 w-4 shrink-0">
-                    <span className="absolute left-0 top-[7px] h-[2px] w-4 rounded-brand bg-charcoal" />
-                    <span className="faq-tick absolute left-[7px] top-0 h-4 w-[2px] rounded-brand bg-charcoal" />
+                    <span className="absolute left-0 top-[7px] h-[2px] w-4 rounded-brand bg-offwhite" />
+                    <span className="faq-tick absolute left-[7px] top-0 h-4 w-[2px] rounded-brand bg-offwhite" />
                   </span>
                 </summary>
 
                 <div className="faq-body">
-                  <p className="max-w-[68ch] pb-7 text-base leading-body text-slate">{item.a}</p>
+                  <p className="max-w-[68ch] pb-7 text-base leading-body text-mist">
+                    <Answer text={item.a} link={'link' in item ? item.link : undefined} />
+                  </p>
                 </div>
               </details>
             </Reveal>
@@ -55,11 +75,11 @@ export default function Faq() {
         </div>
 
         <Reveal index={6}>
-          <p className="mt-tight text-base leading-body text-slate">
+          <p className="mt-tight text-base leading-body text-mist">
             Anything else, ask.{' '}
             <a
               href={`mailto:${EMAIL}`}
-              className="font-bold text-charcoal underline decoration-stone underline-offset-4 transition-colors duration-200 ease-state hover:decoration-charcoal"
+              className="font-bold text-offwhite underline decoration-stone underline-offset-4 transition-colors duration-200 ease-state hover:decoration-offwhite"
             >
               {EMAIL}
             </a>

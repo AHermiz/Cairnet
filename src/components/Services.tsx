@@ -1,45 +1,68 @@
 import { ArrowDown } from 'lucide-react';
-import { services } from '@/lib/content';
+import { QUESTIONS_CALL, howItWorks, services } from '@/lib/content';
+import Button from './Button';
 import Reveal from './Reveal';
-import ServiceDoor from './ServiceDoor';
-import ServiceGraphic from './ServiceGraphic';
+import ServiceFolder, { type FolderFile } from './ServiceFolder';
 
 /**
- * The four services. Charcoal ground, closing the dark block the hero opened.
+ * The other three folders' photographs, in service order. Sources in
+ * public/media/CREDITS.md. Each shows as a small 4:3 print tucked into its
+ * folder, so each position is set by eye to keep the subject in that crop.
+ */
+const folderPhotos = [
+  { name: 'folder-website', position: 'center 40%' },
+  { name: 'folder-autopilot', position: 'center 55%' },
+  { name: 'folder-frontdesk', position: 'center 62%' },
+];
+
+/**
+ * The four services, as four folders. Charcoal ground, like the rest of the page
+ * since 2026-11-02.
  *
- * **Not four identical tiles.** Assessment is the front door, the other three are
- * what an assessment turns up, and the layout says so instead of leaving four
- * equal boxes for the reader to rank. It takes the tall left column at full
- * height; the other three stack beside it.
+ * **Folders, not cards (A, 2026-11-02).** A wanted this section livelier and
+ * picked the 21st.dev glass folders out of ten references. Each folder's front
+ * carries what the card used to: the name, the promise and the short
+ * description. Opening it does what "What's included" did, and the included
+ * lines are grouped into three files per service, so a reader opens three things
+ * rather than twenty-odd. Every line is the existing copy, word for word.
  *
- * **The front door card is inverted onto Off-White** rather than given a badge or
- * a highlight colour. The brand has exactly two grounds and this uses the second
- * one, so the emphasis costs nothing and invents nothing. It also lets the card
- * carry the Statement family's edge blaze, a short Signal bar at the height the
- * type begins, which is the one accent mark in this section. On Off-White Signal
- * measures 4.48:1, comfortably past the 3:1 a graphic needs; on the charcoal
- * cards it would have been 2.5:1 and unusable.
+ * **Not four identical tiles.** Assessment is the front door and the other three
+ * are what an assessment turns up. Its folder is the light one, using the brand's
+ * second ground rather than a badge or a highlight colour, and it carries the
+ * Statement family's edge blaze, the one red mark in this section. On Off-White
+ * Signal measures 4.48:1, past the 3:1 a graphic needs.
+ *
+ * **The Assessment folder repeats How an assessment runs.** Its files are the
+ * section's steps, said in fewer clicks. A accepted the repetition: the folder is
+ * the quick look, the section is the long read. If it grates once seen, the
+ * folder can hold just the three beats and link down.
  *
  * **No assessment CTA in this section.** The nav and the hero already carry the
- * one label this site uses to ask for the sale, and the close asks again. A
- * fourth copy here would be the same intent competing with itself, and it would
- * spend a second red on furniture. The assessment card links down to How it
- * works instead, and the other three open in place (`ServiceDoor`) with a ghost
- * button each that emails about that service. Added 2026-09-24.
+ * one label this site uses to ask for the sale, and the close asks again. The
+ * other three folders each offer a ghost button for that service, never Signal,
+ * so the filled button stays the assessment's.
  *
- * Body copy is Mist, never Stone. Stone is 4.72:1 on flat charcoal, which scrapes
- * past AA and reads as furniture, and on a raised surface it drops to 4.16:1 and
- * fails outright. Mist is 9.98:1 and is the tier that exists for this job.
- *
- * **The cards use `Reveal`, not the stone drop.** They briefly landed the way the
- * mark's stones do, on the four stones' own delays. A's call to take it out: it
- * was not a make-or-break piece of the page, and these are the most-repeated
- * components on it, so Framer Motion's per-instance cost was being paid four
- * times for a flourish. `StoneDrop` and `stoneCardDrop` were deleted rather than
- * left sitting unused.
+ * Body copy is Mist, never Stone. Stone is 4.72:1 on flat charcoal and fails on a
+ * raised surface; Mist is 9.98:1 and is the tier that exists for this job.
  */
 export default function Services() {
   const [frontDoor, ...rest] = services.items;
+  const steps = howItWorks.steps;
+
+  const frontDoorFiles: FolderFile[] = [
+    { name: steps[0].title, meta: steps[0].meta, blocks: [{ p: steps[0].body }] },
+    {
+      // No time on this tab: the name is long enough to be cut off by one, and
+      // "within 2 business days" is already on the folder's front.
+      name: services.researchFile,
+      blocks: [
+        { p: steps[1].body },
+        { p: steps[2].body },
+        { heading: howItWorks.reportHeading, list: howItWorks.report },
+      ],
+    },
+    { name: steps[3].title, meta: steps[3].meta, blocks: [{ p: steps[3].body }] },
+  ];
 
   return (
     <section id="services" className="bg-charcoal py-frame">
@@ -51,81 +74,70 @@ export default function Services() {
           </div>
         </Reveal>
 
-        <div className="mt-gutter grid items-start gap-6 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-8">
-          {/* Sticky, not stretched. The three cards beside it are taller than this
-              one, and matching their height left a 350px hole inside the card.
-              Pinning it instead keeps the column from going ragged, holds the
-              front door on screen while the reader goes through what an
-              assessment turns up, and means the card is only ever as tall as its
-              own content. */}
-          <Reveal index={0} className="lg:sticky lg:top-24 lg:self-start">
-            <article className="group relative flex flex-col overflow-hidden rounded-brand bg-offwhite">
-              {/* The edge blaze. Statement family device, and the only red in
-                  this section: it marks which of the four you start with. */}
-              <span
-                aria-hidden
-                className="absolute left-0 top-[160px] z-10 h-16 w-[6px] rounded-r-brand bg-signal"
-              />
-              <ServiceGraphic
-                service={0}
-                ground="light"
-                className="h-[120px] w-full bg-neutral-100"
-              />
-              <div className="flex flex-col p-8 sm:p-10">
-              <h3 className="text-xl font-bold tracking-claim text-charcoal">{frontDoor.name}</h3>
-              <p className="mt-2 text-cta font-bold leading-snug text-slate">{frontDoor.promise}</p>
-              <p className="mt-5 text-base leading-body text-slate">{frontDoor.body}</p>
-
-              {/* The three beats. This card is the tallest thing in the section
-                  because it sets the height of the column beside it, so it has
-                  to earn that height rather than stretch to fill it: the first
-                  build left roughly 350px of nothing under the body copy. */}
-              <ul className="mt-7 space-y-3 border-t border-neutral-200 pt-7">
-                {services.frontDoorBeats.map((beat) => (
-                  <li key={beat} className="flex gap-3 text-base leading-body text-charcoal">
-                    <span
-                      aria-hidden
-                      className="mt-[0.55em] h-[3px] w-4 shrink-0 rounded-brand bg-stone"
-                    />
-                    {beat}
-                  </li>
-                ))}
-              </ul>
-
-              {/* Not "everything below": on desktop the other three sit beside
-                  this card, not under it, so a directional line is wrong half
-                  the time. This says the thing a buyer actually needs to know
-                  before they book, and it is the same line the source copy
-                  insists goes on the call and in the report. */}
-              <p className="mt-7 text-sm font-bold text-charcoal">
-                Implementation is quoted separately.
-              </p>
-
-              {/* The whole card is this link. Its ::after covers the card (above
-                  the blaze, hence z-20), so a click anywhere scrolls to How it
-                  works while the accessible name stays one short line rather than
-                  the whole card read aloud. */}
-              <a
-                href="#how-it-works"
-                className="mt-5 inline-flex items-center gap-2 self-start rounded-brand text-base font-bold text-charcoal underline decoration-stone underline-offset-4 transition-colors duration-200 ease-state after:absolute after:inset-0 after:z-20 after:content-[''] group-hover:decoration-charcoal focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-charcoal"
-              >
-                {frontDoor.cue}
-                <ArrowDown aria-hidden className="h-4 w-4" strokeWidth={2.5} />
-              </a>
+        {/* No row gap beyond the folders' own headroom: each one reserves the
+            space its files fan into when it opens. */}
+        <div className="mt-6 grid gap-x-8 gap-y-4 lg:grid-cols-2">
+          <ServiceFolder
+            tone="light"
+            blaze
+            photo="folder-assessment"
+            photoPosition="center"
+            name={frontDoor.name}
+            promise={frontDoor.promise}
+            toggleLabel={services.detailLabel}
+            files={frontDoorFiles}
+            closed={<p className="text-base leading-body">{frontDoor.body}</p>}
+            open={
+              <div>
+                <ul className="space-y-3">
+                  {services.frontDoorBeats.map((beat) => (
+                    <li key={beat} className="flex gap-3 text-base leading-body text-charcoal">
+                      <span aria-hidden className="mt-[0.55em] h-[3px] w-4 shrink-0 rounded-brand bg-slate" />
+                      {beat}
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-5 text-sm font-bold tracking-label text-charcoal">
+                  Implementation is quoted separately.
+                </p>
+                <a
+                  href="#how-it-works"
+                  className="mt-4 inline-flex items-center gap-2 rounded-brand text-base font-bold text-charcoal underline decoration-stone underline-offset-4 transition-colors duration-200 ease-state hover:decoration-charcoal focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-charcoal"
+                >
+                  {frontDoor.cue}
+                  <ArrowDown aria-hidden className="h-4 w-4" strokeWidth={2.5} />
+                </a>
               </div>
-            </article>
-          </Reveal>
+            }
+          />
 
-          <div className="grid gap-6 lg:gap-8">
-            {rest.map(
-              (item, i) =>
-                item.detail && (
-                  <Reveal key={item.name} index={i + 1}>
-                    <ServiceDoor item={item} index={i + 1} />
-                  </Reveal>
-                ),
-            )}
-          </div>
+          {rest.map(
+            (item, i) =>
+              item.detail && (
+                <ServiceFolder
+                  key={item.name}
+                  delay={(i + 1) * 140}
+                  photo={folderPhotos[i].name}
+                  photoPosition={folderPhotos[i].position}
+                  name={item.name}
+                  promise={item.promise}
+                  toggleLabel={services.detailLabel}
+                  files={item.detail.included.map((group) => ({
+                    name: group.file,
+                    blocks: [{ list: group.lines }],
+                  }))}
+                  closed={<p className="text-base leading-body">{item.body}</p>}
+                  open={
+                    <div>
+                      <p className="text-base leading-body">{item.detail.what}</p>
+                      <Button href={QUESTIONS_CALL} variant="ghost" className="mt-6">
+                        {item.detail.ask}
+                      </Button>
+                    </div>
+                  }
+                />
+              ),
+          )}
         </div>
       </div>
     </section>

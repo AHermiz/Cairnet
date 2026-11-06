@@ -1,0 +1,42 @@
+/* How an assessment runs (HowItWorks.tsx), 2026-11-03.
+   Motion for the photo stage. Everything here is layered on a finished, static
+   state and the whole file sits behind prefers-reduced-motion. */
+@media (prefers-reduced-motion: no-preference) {
+  /* The slow push-in while a step holds. It resets only after the slide has
+     faded out, so the outgoing photo never visibly jumps back. */
+  .hiw-photo img {
+    transform: scale(1);
+    transition: transform 0s linear 0.4s;
+  }
+  .hiw-slide[aria-hidden='false'] .hiw-photo img {
+    transform: scale(1.07);
+    transition: transform 9s cubic-bezier(0.2, 0.6, 0.3, 1);
+  }
+
+  /* The paragraph settles as its slide arrives. */
+  .hiw-body {
+    translate: 0 12px;
+    transition: translate 0.6s var(--ease-settle);
+  }
+  .hiw-slide[aria-hidden='false'] .hiw-body {
+    translate: 0 0;
+  }
+
+  /* Entrance: the four buttons rise into the stage one after another when the
+     section is revealed. Background changes stay instant to a click. */
+  .hiw-btn {
+    --hiw-d: 0ms;
+    transition:
+      background-color 200ms var(--ease-state) 0s,
+      opacity 600ms var(--ease-state) var(--hiw-d),
+      translate 700ms var(--ease-settle) var(--hiw-d);
+  }
+  .hiw-btn:nth-child(1) { --hiw-d: 250ms; }
+  .hiw-btn:nth-child(2) { --hiw-d: 340ms; }
+  .hiw-btn:nth-child(3) { --hiw-d: 430ms; }
+  .hiw-btn:nth-child(4) { --hiw-d: 520ms; }
+  .reveal[data-reveal='pending'] .hiw-btn {
+    opacity: 0;
+    translate: 0 24px;
+  }
+}

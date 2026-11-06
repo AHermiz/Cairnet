@@ -1,0 +1,383 @@
+/* Service folders (ServiceFolder.tsx), 2026-11-02.
+   From the 21st.dev Glassmorphism Folder Cards (MIT), on the brand's tiers. The
+   resting state is the finished folder; every movement is layered on top, and
+   the reduced-motion block at the end takes all of it away again.
+   Its own file rather than a block in globals.css, because another session
+   rewrote globals.css whole while this was being built and took the block with
+   it. A component's styles beside the component cannot be lost that way. */
+.sf-root {
+  --sf-px: 0;
+  --sf-py: 0;
+  --sf-spring: cubic-bezier(0.34, 1.36, 0.5, 1);
+  --sf-lift: -22px;
+  --sf-spread: 0px;
+  --sf-fan: 0deg;
+  --sf-stack: 12px;
+  --sf-ink: theme('colors.offwhite');
+  --sf-ink-soft: theme('colors.mist');
+  --sf-back: theme('colors.surface-raised');
+  --sf-paper: theme('colors.offwhite');
+  position: relative;
+  isolation: isolate;
+  -webkit-tap-highlight-color: transparent;
+}
+.sf-root[data-tone='light'] {
+  --sf-ink: theme('colors.charcoal');
+  --sf-ink-soft: theme('colors.slate');
+  --sf-back: theme('colors.stone');
+  --sf-paper: #ffffff;
+}
+@media (hover: hover) {
+  .sf-root:hover {
+    --sf-lift: -40px;
+    --sf-spread: 4px;
+    --sf-fan: 0.6deg;
+    --sf-stack: 16px;
+  }
+}
+.sf-root:focus-within {
+  --sf-lift: -40px;
+  --sf-spread: 4px;
+  --sf-fan: 0.6deg;
+  --sf-stack: 16px;
+}
+.sf-root[data-open] {
+  /* No hinge. The reference tips its glass back 24deg, but its front is 198px
+     tall; ours carries a paragraph and runs 500 to 1200px, where 14deg made a
+     trapezoid and even 3deg slanted the edges and softened the type. The files
+     and the lean do the moving. */
+  --sf-lift: -104px;
+  --sf-spread: 18px;
+  --sf-fan: 1.4deg;
+  --sf-stack: 42px;
+}
+
+.sf-tilt {
+  position: relative;
+  transform: perspective(1600px) rotateX(calc(var(--sf-py) * -2.5deg)) rotateY(calc(var(--sf-px) * 3deg));
+  transition: transform 0.9s var(--ease-settle);
+}
+.sf-shadow {
+  position: absolute;
+  inset: auto 18px -8px 18px;
+  height: 60px;
+  border-radius: 40px;
+  background: rgb(0 0 0 / 0.6);
+  filter: blur(22px);
+  transform: translateX(calc(var(--sf-px) * -8px));
+  transition: transform 0.9s var(--ease-settle), opacity 0.9s var(--ease-settle);
+}
+.sf-back {
+  position: absolute;
+  inset: 0;
+  border-radius: theme('borderRadius.brand');
+  background: var(--sf-back);
+  transition: translate 1s var(--ease-settle), opacity 0.9s var(--ease-settle);
+}
+
+.sf-print {
+  position: absolute;
+  /* In front of the glass, A's call 2026-11-03: the whole print shows and its
+     lower edge hangs about 50px over the top of the front, which is why the
+     copy below starts lower than it used to. It takes no clicks, so a press on
+     it still opens the folder. */
+  z-index: 12;
+  pointer-events: none;
+  right: 28px;
+  top: 18px;
+  width: 184px;
+  aspect-ratio: 4 / 3;
+  padding: 6px;
+  border-radius: 4px;
+  background: theme('colors.offwhite');
+  box-shadow: 0 1px 0 rgb(255 255 255 / 0.6) inset, 0 14px 28px -10px rgb(0 0 0 / 0.7);
+  transform-origin: 50% 0;
+  transform: rotate(4deg);
+  transition:
+    transform 0.6s var(--sf-spring),
+    opacity 0.4s var(--ease-state),
+    translate 0.9s var(--ease-settle);
+}
+.sf-root[data-tone='light'] .sf-print {
+  background: #ffffff;
+}
+.sf-print > div {
+  border-radius: 2px;
+}
+.sf-clip {
+  position: absolute;
+  left: 22px;
+  top: -18px;
+  width: 14px;
+  height: 36px;
+  fill: none;
+  stroke: theme('colors.mist');
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  filter: drop-shadow(0 1px 1px rgb(0 0 0 / 0.5));
+}
+@media (hover: hover) {
+  .sf-root:not([data-open]):hover .sf-print {
+    transform: translateY(-8px) rotate(1.5deg);
+  }
+}
+.sf-root[data-open] .sf-print {
+  opacity: 0;
+  transform: translate(24px, -24px) rotate(10deg);
+  pointer-events: none;
+}
+@media (max-width: 639px) {
+  .sf-print {
+    right: 18px;
+    top: 37px;
+    width: 140px;
+  }
+}
+
+.sf-files {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  /* Nothing hangs out of the bottom of the pocket. */
+  clip-path: inset(-600px -600px 12px -600px);
+}
+.sf-sheet {
+  position: absolute;
+  left: 34px;
+  right: 34px;
+  top: 92px;
+  height: 184px;
+  border-radius: theme('borderRadius.brand');
+  overflow: hidden;
+  cursor: pointer;
+  pointer-events: auto;
+  text-align: left;
+  background: var(--sf-paper);
+  box-shadow: 0 0 0 1px rgb(28 28 30 / 0.08), 0 12px 28px -10px rgb(0 0 0 / 0.55);
+  transform-origin: 50% 100%;
+  transform:
+    translate(
+      calc(var(--sf-jx) + var(--sf-slot) * var(--sf-spread)),
+      calc(var(--sf-lift) + var(--sf-depth) * var(--sf-stack) * -1)
+    )
+    rotate(calc(var(--sf-jr) + var(--sf-slot) * var(--sf-fan)));
+  transition:
+    transform 0.75s var(--sf-spring) calc(var(--sf-depth) * 40ms),
+    box-shadow 0.4s var(--ease-state),
+    translate 0.9s var(--ease-settle),
+    opacity 0.9s var(--ease-settle);
+}
+.sf-root[data-open] .sf-sheet:is(:hover, :focus-visible) {
+  transform:
+    translate(
+      calc(var(--sf-jx) + var(--sf-slot) * var(--sf-spread)),
+      calc(var(--sf-lift) + var(--sf-depth) * var(--sf-stack) * -1 - 16px)
+    )
+    rotate(calc(var(--sf-slot) * var(--sf-fan) * 0.6));
+  box-shadow: 0 0 0 1px rgb(28 28 30 / 0.08), 0 22px 40px -12px rgb(0 0 0 / 0.65);
+  transition-delay: 0s;
+}
+.sf-sheet:focus-visible {
+  outline: 2px solid theme('colors.offwhite');
+  outline-offset: 3px;
+}
+.sf-sheet-head {
+  position: absolute;
+  transition: opacity 300ms var(--ease-state);
+  inset: 12px 16px auto 16px;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  white-space: nowrap;
+}
+/* At rest the pocket shows paper, not half a label cut off by the glass. */
+.sf-root:not([data-open]) .sf-sheet-head {
+  opacity: 0;
+}
+.sf-sheet-num {
+  flex: none;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+  color: theme('colors.slate');
+}
+.sf-sheet-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: theme('colors.charcoal');
+}
+.sf-sheet-meta {
+  flex: none;
+  font-size: 0.8125rem;
+  color: theme('colors.slate');
+}
+.sf-lines {
+  position: absolute;
+  inset: 46px 16px auto 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.sf-lines i {
+  display: block;
+  height: 6px;
+  border-radius: 3px;
+  background: rgb(28 28 30 / 0.1);
+}
+
+.sf-front {
+  position: relative;
+  z-index: 10;
+  cursor: pointer;
+  border-radius: theme('borderRadius.brand');
+  -webkit-backdrop-filter: blur(22px) saturate(1.3);
+  backdrop-filter: blur(22px) saturate(1.3);
+  transition: translate 1s var(--ease-settle), opacity 1s var(--ease-settle);
+}
+/* Dense enough that Off-White type keeps its contrast however much paper is
+   showing through behind it; the glass shows as a glow, not as a window. */
+.sf-tint {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgb(38 38 42 / 0.8) 0%, rgb(30 30 33 / 0.92) 40%, rgb(28 28 30 / 0.97) 100%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.12), inset 0 0 0 1px theme('colors.border');
+}
+.sf-root[data-tone='light'] .sf-tint {
+  background: linear-gradient(180deg, rgb(245 243 239 / 0.82) 0%, rgb(245 243 239 / 0.94) 40%, rgb(245 243 239 / 0.98) 100%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.9);
+}
+.sf-spec {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(320px 240px at calc(50% + var(--sf-px) * 46%) calc(30% + var(--sf-py) * 40%), rgb(255 255 255 / 0.5), transparent 70%);
+  mix-blend-mode: screen;
+  opacity: 0.1;
+  pointer-events: none;
+}
+.sf-root[data-tone='light'] .sf-spec {
+  mix-blend-mode: soft-light;
+  opacity: 0.7;
+}
+/* The Statement family's edge blaze, at the height the name begins. */
+.sf-blaze {
+  position: absolute;
+  left: 0;
+  top: 96px;
+  z-index: 2;
+  width: 6px;
+  height: 64px;
+  border-radius: 0 theme('borderRadius.brand') theme('borderRadius.brand') 0;
+  background: theme('colors.signal');
+}
+
+.sf-copy {
+  position: relative;
+  z-index: 1;
+  /* Starts below the print hanging over the top edge, not at 52px as it did
+     when the print tucked behind the glass. */
+  padding: 96px 32px 30px;
+}
+@media (min-width: 640px) {
+  .sf-copy {
+    padding: 112px 40px 34px;
+  }
+}
+.sf-name,
+.sf-toggle {
+  color: var(--sf-ink);
+}
+.sf-promise,
+.sf-face {
+  color: var(--sf-ink-soft);
+}
+.sf-glyph {
+  background: var(--sf-ink);
+  transition: transform 200ms var(--ease-state);
+}
+.sf-root[data-open] .sf-glyph-v {
+  transform: scaleY(0);
+}
+.sf-toggle:focus-visible {
+  outline: 2px solid var(--sf-ink);
+  outline-offset: 4px;
+}
+.sf-more {
+  grid-template-rows: 0fr;
+  visibility: hidden;
+  transition: grid-template-rows 300ms var(--ease-state), visibility 0s 300ms;
+}
+.sf-root[data-open] .sf-more {
+  grid-template-rows: 1fr;
+  visibility: visible;
+  transition-delay: 0s;
+}
+
+/* The reading card grows out of the file, so it is paper like the file. */
+.sf-reader {
+  margin: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  max-width: min(36rem, calc(100vw - 2.5rem));
+  width: 100%;
+  overflow: visible;
+}
+/* The dialog takes focus when it opens; the card is the visible thing, and the
+   close button inside it carries its own ring. */
+.sf-reader:focus-visible {
+  outline: none;
+}
+.sf-reader::backdrop {
+  background: rgb(18 18 20 / 0.72);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+.sf-reader-card {
+  max-height: calc(100svh - 3rem);
+  overflow-y: auto;
+  padding: 28px 32px 36px;
+  border-radius: theme('borderRadius.brand');
+  background: theme('colors.offwhite');
+  box-shadow: 0 30px 60px -20px rgb(0 0 0 / 0.7);
+  transform-origin: 0 0;
+}
+@media (min-width: 640px) {
+  .sf-reader-card {
+    padding: 36px 44px 44px;
+  }
+}
+
+/* Entrance: the folder assembles itself, back, then files, then glass. Only a
+   folder marked pending is ever hidden, and only JS that knows the document is
+   visible and motion is allowed marks it. */
+.sf-root[data-pending] .sf-back { translate: 0 22px; opacity: 0; }
+.sf-root[data-pending] .sf-sheet { translate: 0 -120px; opacity: 0; }
+.sf-root[data-pending] .sf-front { translate: 0 46px; opacity: 0; }
+.sf-root[data-pending] .sf-shadow { opacity: 0; }
+.sf-root[data-pending] .sf-print { translate: 0 -40px; opacity: 0; }
+@media (min-width: 640px) {
+  .sf-blaze { top: 112px; }
+}
+.sf-root:not([data-pending]) .sf-print { transition-delay: 0s, 0s, 0.6s; }
+.sf-root:not([data-pending]) .sf-sheet {
+  transition-delay: calc(var(--sf-depth) * 40ms), 0s, calc(0.18s + var(--sf-depth) * 90ms), calc(0.18s + var(--sf-depth) * 90ms);
+}
+.sf-root:not([data-pending]) .sf-front { transition-delay: 0.42s, 0.42s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .sf-root *,
+  .sf-root *::before,
+  .sf-root *::after {
+    transition-duration: 0s !important;
+    transition-delay: 0s !important;
+    animation: none !important;
+  }
+  .sf-tilt { transform: none; }
+}

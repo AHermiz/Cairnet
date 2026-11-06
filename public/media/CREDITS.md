@@ -186,3 +186,46 @@ onto the video so the handover is invisible.
 video is brighter in some frames than the frame it came from. Mean luminance
 across the clip moves by about 1 level out of 255, so the still's numbers hold,
 but re-measure against the brightest frame if the grade is ever lightened.
+
+## step-0\*.webp and folder-\*.webp
+
+Eight stock photographs, added 2026-11-03 when A asked for the page to be
+livelier: one beside each step of How an assessment runs, in place of the flat
+drawings, and one on each service folder as a small print tucked into its
+pocket. They sat as a band behind the tab first, and the glass left only a
+74px strip of each showing, which was not enough to tell what any photo was.
+
+All eight are from Unsplash under the free Unsplash License: commercial use,
+no attribution required. Credited here anyway. Paid Unsplash+ images were
+filtered out of every search.
+
+| File | Shows | Photographer | Source |
+|---|---|---|---|
+| `step-01-conversation` | Two men talking over coffee, a laptop and a printed chart (A's pick, 2026-11-04) | Vitaly Gariev | [Unsplash](https://unsplash.com/photos/two-businessmen-discussing-charts-on-a-laptop-YR4zsA7QwRk) |
+| `step-02-research` | A desk with a laptop and papers at night | Yen Vu | [Unsplash](https://unsplash.com/photos/desk-with-laptop-books-and-papers-at-night-UlHSF20AHu0) |
+| `step-03-report` | Printed pages and a pen on a dark wooden desk | 2H Media | [Unsplash](https://unsplash.com/photos/a-wooden-table-topped-with-papers-and-a-pen-VnK5iT01HYQ) |
+| `step-04-walkthrough` | A man on the phone at his desk with a laptop (A's pick, 2026-11-04) | Vitaly Gariev | [Unsplash](https://unsplash.com/photos/man-talking-on-phone-at-desk-with-laptop-Gvvtc1rfCI8) |
+| `folder-assessment` | A brand questionnaire and a pen on a wooden desk (A's find) | 2H Media | [Unsplash](https://unsplash.com/photos/a-stack-of-papers-sitting-on-top-of-a-wooden-table-b-5ubnkM0LU) |
+| `folder-website` | A website on a laptop on a wooden desk | Carriza Maiquez | [Unsplash](https://unsplash.com/photos/a-laptop-computer-sitting-on-top-of-a-wooden-desk-RTdvy9izXvw) |
+| `folder-autopilot` | Two pilots from behind in a cockpit | Caleb Woods | [Unsplash](https://unsplash.com/photos/two-men-sitting-on-vehicle-R2lCJwGyqPQ) |
+| `folder-frontdesk` | A "we are open" sign | Tim Mossholder | [Unsplash](https://unsplash.com/photos/a-yellow-sign-that-says-we-are-open-hanging-from-a-hook-XU84U7xhQ_4) |
+
+**Processing.** Downloaded at 1600 wide, resized to 640 and 1200 wide, WebP at
+quality 62. 9 to 75 KB a file. The four step photos also have a 2000-wide file
+(quality 58, 40 to 150 KB) from a 2400-wide download, because the How it works
+stage runs about 1040px wide and 1200 was visibly soft on a high-density screen. The grade is not baked in: `Photo.tsx` applies
+`saturate(0.55) contrast(1.02) brightness(0.9)` and a 22% charcoal scrim, the
+hero's own grade, which A chose on 2026-11-03 over the original 12%. The
+two options it beat: a duotone mapping shadows to Charcoal and highlights to
+Linen (the most cohesive, and barely warmer than grey on screen), and grey at
+rest with colour blooming in on the active step or on hover.
+
+**Choices worth keeping.** Rejected along the way, so they are not re-proposed:
+a café menu and a newspaper's stock tables for the report; a bakery's own sign
+and Google Maps showing a named shop, which put another business on the page; a
+"we're open" sign that also carried a "love is love" print; a man on a video
+call who could read as A; a notepad that turned out to be a shopping list; anything showing a carmaker's logo or a Tesla screen;
+an Unsplash+ image of a video call (Getty, not covered by the free licence); and the human-and-robot-hand image, which is the stock picture of "AI" and
+undercuts "AI where it earns its place". Autopilot was the hard one: messy
+desks and dominoes said the wrong thing, and no free photo says "cruise
+control" or "autopilot" outright. The cockpit was A's find.

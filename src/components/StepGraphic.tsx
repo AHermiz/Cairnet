@@ -24,7 +24,9 @@ import { tiers, mark } from '@/lib/tokens';
  * Drawn at a 360 x 240 viewBox and scaled by the container.
  */
 
-const [STONE, SLATE, CHARCOAL, SIGNAL] = tiers.light;
+// The dark tier set, now that How it works sits on Charcoal (A, 2026-11-02).
+// Charcoal fills vanish on that ground, so the reversed set is mandatory.
+const [STONE, MIST, OFFWHITE, SIGNAL] = tiers.dark;
 const R = mark.radius; // 9, the brand's one corner radius
 
 type Props = { step: number; className?: string };
@@ -54,7 +56,7 @@ function Bubble({
   // Bars have to contrast with the bubble they sit in. Stone bars in a Stone
   // bubble is invisible, which is exactly how the walkthrough frame shipped its
   // right hand bubble blank the first time.
-  const barFill = fill === STONE ? CHARCOAL : STONE;
+  const barFill = fill === STONE ? OFFWHITE : STONE;
   const tailX = side === 'left' ? x + 20 : x + w - 20;
   const tail =
     side === 'left'
@@ -83,8 +85,8 @@ function Bubble({
 function Conversation() {
   return (
     <>
-      <Bubble x={10} y={20} w={186} h={76} fill={SLATE} side="left" bars={[122, 88]} />
-      <Bubble x={164} y={136} w={186} h={76} fill={CHARCOAL} side="right" bars={[132, 96]} />
+      <Bubble x={10} y={20} w={186} h={76} fill={MIST} side="left" bars={[122, 88]} />
+      <Bubble x={164} y={136} w={186} h={76} fill={OFFWHITE} side="right" bars={[132, 96]} />
     </>
   );
 }
@@ -98,8 +100,8 @@ function Research() {
   const rows = [0, 1, 2, 3];
   return (
     <>
-      <rect x="34" y="22" width="292" height="152" rx={R} fill={CHARCOAL} />
-      <rect x="50" y="38" width="260" height="120" rx={R} fill={SLATE} />
+      <rect x="34" y="22" width="292" height="152" rx={R} fill={OFFWHITE} />
+      <rect x="50" y="38" width="260" height="120" rx={R} fill={MIST} />
 
       {rows.map((r) => {
         const picked = r === 2;
@@ -119,8 +121,8 @@ function Research() {
       })}
 
       {/* Stand. Enough to read as a screen on a desk rather than a floating panel. */}
-      <rect x="166" y="174" width="28" height="24" rx={R / 2} fill={CHARCOAL} />
-      <rect x="122" y="196" width="116" height="16" rx={R} fill={SLATE} />
+      <rect x="166" y="174" width="28" height="24" rx={R / 2} fill={OFFWHITE} />
+      <rect x="122" y="196" width="116" height="16" rx={R} fill={MIST} />
     </>
   );
 }
@@ -129,13 +131,13 @@ function Report() {
   return (
     <>
       {/* The document. One line is Signal: the recommendation. */}
-      <rect x="86" y="16" width="188" height="208" rx={R} fill={CHARCOAL} />
+      <rect x="86" y="16" width="188" height="208" rx={R} fill={OFFWHITE} />
       <rect x="110" y="48" width="140" height="12" rx={R / 2} fill={STONE} />
-      <rect x="110" y="76" width="112" height="10" rx={R / 2} fill={SLATE} />
-      <rect x="110" y="98" width="128" height="10" rx={R / 2} fill={SLATE} />
+      <rect x="110" y="76" width="112" height="10" rx={R / 2} fill={MIST} />
+      <rect x="110" y="98" width="128" height="10" rx={R / 2} fill={MIST} />
       <rect x="110" y="128" width="96" height="14" rx={R / 2} fill={SIGNAL} />
-      <rect x="110" y="160" width="120" height="10" rx={R / 2} fill={SLATE} />
-      <rect x="110" y="182" width="84" height="10" rx={R / 2} fill={SLATE} />
+      <rect x="110" y="160" width="120" height="10" rx={R / 2} fill={MIST} />
+      <rect x="110" y="182" width="84" height="10" rx={R / 2} fill={MIST} />
     </>
   );
 }
@@ -146,14 +148,14 @@ function Walkthrough() {
   // start, with a document on the table.
   return (
     <>
-      <rect x="132" y="42" width="96" height="156" rx={R} fill={CHARCOAL} />
+      <rect x="132" y="42" width="96" height="156" rx={R} fill={OFFWHITE} />
       <rect x="148" y="64" width="62" height="8" rx={R / 2} fill={STONE} opacity={0.8} />
-      <rect x="148" y="80" width="48" height="8" rx={R / 2} fill={SLATE} />
+      <rect x="148" y="80" width="48" height="8" rx={R / 2} fill={MIST} />
       <rect x="148" y="102" width="56" height="11" rx={R / 2} fill={SIGNAL} />
-      <rect x="148" y="126" width="52" height="8" rx={R / 2} fill={SLATE} />
-      <rect x="148" y="142" width="40" height="8" rx={R / 2} fill={SLATE} />
+      <rect x="148" y="126" width="52" height="8" rx={R / 2} fill={MIST} />
+      <rect x="148" y="142" width="40" height="8" rx={R / 2} fill={MIST} />
 
-      <Bubble x={6} y={24} w={108} h={58} fill={SLATE} side="right" bars={[64, 42]} />
+      <Bubble x={6} y={24} w={108} h={58} fill={MIST} side="right" bars={[64, 42]} />
       <Bubble x={246} y={126} w={108} h={58} fill={STONE} side="left" bars={[60, 38]} />
     </>
   );

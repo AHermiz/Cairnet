@@ -1,5 +1,5 @@
 import { ArrowRight } from 'lucide-react';
-import { CTA, EMAIL, MAILTO, closing } from '@/lib/content';
+import { BOOK, CTA, EMAIL, closing } from '@/lib/content';
 import CairnMark from './CairnMark';
 import Reveal from './Reveal';
 
@@ -44,7 +44,7 @@ export default function Closing() {
         <Reveal index={3}>
           <div className="mt-gutter flex flex-col items-center gap-5">
             <a
-              href={MAILTO}
+              href={BOOK}
               className="group inline-flex items-center gap-3 rounded-brand bg-signal py-1.5 pl-6 pr-1.5 text-cta font-bold text-offwhite transition-[gap,filter,transform] duration-200 ease-state hover:gap-4 hover:brightness-95 active:scale-[0.98]"
             >
               {CTA}

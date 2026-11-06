@@ -22,6 +22,9 @@ const tokens = require('./tokens.json');
 
 const { brand, semantic, neutral, tiers } = tokens.color;
 
+// A cubic-bezier played backwards in time: (x1, y1, x2, y2) -> (1-x2, 1-y2, 1-x1, 1-y1).
+const mirror = ([x1, y1, x2, y2]) => [1 - x2, 1 - y2, 1 - x1, 1 - y1].map((n) => +n.toFixed(4));
+
 // The mark's corner radius as a ratio of its own grid: 9 / 200. The brand rule is
 // "never a pill, never square", and this is the number behind it.
 const radius = `${Math.round(tokens.mark.radius / tokens.mark.grid * 200)}px`;
@@ -39,6 +42,10 @@ const space = Object.fromEntries(
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ['./src/**/*.{ts,tsx}'],
+  // Hover styles only where a pointer can actually hover. Without this, Tailwind 3
+  // emits plain :hover, which iOS leaves stuck on whatever was last tapped: a
+  // service card keeps its lit border after the tap. Touch gets `active:` instead.
+  future: { hoverOnlyWhenSupported: true },
   theme: {
     extend: {
       colors: {
@@ -96,6 +103,11 @@ module.exports = {
         // The wordmark is set solid. Display type follows it and never goes tighter
         // than -0.02em, which is where Poppins Bold starts to collide.
         claim: '-0.02em',
+        // Tracking is size-specific (apple-design, typography). The 27px titles sit
+        // between the display sizes and body, so they get half the display value,
+        // and small bold labels open up slightly to stay legible at 13 to 15px.
+        title: '-0.01em',
+        label: '0.01em',
       },
       spacing: space,
       borderRadius: {
@@ -109,6 +121,9 @@ module.exports = {
       transitionTimingFunction: {
         settle: `cubic-bezier(${tokens.motion.easing.settle.join(',')})`,
         state: `cubic-bezier(${tokens.motion.easing.stateChange.join(',')})`,
+        // The state curve mirrored, for the return leg of a reversible transition,
+        // so closing retraces opening rather than running the same curve forwards.
+        'state-reverse': `cubic-bezier(${mirror(tokens.motion.easing.stateChange).join(',')})`,
       },
       zIndex: {
         // A named scale, so nothing ever reaches for z-9999.
