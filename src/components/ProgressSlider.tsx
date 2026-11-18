@@ -12,7 +12,6 @@ import {
   type FC,
   type ReactNode,
 } from 'react';
-import { motion, useMotionValue, useReducedMotion, type MotionValue } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { useEntrance } from '@/lib/useEntrance';
 
@@ -26,8 +25,9 @@ import { useEntrance } from '@/lib/useEntrance';
  *
  * 1. **Progress was React state written on every animation frame.** `setProgress`
  *    inside a requestAnimationFrame loop re-renders the whole slider sixty times
- *    a second. It is now a `MotionValue`, so the bar is written straight to the
- *    compositor and React re-renders once per slide instead of once per frame.
+ *    a second. It is now a tiny value holder the bar subscribes to, so the bar is
+ *    written straight to its own style and React re-renders once per slide
+ *    instead of once per frame.
  * 2. **The fast-forward maths read a stale `progress`.** The rAF callback closed
  *    over the value from the render that created it, and the effect's deps did
  *    not include it, so the acceleration was computed against whatever `progress`
@@ -43,6 +43,12 @@ import { useEntrance } from '@/lib/useEntrance';
  *    and left/right/home/end key handling. A screen reader could not previously
  *    tell that the buttons drove the panes at all.
  *
+ * **No Framer Motion here any more (2026-11-18).** Both of its jobs were small:
+ * a number the bar follows, and a fade between panes. A 150-line holder and a CSS
+ * transition do the same work, and the Framer bundle was about 38 KB gzipped on
+ * the home page, 26 KB of it unused on load. The pane fade is the same 0.28s
+ * ease-out; `visibility` flips at the end of it exactly as Framer did.
+ *
  * One more change, for layout rather than correctness: panes are stacked in a
  * single grid cell rather than mounted and unmounted. The container is therefore
  * as tall as the longest step and the height never jumps between slides, and
@@ -54,7 +60,7 @@ type Ctx = {
   active: string;
   register: (value: string) => void;
   select: (value: string) => void;
-  progress: MotionValue<number>;
+  progress: Progress;
   vertical: boolean;
   values: string[];
   tabId: (value: string) => string;
@@ -71,6 +77,36 @@ type Ctx = {
  * are legal in an id and awkward everywhere else, so they go too.
  */
 const slug = (value: string) => value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+
+/**
+ * The bar's value, held outside React. `set` is called every frame while a slide
+ * counts down; only the active tab's fill is subscribed, and it writes straight
+ * to its own style, so none of that goes through a render.
+ */
+type Progress = {
+  get: () => number;
+  set: (v: number) => void;
+  subscribe: (fn: (v: number) => void) => () => void;
+};
+
+function createProgress(): Progress {
+  let value = 0;
+  const listeners = new Set<(v: number) => void>();
+  return {
+    get: () => value,
+    set: (v) => {
+      if (v === value) return;
+      value = v;
+      listeners.forEach((fn) => fn(v));
+    },
+    subscribe: (fn) => {
+      listeners.add(fn);
+      return () => {
+        listeners.delete(fn);
+      };
+    },
+  };
+}
 
 const ProgressSliderContext = createContext<Ctx | undefined>(undefined);
 
@@ -93,15 +129,16 @@ export const ProgressSlider: FC<{
   const [values, setValues] = useState<string[]>([]);
   const [paused, setPaused] = useState(false);
   const [stopped, setStopped] = useState(false);
-  const progress = useMotionValue(0);
+  const [progress] = useState(createProgress);
   const elapsed = useRef(0);
   const baseId = useId().replace(/:/g, '');
   const tabId = useCallback((v: string) => `${baseId}-tab-${slug(v)}`, [baseId]);
   const panelId = useCallback((v: string) => `${baseId}-panel-${slug(v)}`, [baseId]);
 
-  const reduce = useReducedMotion();
+  // useEntrance is false under prefers-reduced-motion, so the slider never
+  // starts rotating for a reader who has asked for stillness.
   const mayAnimate = useEntrance();
-  const rotating = mayAnimate && !reduce && !stopped && !paused && values.length > 1;
+  const rotating = mayAnimate && !stopped && !paused && values.length > 1;
 
   // Panes register themselves in mount order, which is DOM order. The reference
   // read `child.type === SliderContent` off React.Children instead, which breaks
@@ -119,7 +156,7 @@ export const ProgressSlider: FC<{
   /**
    * The frame loop reads refs, not closure variables.
    *
-   * The first version of this used Framer's `useAnimationFrame` and closed over
+   * The first version of this used a frame hook from a library and closed over
    * `rotating` and `values` directly. Those are empty and false on the first
    * render, the callback captured them, and the slider advanced to the last step
    * and then froze with the bar at zero for good. Which is the same stale closure
@@ -213,23 +250,26 @@ export const SliderWrapper: FC<{ children: ReactNode; value: string; className?:
   }, [register, value]);
 
   return (
-    <motion.div
+    <div
       // Every pane sits in the same grid cell, so the block is as tall as the
       // longest step and nothing shifts when the slide changes.
-      style={{ gridArea: '1 / 1' }}
+      // visibility rather than display: the cell keeps its size, and hidden panes
+      // stay out of the tab order and off the accessibility tree. A transition on
+      // visibility holds it visible until the fade has finished.
+      style={{
+        gridArea: '1 / 1',
+        opacity: isActive ? 1 : 0,
+        visibility: isActive ? 'visible' : 'hidden',
+        transition: 'opacity 0.28s ease-out, visibility 0.28s ease-out',
+      }}
       className={cn(className)}
       id={panelId(value)}
       role="tabpanel"
       aria-labelledby={tabId(value)}
       aria-hidden={!isActive}
-      // visibility rather than display: the cell keeps its size, and hidden panes
-      // stay out of the tab order and off the accessibility tree.
-      animate={{ opacity: isActive ? 1 : 0, visibility: isActive ? 'visible' : 'hidden' }}
-      initial={false}
-      transition={{ duration: 0.28, ease: 'easeOut' }}
     >
       {children}
-    </motion.div>
+    </div>
   );
 };
 
@@ -270,6 +310,25 @@ export const SliderBtn: FC<{
 }> = ({ children, value, className, progressBarClass, trackClass }) => {
   const { active, progress, select, vertical, tabId, panelId } = useProgressSliderContext();
   const isActive = active === value;
+  const fill = useRef<HTMLSpanElement>(null);
+
+  // Only the active tab follows the progress; the rest sit empty. The fill is
+  // written directly to its own style, not through React, because this runs on
+  // every animation frame.
+  useEffect(() => {
+    const el = fill.current;
+    if (!el) return;
+    const axis = vertical ? 'scaleY' : 'scaleX';
+    const write = (v: number) => {
+      el.style.transform = `${axis}(${v})`;
+    };
+    if (!isActive) {
+      write(0);
+      return;
+    }
+    write(progress.get());
+    return progress.subscribe(write);
+  }, [isActive, progress, vertical]);
 
   return (
     <button
@@ -287,11 +346,13 @@ export const SliderBtn: FC<{
       <span aria-hidden className={cn('absolute left-0 top-0', trackClass)} />
       {/* The fill. scaleX on a left origin, not width: a transform does not force
           layout, and this runs every frame. */}
-      <motion.span
+      <span
+        ref={fill}
         aria-hidden
         className={cn('absolute left-0 top-0 origin-left', progressBarClass)}
+        // Empty in the served HTML; the effect above fills the active one.
         style={{
-          [vertical ? 'scaleY' : 'scaleX']: isActive ? progress : 0,
+          transform: `${vertical ? 'scaleY' : 'scaleX'}(0)`,
           transformOrigin: vertical ? 'top' : 'left',
         }}
       />

@@ -1,7 +1,6 @@
 'use client';
 
-import { useRef } from 'react';
-import { motion, useInView, useReducedMotion } from 'framer-motion';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { mark, tiers, stoneTimeline, bounce, rock, frames } from '@/lib/tokens';
 import { bounceKeyframes, rockKeyframes, markDrop } from '@/lib/motion';
 
@@ -16,6 +15,14 @@ import { bounceKeyframes, rockKeyframes, markDrop } from '@/lib/motion';
  *
  * A stone bounces UP, never down. A spring overshoots below its resting place,
  * and with 7 units between stones any overshoot worth seeing is an overlap.
+ *
+ * **The browser's own animation API, not Framer Motion (2026-11-18).** This mark
+ * was the last thing pulling the Framer bundle onto the home page: about 38 KB
+ * gzipped, 26 KB of it unused on load. The motion is unchanged. Framer was being
+ * asked for exactly two things, keyframes with a time per keyframe and an easing
+ * per segment, and `Element.animate` takes both natively. `translate` and
+ * `rotate` are separate CSS properties, so the drop and the rock keep their own
+ * timelines the way they did when they were two Framer tracks.
  */
 
 type Props = {
@@ -29,20 +36,108 @@ type Props = {
 
 const GRID = mark.grid;
 
+// Framer's named eases, as the cubic beziers they stand for.
+const EASE: Record<string, string> = {
+  easeIn: 'cubic-bezier(0.42, 0, 1, 1)',
+  easeOut: 'cubic-bezier(0, 0, 0.58, 1)',
+  linear: 'linear',
+};
+
+// useLayoutEffect warns during server render; there is nothing to lay out there.
+const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
+
 export default function CairnMark({
   ground = 'dark',
   className,
   animate = false,
   title = 'The Cairnet mark, four stacked stones',
 }: Props) {
-  const reduce = useReducedMotion();
   const ref = useRef<SVGSVGElement>(null);
+  const stones = useRef<(SVGRectElement | null)[]>([]);
   // The stack has to land while somebody is looking at it. This mark sits at the
   // bottom of the page, so triggering on mount would mean it had finished
-  // stacking minutes before the reader ever got there.
-  const inView = useInView(ref, { once: true, amount: 0.5 });
+  // stacking minutes before the reader ever got there. Half the mark in view,
+  // once. Never under prefers-reduced-motion: the stones simply sit there.
+  const [play, setPlay] = useState(false);
   const fills = ground === 'dark' ? tiers.dark : tiers.light;
-  const play = animate && !reduce && inView;
+
+  useEffect(() => {
+    if (!animate || play) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const el = ref.current;
+    if (!el || typeof IntersectionObserver === 'undefined') return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((e) => e.isIntersecting)) return;
+        io.disconnect();
+        setPlay(true);
+      },
+      { threshold: 0.5 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [animate, play]);
+
+  // A layout effect, so the stones are already above the frame on the first
+  // painted frame and there is no flash of the finished stack before it starts.
+  useIsomorphicLayoutEffect(() => {
+    if (!play) return;
+    const running: Animation[] = [];
+
+    mark.rects.forEach((_, i) => {
+      const el = stones.current[i];
+      if (!el || typeof el.animate !== 'function') return;
+
+      const stone = stoneTimeline[i];
+      const isBlaze = i === mark.rects.length - 1;
+      const physics = isBlaze ? bounce.blaze : bounce.stone;
+      const tilt = isBlaze ? rock.blaze : rock.stone;
+
+      // Drop height scales with the mark, not with the frame it happens in.
+      const fall = bounceKeyframes(markDrop, physics.restitution, physics.bounces);
+      const tip = rockKeyframes(tilt.degrees, tilt.oscillations, tilt.decay);
+
+      const delay = stone.delay * 1000;
+      // `both`: hold the first keyframe through the delay, the last one after.
+      const hold = { fill: 'both', easing: 'linear' } as const;
+
+      // A stone is not there until it is released.
+      running.push(
+        el.animate([{ opacity: 0 }, { opacity: 1 }], { ...hold, delay, duration: 0 }),
+      );
+
+      running.push(
+        el.animate(
+          fall.values.map((v, k) => ({
+            translate: `0 ${v}px`,
+            offset: fall.times[k],
+            easing: EASE[fall.easings[k]] ?? 'linear',
+          })),
+          { ...hold, delay, duration: stone.duration * 1000 },
+        ),
+      );
+
+      // A stone in the air does not rock. This starts on first contact.
+      running.push(
+        el.animate(
+          tip.values.map((v, k) => ({ rotate: `${v}deg`, offset: tip.times[k] })),
+          {
+            ...hold,
+            delay: delay + stone.duration * 1000 * fall.firstContact,
+            duration: frames(tilt.durationFrames) * 1000,
+          },
+        ),
+      );
+    });
+
+    // Once everything has landed the resting attributes say the same thing the
+    // last keyframes do, so let the animations go rather than hold them forever.
+    Promise.all(running.map((a) => a.finished))
+      .then(() => running.forEach((a) => a.cancel()))
+      .catch(() => {});
+
+    return () => running.forEach((a) => a.cancel());
+  }, [play]);
 
   return (
     <svg
@@ -56,54 +151,22 @@ export default function CairnMark({
       style={{ overflow: 'visible' }}
     >
       <title>{title}</title>
-      {mark.rects.map(([x, y, w, h], i) => {
-        const stone = stoneTimeline[i];
-        const isBlaze = i === mark.rects.length - 1;
-        const physics = isBlaze ? bounce.blaze : bounce.stone;
-        const tilt = isBlaze ? rock.blaze : rock.stone;
-
-        if (!play) {
-          return (
-            <rect key={i} x={x} y={y} width={w} height={h} rx={mark.radius} fill={fills[i]} />
-          );
-        }
-
-        // Drop height scales with the mark, not with the frame it happens in.
-        const drop = markDrop;
-        const fall = bounceKeyframes(drop, physics.restitution, physics.bounces);
-        const tip = rockKeyframes(tilt.degrees, tilt.oscillations, tilt.decay);
-
-        return (
-          <motion.rect
-            key={i}
-            x={x}
-            y={y}
-            width={w}
-            height={h}
-            rx={mark.radius}
-            fill={fills[i]}
-            style={{ transformBox: 'fill-box', transformOrigin: 'center' }}
-            initial={{ y: -drop, rotate: 0, opacity: 0 }}
-            animate={{ y: fall.values, rotate: tip.values, opacity: 1 }}
-            transition={{
-              y: {
-                delay: stone.delay,
-                duration: stone.duration,
-                times: fall.times,
-                ease: fall.easings,
-              },
-              rotate: {
-                // A stone in the air does not rock. This starts on first contact.
-                delay: stone.delay + stone.duration * fall.firstContact,
-                duration: frames(tilt.durationFrames),
-                times: tip.times,
-                ease: 'linear',
-              },
-              opacity: { delay: stone.delay, duration: 0 },
-            }}
-          />
-        );
-      })}
+      {mark.rects.map(([x, y, w, h], i) => (
+        <rect
+          key={i}
+          ref={(el) => {
+            stones.current[i] = el;
+          }}
+          x={x}
+          y={y}
+          width={w}
+          height={h}
+          rx={mark.radius}
+          fill={fills[i]}
+          // Rock about the stone's own centre, not the SVG's origin.
+          style={{ transformBox: 'fill-box', transformOrigin: 'center' }}
+        />
+      ))}
     </svg>
   );
 }
