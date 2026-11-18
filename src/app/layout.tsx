@@ -7,8 +7,8 @@ import './globals.css';
 // than linked from Google, so the first paint does not wait on a third party.
 const poppins = localFont({
   src: [
-    { path: '../fonts/Poppins-Regular.ttf', weight: '400', style: 'normal' },
-    { path: '../fonts/Poppins-Bold.ttf', weight: '700', style: 'normal' },
+    { path: '../fonts/Poppins-Regular.woff2', weight: '400', style: 'normal' },
+    { path: '../fonts/Poppins-Bold.woff2', weight: '700', style: 'normal' },
   ],
   variable: '--font-poppins',
   display: 'swap',
@@ -19,7 +19,7 @@ const poppins = localFont({
 // hero subline and nothing else, so it is a hand-written note on the claim
 // rather than a second voice for the page.
 const caveat = localFont({
-  src: [{ path: '../fonts/Caveat.ttf', weight: '400 700', style: 'normal' }],
+  src: [{ path: '../fonts/Caveat.woff2', weight: '400 700', style: 'normal' }],
   variable: '--font-caveat',
   display: 'swap',
   fallback: ['cursive'],

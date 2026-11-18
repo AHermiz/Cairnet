@@ -39,6 +39,10 @@ export default function Photo({
 }) {
   return (
     <div className={`relative overflow-hidden ${className}`}>
+      {/* A plain <img> on purpose: the WebP files are already sized and
+          compressed, srcSet and lazy-loading are handled below, and next/image
+          would add a hosting transform and could shift the grade. */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={`/media/${name}-1200.webp`}
         srcSet={`/media/${name}-640.webp 640w, /media/${name}-1200.webp 1200w${
