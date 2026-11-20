@@ -467,3 +467,15 @@
       transform 600ms cubic-bezier(0.34, 1.56, 0.64, 1) calc(var(--j, 0) * 80ms);
   }
 }
+
+/* The hero loop (HeroVideo.tsx). It is decoration and never has controls, so
+   Safari's big play button must never be drawn on it, even if a phone refuses
+   to autoplay. The component also keeps the video invisible unless it is
+   playing; this is the second guard. */
+.hero-video::-webkit-media-controls,
+.hero-video::-webkit-media-controls-panel,
+.hero-video::-webkit-media-controls-overlay-play-button,
+.hero-video::-webkit-media-controls-start-playback-button {
+  display: none !important;
+  -webkit-appearance: none;
+}

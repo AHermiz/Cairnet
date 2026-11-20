@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 /**
  * The hero loop, layered over the still.
@@ -58,23 +58,43 @@ import { useEffect, useState } from 'react';
  * still is what paints either way, and if the loop arrives late it simply fades
  * in late.
  *
+ * **It shows only while it is actually playing (A, 2026-11-20).** It used to
+ * fade in on `canplay`, which means "has enough data", not "is playing". An
+ * iPhone in Low Power Mode loads the video and then refuses to play it, so the
+ * hero became a paused, softer frame over the photograph with Safari's play
+ * button in the middle of it. Now the video is see-through until `playing`
+ * fires, and goes see-through again on `pause`, `ended`, `emptied` or `error`,
+ * so whenever it is not moving the photograph is the hero. Safari's play button
+ * is also hidden in globals.css (.hero-video), and the video takes no taps, so
+ * that button cannot show even if something else stops playback in future.
+ *
  * The grade is duplicated from the `img` rather than shared, because the two
  * elements are siblings and there is nothing to inherit it from. If one changes
  * the other has to change with it or the fade will visibly shift colour.
  */
 export default function HeroVideo({ src, className }: { src: string; className?: string }) {
+  const ref = useRef<HTMLVideoElement>(null);
   const [mount, setMount] = useState(false);
-  const [ready, setReady] = useState(false);
+  const [playing, setPlaying] = useState(false);
 
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     setMount(true);
   }, []);
 
+  // Ask for playback as well as relying on autoplay, and swallow the refusal:
+  // Low Power Mode, a data saver or a browser policy can all say no. A refusal
+  // just leaves the photograph showing.
+  useEffect(() => {
+    if (!mount) return;
+    ref.current?.play()?.catch(() => {});
+  }, [mount]);
+
   if (!mount) return null;
 
   return (
     <video
+      ref={ref}
       src={src}
       autoPlay
       muted
@@ -83,9 +103,14 @@ export default function HeroVideo({ src, className }: { src: string; className?:
       preload="auto"
       aria-hidden
       tabIndex={-1}
-      onCanPlay={() => setReady(true)}
-      style={{ opacity: ready ? 1 : 0 }}
-      className={`transition-opacity duration-1000 ease-out ${className ?? ''}`}
+      disablePictureInPicture
+      onPlaying={() => setPlaying(true)}
+      onPause={() => setPlaying(false)}
+      onEnded={() => setPlaying(false)}
+      onEmptied={() => setPlaying(false)}
+      onError={() => setPlaying(false)}
+      style={{ opacity: playing ? 1 : 0 }}
+      className={`hero-video pointer-events-none transition-opacity duration-1000 ease-out ${className ?? ''}`}
     />
   );
 }
