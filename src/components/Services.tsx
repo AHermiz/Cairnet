@@ -2,6 +2,7 @@ import { ArrowDown } from 'lucide-react';
 import { QUESTIONS_CALL, howItWorks, services } from '@/lib/content';
 import Button from './Button';
 import Reveal from './Reveal';
+import ServiceCarousel from './ServiceCarousel';
 import ServiceFolder, { type FolderFile } from './ServiceFolder';
 
 /**
@@ -42,12 +43,20 @@ const folderPhotos = [
  * other three folders each offer a ghost button for that service, never Signal,
  * so the filled button stays the assessment's.
  *
+ * **One curved row, not a grid (A, 2026-11-20).** The four folders sit in a
+ * carousel after Ruixen's Tilted Grid Hero: the centred folder is flat and live,
+ * the others curve toward the viewer and fade at the edges, and clicking one
+ * brings it to the middle. Assessment starts in the middle. The behaviour, and
+ * why it drifts, is written up in ServiceCarousel.tsx.
+ *
  * Body copy is Mist, never Stone. Stone is 4.72:1 on flat charcoal and fails on a
  * raised surface; Mist is 9.98:1 and is the tier that exists for this job.
  */
 export default function Services() {
   const [frontDoor, ...rest] = services.items;
   const steps = howItWorks.steps;
+  // A service without detail has no folder, so it gets no name in the row.
+  const names = [frontDoor.name, ...rest.filter((item) => item.detail).map((item) => item.name)];
 
   const frontDoorFiles: FolderFile[] = [
     { name: steps[0].title, meta: steps[0].meta, blocks: [{ p: steps[0].body }] },
@@ -65,7 +74,9 @@ export default function Services() {
   ];
 
   return (
-    <section id="services" className="bg-charcoal py-frame">
+    // overflow-x-clip: the folder row runs the full width of the window, and the
+    // section is what stops that from scrolling the page sideways.
+    <section id="services" className="overflow-x-clip bg-charcoal py-frame">
       <div className="frame">
         <Reveal>
           <div className="max-w-prose">
@@ -74,9 +85,9 @@ export default function Services() {
           </div>
         </Reveal>
 
-        {/* No row gap beyond the folders' own headroom: each one reserves the
+        {/* No gap above beyond the folders' own headroom: each one reserves the
             space its files fan into when it opens. */}
-        <div className="mt-6 grid gap-x-8 gap-y-4 lg:grid-cols-2">
+        <ServiceCarousel className="mt-6" label={services.heading} names={names}>
           <ServiceFolder
             tone="light"
             blaze
@@ -135,10 +146,20 @@ export default function Services() {
                       </Button>
                     </div>
                   }
+                  // The phone's reading card is white paper, so the button there
+                  // is the light-ground ghost, the same words.
+                  paperOpen={
+                    <div>
+                      <p className="text-base leading-body">{item.detail.what}</p>
+                      <Button href={QUESTIONS_CALL} variant="ghost" ground="light" className="mt-6">
+                        {item.detail.ask}
+                      </Button>
+                    </div>
+                  }
                 />
               ),
           )}
-        </div>
+        </ServiceCarousel>
       </div>
     </section>
   );

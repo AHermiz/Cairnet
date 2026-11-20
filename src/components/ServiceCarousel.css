@@ -1,0 +1,178 @@
+/* The curved row of service folders (ServiceCarousel.tsx), 2026-11-20.
+   Geometry from Ruixen's Tilted Grid Hero (MIT): every slot sits at the middle
+   and is carried round a cylinder whose axis is in front of the page, so the
+   slots either side come toward the viewer and turn to face the middle. The
+   camera is 1.6 radii back, the reference's own distance; any further and the
+   row flattens out. */
+
+/* Registered as lengths so they resolve to pixels on the stage, where the
+   container units mean the row's width, and reach each slot as plain pixels.
+   Unregistered, they reach the slot as unresolved text and the radius inside
+   its transform came out as zero, so every folder turned on the spot. */
+@property --w {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 0px;
+}
+@property --r {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 0px;
+}
+
+.sc-root {
+  container-type: inline-size;
+  position: relative;
+}
+
+.sc-stage {
+  /* A folder's width, and the cylinder it sits on. A radius of 1.75 folder
+     widths at 34 degrees a step leaves a clear gap between the middle folder
+     and the next, which 28 degrees did not: they touched. On a
+     phone the folder takes 76% of the width, so the next one peeks in at the
+     edge. */
+  --w: min(540px, 76cqw);
+  --r: calc(var(--w) * 1.75);
+  --step: 34deg;
+  display: grid;
+  /* Full bleed: the row runs out to the window's edges and fades there, the
+     way the reference does, instead of stopping at the text column. The
+     section clips the overflow so the page never scrolls sideways. */
+  width: 100vw;
+  margin-inline: calc(50% - 50vw);
+  perspective: calc(var(--r) * 1.6);
+  perspective-origin: 50% 45%;
+  /* Room for the shadow under each folder, which the fade would otherwise cut. */
+  padding-block: 8px 56px;
+  /* clip, not hidden: hidden would also clip vertically, and the files fan up
+     out of the folder when it opens. */
+  overflow-x: clip;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent);
+  touch-action: pan-y;
+}
+
+.sc-slot {
+  grid-area: 1 / 1;
+  justify-self: center;
+  align-self: start;
+  position: relative;
+  width: var(--w);
+  /* Out to the axis, round it, back in. --d is the slot's distance from the
+     middle; positive is to the right, which is a negative turn. */
+  transform: translateZ(var(--r)) rotateY(calc(var(--d) * var(--step) * -1)) translateZ(calc(var(--r) * -1));
+  transition:
+    transform 0.9s var(--ease-settle),
+    opacity 0.6s var(--ease-state),
+    visibility 0.6s var(--ease-state);
+}
+/* Each slot's distance from the middle, its opacity and its stacking are written
+   to its style by the component, every frame while the row moves. Slots more
+   than about a folder and a half away are fully faded and hidden, but still take
+   up room, so the row's height never changes as it moves. */
+
+/* Drifting, dragging or swiping: the slots follow every frame, so no transition
+   to lag behind. The transition is only for landing on a folder. */
+.sc-stage[data-moving] .sc-slot {
+  transition: none;
+}
+.sc-stage[data-dragging] {
+  cursor: grabbing;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* A side folder is one big button that brings it to the middle. */
+.sc-pick {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  cursor: pointer;
+  border-radius: theme('borderRadius.brand');
+  background: transparent;
+}
+.sc-pick:focus-visible {
+  outline: 2px solid theme('colors.offwhite');
+  outline-offset: 4px;
+}
+
+.sc-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+.sc-arrow {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid theme('colors.stone');
+  border-radius: theme('borderRadius.brand');
+  color: theme('colors.offwhite');
+  transition:
+    border-color 200ms var(--ease-state),
+    background-color 200ms var(--ease-state),
+    opacity 200ms var(--ease-state);
+}
+.sc-arrow:hover {
+  border-color: theme('colors.offwhite');
+  background-color: theme('colors.surface');
+}
+.sc-arrow:focus-visible,
+.sc-dot:focus-visible {
+  outline: 2px solid theme('colors.offwhite');
+  outline-offset: 2px;
+}
+
+.sc-dots {
+  display: flex;
+  align-items: center;
+}
+/* A 24px target round an 8px pip. */
+.sc-dot {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: theme('borderRadius.brand');
+}
+.sc-dot::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: theme('colors.stone');
+  transition:
+    width 300ms var(--ease-state),
+    background-color 300ms var(--ease-state);
+}
+.sc-dot[aria-current='true']::before {
+  width: 20px;
+  background: theme('colors.offwhite');
+}
+
+/* Phones. The desktop camera sits close, so the folders either side swell as they
+   come toward it; on a narrow screen that stretched them into tall slivers. Here
+   the camera is four radii back, so the neighbours keep their shape and the
+   curve shows in how they turn. The folder is a little wider so its copy wraps
+   less and it is less tall, and the radius is set so the next folder clears this
+   one and still peeks in at the edge. The fade is narrower to leave that peek
+   visible. */
+@container (max-width: 640px) {
+  .sc-stage {
+    --w: 80cqw;
+    --r: calc(var(--w) * 1.96);
+    --step: 30deg;
+    perspective: calc(var(--r) * 4);
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sc-slot,
+  .sc-dot::before {
+    transition-duration: 0.01ms;
+  }
+}

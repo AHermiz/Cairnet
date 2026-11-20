@@ -5,6 +5,7 @@ import {
   type MouseEvent,
   type ReactNode,
   type RefObject,
+  useContext,
   useEffect,
   useId,
   useLayoutEffect,
@@ -13,6 +14,7 @@ import {
 } from 'react';
 import { X } from 'lucide-react';
 import { mark } from '@/lib/tokens';
+import { SlotContext } from '@/lib/slot';
 import { useEntrance } from '@/lib/useEntrance';
 import Photo from './Photo';
 import './ServiceFolder.css';
@@ -36,8 +38,9 @@ import './ServiceFolder.css';
  *    card with the right height.
  * 2. **The files open.** In the reference a file is a button with nowhere to go.
  *    Here it opens a `<dialog>`, which brings focus trapping, Escape and the
- *    inert page behind it for free, and the card grows out of the file's own
- *    position (FLIP on the Web Animations API, no animation library).
+ *    inert page behind it for free, and the card rises out of the folder's
+ *    pocket and drops back into it (pocketFlight, Web Animations API, no
+ *    animation library).
  * 3. **The entrance is CSS and the content is visible by default.** The same
  *    contract as `Reveal` and the hero: the folder is drawn finished, and only a
  *    document that is visible, with motion allowed, hides it to assemble it.
@@ -56,6 +59,10 @@ type Props = {
   closed: ReactNode;
   /** What opening adds under it. */
   open: ReactNode;
+  /** The same, drawn for white paper: the phone's reading card is always paper,
+   *  so a dark folder's button needs its light-ground version there. Defaults
+   *  to `open`, which is right for a folder that is already light. */
+  paperOpen?: ReactNode;
   toggleLabel: string;
   files: FolderFile[];
   tone?: 'dark' | 'light';
@@ -98,11 +105,109 @@ function jitter(seed: string) {
 const reducedMotion = () =>
   typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+/**
+ * A reading card's way in and out of its folder (A, 2026-11-20), shared by the
+ * file reader on a computer and the whole-folder card on a phone.
+ *
+ * Where the card hovers, file-sized, just above the folder's pocket over the
+ * file it belongs to, and where it ends, down inside the pocket. Each comes with
+ * the clip that hides whatever of the card is below the glass's top edge by then:
+ * the card draws above everything, so "behind the glass" is a clip at that edge,
+ * not real layering. Measured against the card at rest, so call it while the
+ * card has no transform. The card's transform-origin must be its top left.
+ */
+function pocketFlight(card: HTMLElement, file: HTMLElement, front: HTMLElement) {
+  const c = card.getBoundingClientRect();
+  const s = file.getBoundingClientRect();
+  const f = front.getBoundingClientRect();
+  if (!c.width || !c.height || !s.width) return null;
+
+  const glass = f.top + 32; // the glass front's top edge, below its tab
+  // File-sized and fully above the pocket while it hovers: no wider than the
+  // file, and short enough to sit in the room above the glass. An even scale,
+  // so the card shrinks and never squashes.
+  const room = Math.max(110, Math.min(260, glass - 24));
+  const k = Math.min(s.width / c.width, room / c.height);
+  const w = c.width * k;
+  const h = c.height * k;
+  const left = s.left + (s.width - w) / 2;
+  const GAP = 6; // how far above the glass it hovers, and below it it ends
+  const hoverTop = glass - GAP - h;
+  const endTop = glass + GAP;
+  const PAD = 80; // keeps the card's shadow inside the clip at rest
+  const at = (top: number) =>
+    `translate(${(left - c.left).toFixed(1)}px, ${(top - c.top).toFixed(1)}px) scale(${k.toFixed(4)})`;
+  // The clip's bottom edge sits on the glass line: everything of the card below
+  // it, in the card's own pixels, is hidden. Hovering, that is only the shadow;
+  // inside, it is all of it. Between the two the card moves straight down at
+  // one scale, so the cut stays exactly on the glass the whole way.
+  const onGlass = (top: number) => c.height - (glass - top) / k;
+  const clip = (bottom: number) => `inset(${-PAD}px ${-PAD}px ${bottom.toFixed(1)}px ${-PAD}px)`;
+
+  return {
+    rest: clip(-PAD),
+    hover: { transform: at(hoverTop), clipPath: clip(onGlass(hoverTop)) },
+    inside: { transform: at(endTop), clipPath: clip(onGlass(endTop)) },
+  };
+}
+
+type Flight = NonNullable<ReturnType<typeof pocketFlight>>;
+
+/** Out of the pocket, then up to full size. */
+function flyOut(card: HTMLElement | null, path: Flight) {
+  return card?.animate(
+    [
+      { ...path.inside, offset: 0, easing: 'cubic-bezier(0.2, 0, 0, 1)' },
+      { ...path.hover, offset: 0.38, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' },
+      { transform: 'none', clipPath: path.rest, offset: 1 },
+    ],
+    { duration: 640 },
+  );
+}
+
+/** Down to file size, then into the pocket. Resolves when it is inside. */
+async function flyIn(card: HTMLElement | null, path: Flight) {
+  await card
+    ?.animate(
+      [
+        { transform: 'none', clipPath: path.rest, offset: 0, easing: 'cubic-bezier(0.4, 0, 0.2, 1)' },
+        { ...path.hover, offset: 0.62, easing: 'cubic-bezier(0.5, 0, 0.9, 0.6)' },
+        { ...path.inside, offset: 1 },
+      ],
+      { duration: 620, fill: 'forwards' },
+    )
+    .finished.catch(() => undefined);
+}
+
+/** The blur behind a reading card, faded rather than switched. */
+function fadeBackdrop(dialog: HTMLDialogElement | null, from: number, to: number, duration: number) {
+  try {
+    dialog?.animate([{ opacity: from }, { opacity: to }], {
+      duration,
+      easing: 'ease-out',
+      fill: 'forwards',
+      pseudoElement: '::backdrop',
+    });
+  } catch {
+    // a browser that cannot animate ::backdrop just shows it
+  }
+}
+
+/** The folder catches the card: the file lifts a little and settles. */
+function catchFile(file: HTMLElement | null | undefined) {
+  file?.animate([{ translate: '0 0' }, { translate: '0 -9px' }, { translate: '0 0' }], {
+    duration: 420,
+    easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+    composite: 'add',
+  });
+}
+
 export default function ServiceFolder({
   name,
   promise,
   closed,
   open: openContent,
+  paperOpen,
   toggleLabel,
   files,
   tone = 'dark',
@@ -188,6 +293,18 @@ export default function ServiceFolder({
     };
   }, []);
 
+  // In the carousel, a folder that leaves the middle shuts behind it, so the row
+  // never carries an open folder off to the side. At phone width it never fans
+  // out at all: tapping it opens the whole folder in one reading card.
+  const { dormant, compact } = useContext(SlotContext);
+  const [paging, setPaging] = useState(false);
+  useEffect(() => {
+    if (dormant || compact) setOpen(false);
+  }, [dormant, compact]);
+  useEffect(() => {
+    if (dormant) setPaging(false);
+  }, [dormant]);
+
   // Closed files are out of the tab order and the accessibility tree.
   useEffect(() => {
     filesRef.current?.toggleAttribute('inert', !isOpen);
@@ -216,7 +333,8 @@ export default function ServiceFolder({
   // link or a file, which have jobs of their own.
   function onFrontClick(e: MouseEvent<HTMLElement>) {
     if ((e.target as HTMLElement).closest('a, [data-sf-keep]')) return;
-    setOpen((o) => !o);
+    if (compact) setPaging(true);
+    else setOpen((o) => !o);
   }
 
   const backClip = size ? `path('${backPath(size.w, size.h)}')` : undefined;
@@ -280,8 +398,10 @@ export default function ServiceFolder({
             <button
               ref={toggleRef}
               type="button"
-              aria-expanded={isOpen}
-              aria-controls={filesId}
+              // On a phone the button opens the reading card, a dialog.
+              aria-expanded={compact ? undefined : isOpen}
+              aria-controls={compact ? undefined : filesId}
+              aria-haspopup={compact ? 'dialog' : undefined}
               className="sf-toggle mt-6 flex items-center gap-3 rounded-brand text-base font-bold"
             >
               {/* The FAQ's plus to minus. */}
@@ -341,14 +461,224 @@ export default function ServiceFolder({
         onClose={() => setReading(null)}
         rootRef={rootRef}
       />
+
+      <FolderPage
+        shown={paging}
+        onClose={() => {
+          setPaging(false);
+          toggleRef.current?.focus({ preventScroll: true });
+        }}
+        rootRef={rootRef}
+        name={name}
+        promise={promise}
+        closed={closed}
+        open={paperOpen ?? openContent}
+        files={files}
+        filesLabel={toggleLabel}
+      />
     </div>
   );
 }
 
 /**
+ * The whole folder in one reading card, for phones (A, 2026-11-20).
+ *
+ * On a phone the folder's front is already longer than the screen, and reading
+ * the rest meant opening it, then each of three files in turn. Here a tap opens
+ * one card with all of it, top to bottom: the name and promise, the description,
+ * every file under its own number and name, and last the same closing words and
+ * button the open folder ends on.
+ *
+ * It is made to match the computer's reading card, at A's request: white paper,
+ * a little smaller than the screen, with the page blurred around it, so it still
+ * reads as something pulled out of the folder. The card scrolls inside itself; close is pinned
+ * to its top. It is always paper, whatever the folder's tone, so a dark folder's
+ * button arrives here in its light-ground version (`paperOpen`).
+ *
+ * It is a modal `<dialog>`, like the file reader: focus is trapped, Escape
+ * closes it, a tap on the blurred page closes it, and the page behind is inert.
+ * Every word is the folder's existing copy.
+ *
+ * **It comes out of the folder's pocket and goes back into it** (A,
+ * 2026-11-20). Opening, the card rises out of the pocket where the files peek
+ * above the glass, file-sized, and grows to full size. Closing is the same in
+ * reverse: it shrinks, evenly and still showing its words, to the size of a
+ * file just above the pocket, then slips down into it, hidden from the glass's
+ * edge down as it goes, and the top file in the folder gives a small bump as it
+ * lands. The blur fades with it rather than switching off. The first version
+ * blanked the card, squashed it onto the whole folder and vanished, which A
+ * found harsh.
+ *
+ * The card draws above everything, so "behind the glass" is a clip at the
+ * glass's top edge, not real layering. All of it is the Web Animations API, no
+ * library, and none of it runs under prefers-reduced-motion.
+ */
+function FolderPage({
+  shown,
+  onClose,
+  rootRef,
+  name,
+  promise,
+  closed,
+  open,
+  files,
+  filesLabel,
+}: {
+  shown: boolean;
+  onClose: () => void;
+  rootRef: RefObject<HTMLDivElement>;
+  name: string;
+  promise: string;
+  closed: ReactNode;
+  open: ReactNode;
+  files: FolderFile[];
+  filesLabel: string;
+}) {
+  const ref = useRef<HTMLDialogElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
+  const closing = useRef(false);
+  const titleId = useId();
+
+  /** The card's way in and out of the folder's pocket, over its top file. */
+  function flight() {
+    const root = rootRef.current;
+    const card = cardRef.current;
+    const file = root?.querySelector<HTMLElement>('[data-sf-file="0"]');
+    const front = root?.querySelector<HTMLElement>('.sf-front');
+    return card && file && front ? pocketFlight(card, file, front) : null;
+  }
+
+  useLayoutEffect(() => {
+    const dialog = ref.current;
+    if (!shown || !dialog || dialog.open) return;
+    dialog.showModal();
+    // Focus goes to Close. Left to itself the browser focuses the first thing it
+    // can, and a scrolling card counts, so the whole card took the focus ring.
+    closeRef.current?.focus({ preventScroll: true });
+    if (cardRef.current) cardRef.current.scrollTop = 0;
+    if (reducedMotion()) return;
+    const path = flight();
+    if (!path) return;
+    flyOut(cardRef.current, path);
+    fadeBackdrop(dialog, 0, 1, 420);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [shown]);
+
+  /** Back into the pocket, then close. `now` skips the flight. */
+  async function close(now = false) {
+    const dialog = ref.current;
+    if (!dialog || !dialog.open || closing.current) return;
+    closing.current = true;
+    const path = now || reducedMotion() ? null : flight();
+    if (path) {
+      fadeBackdrop(dialog, 1, 0, 600);
+      await flyIn(cardRef.current, path);
+    }
+    dialog.close();
+    // The card's flight and the blur's fade, ::backdrop included, so the next
+    // opening starts clean.
+    dialog.getAnimations({ subtree: true }).forEach((a) => a.cancel());
+    closing.current = false;
+    onClose();
+    // The folder catches it.
+    if (path) catchFile(rootRef.current?.querySelector<HTMLElement>('[data-sf-file="0"]'));
+  }
+
+  return (
+    <dialog
+      ref={ref}
+      className="sf-page"
+      aria-labelledby={titleId}
+      onCancel={(e) => {
+        e.preventDefault();
+        close();
+      }}
+      onClick={(e) => {
+        // A tap on the blurred page lands on the dialog itself.
+        if (e.target === ref.current) close();
+      }}
+      onClickCapture={(e) => {
+        // A link to somewhere else on the page closes the card at once, or it
+        // would scroll the site behind a card that still covers it.
+        const link = (e.target as HTMLElement).closest('a');
+        if (link && link.getAttribute('href')?.startsWith('#')) close(true);
+      }}
+    >
+      <div ref={cardRef} className="sf-page-card">
+        <div className="sf-page-inner">
+          <div className="sf-page-bar">
+            <p className="sf-page-kicker text-sm font-bold tracking-label">{filesLabel}</p>
+            <button
+              ref={closeRef}
+              type="button"
+              onClick={() => close()}
+              aria-label="Close"
+              className="sf-page-close grid h-11 w-11 shrink-0 place-items-center rounded-brand"
+            >
+              <X aria-hidden className="h-5 w-5" strokeWidth={2.25} />
+            </button>
+          </div>
+
+          <div className="sf-page-body">
+            <h2 id={titleId} className="sf-name text-2xl font-bold tracking-title">
+              {name}
+            </h2>
+            <p className="sf-promise mt-2 text-cta font-bold leading-snug">{promise}</p>
+            <div className="sf-face mt-5">{closed}</div>
+
+            <ol className="mt-10 space-y-9">
+              {files.map((file, i) => (
+                <li key={file.name}>
+                  <p className="sf-page-num text-sm font-bold tracking-label tabular-nums">
+                    {String(i + 1).padStart(2, '0')}
+                  </p>
+                  <h3 className="sf-name mt-1 text-xl font-bold tracking-title">{file.name}</h3>
+                  {file.meta ? <p className="sf-face mt-1 text-sm">{file.meta}</p> : null}
+                  <div className="mt-4 space-y-4">
+                    {file.blocks.map((block, k) =>
+                      'p' in block ? (
+                        <p key={k} className="sf-face text-base leading-body">
+                          {block.p}
+                        </p>
+                      ) : (
+                        <div key={k}>
+                          {block.heading ? (
+                            <p className="sf-name mb-3 text-base font-bold">{block.heading}</p>
+                          ) : null}
+                          <ul className="space-y-3">
+                            {block.list.map((line) => (
+                              <li key={line} className="sf-face flex gap-3 text-base leading-body">
+                                <span
+                                  aria-hidden
+                                  className="sf-page-dash mt-[0.55em] h-[3px] w-4 shrink-0 rounded-brand"
+                                />
+                                {line}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      ),
+                    )}
+                  </div>
+                </li>
+              ))}
+            </ol>
+
+            <div className="sf-face sf-page-close-copy mt-10">{open}</div>
+          </div>
+        </div>
+      </div>
+    </dialog>
+  );
+}
+
+/**
  * The reading card. One `<dialog>` per folder, opened modally so focus is
- * trapped, Escape closes it and the page behind is inert. It grows out of the
- * file that was clicked and shrinks back into it on close.
+ * trapped, Escape closes it and the page behind is inert. It rises out of the
+ * folder's pocket over the file that was clicked, and on close drops back into
+ * the pocket behind the glass, the same flight as the phone's card (A,
+ * 2026-11-20). It used to grow straight out of the file and shrink back onto it.
  */
 function FileReader({
   folder,
@@ -375,12 +705,13 @@ function FileReader({
   const sheet = (i: number) =>
     rootRef.current?.querySelector<HTMLElement>(`[data-sf-file="${i}"]`) ?? null;
 
-  /** The transform that puts the card exactly over the file it came from. */
-  function fromSheet(i: number) {
-    const s = sheet(i)?.getBoundingClientRect();
-    const c = cardRef.current?.getBoundingClientRect();
-    if (!s || !c || !c.width || !c.height) return null;
-    return `translate(${s.left - c.left}px, ${s.top - c.top}px) scale(${s.width / c.width}, ${s.height / c.height})`;
+  /** The card's way in and out of the folder's pocket, over the file it is.
+   *  The same flight as the phone's whole-folder card (pocketFlight). */
+  function flight(i: number) {
+    const card = cardRef.current;
+    const file = sheet(i);
+    const front = rootRef.current?.querySelector<HTMLElement>('.sf-front');
+    return card && file && front ? pocketFlight(card, file, front) : null;
   }
 
   useEffect(() => {
@@ -392,18 +723,11 @@ function FileReader({
     const dialog = ref.current;
     if (shown === null || !dialog || dialog.open) return;
     dialog.showModal();
-    const from = fromSheet(shown);
-    if (from && !reducedMotion()) {
-      cardRef.current?.animate(
-        [
-          { transform: from, borderRadius: '9px' },
-          { transform: 'none', borderRadius: '9px' },
-        ],
-        { duration: 460, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' },
-      );
-      cardRef.current
-        ?.querySelector('.sf-reader-body')
-        ?.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 260, delay: 180, fill: 'backwards' });
+    // Out of the folder's pocket, as the file it is (A, 2026-11-20).
+    const path = reducedMotion() ? null : flight(shown);
+    if (path) {
+      flyOut(cardRef.current, path);
+      fadeBackdrop(dialog, 0, 1, 420);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shown]);
@@ -412,19 +736,18 @@ function FileReader({
     const dialog = ref.current;
     if (!dialog || closing.current || shown === null) return;
     closing.current = true;
-    const from = fromSheet(shown);
-    if (from && !reducedMotion()) {
-      const body = cardRef.current?.querySelector('.sf-reader-body');
-      body?.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 140, fill: 'forwards' });
-      await cardRef.current?.animate([{ transform: 'none' }, { transform: from }], {
-        duration: 320,
-        easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
-        fill: 'forwards',
-      }).finished.catch(() => undefined);
+    // Back into the pocket, as the file it is.
+    const path = reducedMotion() ? null : flight(shown);
+    if (path) {
+      fadeBackdrop(dialog, 1, 0, 600);
+      await flyIn(cardRef.current, path);
     }
     const back = sheet(shown);
     dialog.close();
-    cardRef.current?.getAnimations({ subtree: true }).forEach((a) => a.cancel());
+    // The flight and the blur's fade, ::backdrop included, so the next opening
+    // starts clean.
+    dialog.getAnimations({ subtree: true }).forEach((a) => a.cancel());
+    if (path) catchFile(back);
     closing.current = false;
     setShown(null);
     onClose();

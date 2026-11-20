@@ -354,6 +354,82 @@
   }
 }
 
+/* The whole folder in one reading card, for phones (FolderPage, 2026-11-20).
+   The computer's reading card, made to hold a whole folder: white paper a
+   little smaller than the screen, the page blurred around it, and the card
+   scrolling inside itself. Always paper, so it sets the light-tone ink on
+   itself whatever the folder's tone. */
+.sf-page {
+  margin: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  width: calc(100vw - 2rem);
+  max-width: 36rem;
+  max-height: none;
+  overflow: visible;
+}
+.sf-page:focus-visible {
+  outline: none;
+}
+.sf-page::backdrop {
+  background: rgb(18 18 20 / 0.72);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+/* The card scrolls, so the browser lets it take focus; it is the dialog's body,
+   not a control, and should not carry a ring. */
+.sf-page-card:focus,
+.sf-page-card:focus-visible {
+  outline: none;
+}
+.sf-page-card {
+  --sf-ink: theme('colors.charcoal');
+  --sf-ink-soft: theme('colors.slate');
+  max-height: calc(100svh - 2.5rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border-radius: theme('borderRadius.brand');
+  background: theme('colors.offwhite');
+  box-shadow: 0 30px 60px -20px rgb(0 0 0 / 0.7);
+  transform-origin: 0 0;
+  color: var(--sf-ink);
+}
+/* Close stays put while the card scrolls under it. */
+.sf-page-bar {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 6px 6px 6px 22px;
+  background: theme('colors.offwhite');
+  border-bottom: 1px solid color-mix(in srgb, var(--sf-ink) 12%, transparent);
+}
+.sf-page-kicker,
+.sf-page-num {
+  color: var(--sf-ink-soft);
+}
+.sf-page-close {
+  color: var(--sf-ink);
+  transition: background-color 200ms var(--ease-state);
+}
+.sf-page-close:hover {
+  background: theme('colors.neutral.100');
+}
+.sf-page-close:focus-visible {
+  outline: 2px solid var(--sf-ink);
+  outline-offset: -2px;
+}
+.sf-page-body {
+  padding: 22px 22px 32px;
+}
+.sf-page-dash {
+  background: var(--sf-ink-soft);
+}
+
 /* Entrance: the folder assembles itself, back, then files, then glass. Only a
    folder marked pending is ever hidden, and only JS that knows the document is
    visible and motion is allowed marks it. */
