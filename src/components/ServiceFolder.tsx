@@ -39,7 +39,7 @@ import './ServiceFolder.css';
  * 2. **The files open.** In the reference a file is a button with nowhere to go.
  *    Here it opens a `<dialog>`, which brings focus trapping, Escape and the
  *    inert page behind it for free, and the card rises out of the folder's
- *    pocket and drops back into it (pocketFlight, Web Animations API, no
+ *    pocket and drops back onto its file (pocketFlight, Web Animations API, no
  *    animation library).
  * 3. **The entrance is CSS and the content is visible by default.** The same
  *    contract as `Reveal` and the hero: the folder is drawn finished, and only a
@@ -109,74 +109,212 @@ const reducedMotion = () =>
  * A reading card's way in and out of its folder (A, 2026-11-20), shared by the
  * file reader on a computer and the whole-folder card on a phone.
  *
- * Where the card hovers, file-sized, just above the folder's pocket over the
- * file it belongs to, and where it ends, down inside the pocket. Each comes with
- * the clip that hides whatever of the card is below the glass's top edge by then:
- * the card draws above everything, so "behind the glass" is a clip at that edge,
- * not real layering. Measured against the card at rest, so call it while the
- * card has no transform. The card's transform-origin must be its top left.
+ * Going back, the card shrinks into the exact shape of the file it came from
+ * (its width, height and tilt) just above it, then drops straight down onto
+ * that file, sliding behind the glass as it goes. Opening is the same thing
+ * backwards.
+ *
+ * **The glass is the folder's real outline, tab and all.** The card draws above
+ * everything, so "behind the glass" is a clip, not real layering. The first
+ * version cut along one straight line at the glass's lower edge, but the front
+ * has a raised tab on the left, so over the tab the card's bottom showed in
+ * front of the folder (A, 2026-11-20). The cut now follows the same curve the
+ * front is drawn with (frontPath).
+ *
+ * A cut along a curve on a moving, turning card can't be left to the browser to
+ * blend between two shapes, so the flight is worked out frame by frame here:
+ * every few milliseconds, where the card is and which part of it is above the
+ * glass. Measured against the card at rest, so call it while the card has no
+ * transform. The card's transform-origin must be its top left.
  */
-function pocketFlight(card: HTMLElement, file: HTMLElement, front: HTMLElement) {
+function pocketFlight(card: HTMLElement, file: HTMLElement, front: HTMLElement, print: HTMLElement | null) {
   const c = card.getBoundingClientRect();
-  const s = file.getBoundingClientRect();
   const f = front.getBoundingClientRect();
-  if (!c.width || !c.height || !s.width) return null;
+  if (!c.width || !c.height || !file.offsetWidth || !front.offsetWidth) return null;
 
-  const glass = f.top + 32; // the glass front's top edge, below its tab
-  // File-sized and fully above the pocket while it hovers: no wider than the
-  // file, and short enough to sit in the room above the glass. An even scale,
-  // so the card shrinks and never squashes.
-  const room = Math.max(110, Math.min(260, glass - 24));
-  const k = Math.min(s.width / c.width, room / c.height);
-  const w = c.width * k;
-  const h = c.height * k;
-  const left = s.left + (s.width - w) / 2;
-  const GAP = 6; // how far above the glass it hovers, and below it it ends
-  const hoverTop = glass - GAP - h;
-  const endTop = glass + GAP;
-  const PAD = 80; // keeps the card's shadow inside the clip at rest
-  const at = (top: number) =>
-    `translate(${(left - c.left).toFixed(1)}px, ${(top - c.top).toFixed(1)}px) scale(${k.toFixed(4)})`;
-  // The clip's bottom edge sits on the glass line: everything of the card below
-  // it, in the card's own pixels, is hidden. Hovering, that is only the shadow;
-  // inside, it is all of it. Between the two the card moves straight down at
-  // one scale, so the cut stays exactly on the glass the whole way.
-  const onGlass = (top: number) => c.height - (glass - top) / k;
-  const clip = (bottom: number) => `inset(${-PAD}px ${-PAD}px ${bottom.toFixed(1)}px ${-PAD}px)`;
+  // Where something really is, tilt included: the page's own position of its
+  // two top corners, read off two empty markers placed in them.
+  const mark = (el: HTMLElement, side: 'left' | 'right') => {
+    const m = document.createElement('span');
+    m.style.cssText = `position:absolute;top:0;${side}:0;width:0;height:0`;
+    el.appendChild(m);
+    const r = m.getBoundingClientRect();
+    m.remove();
+    return r;
+  };
+  const tl = mark(file, 'left');
+  const tr = mark(file, 'right');
+  const dx = tr.left - tl.left;
+  const dy = tr.top - tl.top;
+  const fw = Math.hypot(dx, dy);
+  if (!fw) return null;
+  const angle = Math.atan2(dy, dx); // radians
+  const k = fw / c.width; // one even scale: the card is the file's width
+  const fh = (file.offsetHeight * fw) / file.offsetWidth; // the file's height on screen
+  const crop = fh / k; // the same, in the card's own pixels
+
+  // The glass's top edge on screen, from frontPath: level with the front's top
+  // over the tab, a curve down, then 32px lower to the right.
+  const sc = f.width / front.offsetWidth;
+  const bez = (t: number, a: number, b: number, c2: number, d: number) =>
+    (1 - t) ** 3 * a + 3 * (1 - t) ** 2 * t * b + 3 * (1 - t) * t ** 2 * c2 + t ** 3 * d;
+  const edge: [number, number][] = [[-5000, 0]];
+  for (let x = -40; x < 118; x += 16) edge.push([x, 0]);
+  for (let i = 0; i <= 10; i++) {
+    const t = i / 10;
+    edge.push([bez(t, 118, 144, 146, 172), bez(t, 0, 0, 32, 32)]);
+  }
+  for (let x = 188; x < front.offsetWidth + 40; x += 16) edge.push([x, 32]);
+  edge.push([front.offsetWidth + 5000, 32]);
+  const glassPts = edge.map(([x, y]) => [f.left + x * sc, f.top + y * sc] as const);
+  const glassAt = (x: number) => {
+    for (let i = 1; i < glassPts.length; i++) {
+      const [x0, y0] = glassPts[i - 1];
+      const [x1, y1] = glassPts[i];
+      if (x <= x1) return x1 === x0 ? y1 : y0 + ((y1 - y0) * (x - x0)) / (x1 - x0);
+    }
+    return glassPts[glassPts.length - 1][1];
+  };
+
+  // The photograph tucked in the front of a shut folder is in front of the
+  // files too, so the card goes behind it as well: over the print, the edge to
+  // hide below is the print's top. An open folder has slid it away.
+  let printAt: ((x: number) => number) | null = null;
+  const printXs: number[] = [];
+  if (print && print.offsetWidth && Number(getComputedStyle(print).opacity) > 0.5) {
+    const pl = mark(print, 'left');
+    const pr = mark(print, 'right');
+    if (pr.left > pl.left) {
+      printAt = (x) =>
+        x < pl.left || x > pr.left ? Infinity : pl.top + ((pr.top - pl.top) * (x - pl.left)) / (pr.left - pl.left);
+      printXs.push(pl.left - 0.5, pl.left, pr.left, pr.left + 0.5);
+      for (let x = pl.left + 16; x < pr.left; x += 16) printXs.push(x);
+    }
+  }
+  const edgeAt = (x: number) => Math.min(glassAt(x), printAt ? printAt(x) : Infinity);
+  const glass = [...glassPts.map(([x]) => x), ...printXs]
+    .sort((a, b) => a - b)
+    .map((x) => [x, edgeAt(x)] as const);
+
+  // A pose: where the card's top-left corner is on screen, its turn, its scale,
+  // and how much of its height shows (the rest is cropped off its bottom).
+  type Pose = { x: number; y: number; a: number; k: number; b: number };
+  const PAD = 80; // room for the card's shadow inside the clip
+  const rest: Pose = { x: c.left, y: c.top, a: 0, k: 1, b: c.height + PAD };
+  const onFile: Pose = { x: tl.left, y: tl.top, a: angle, k, b: crop };
+
+  // Just above the file, high enough that none of it is behind the glass yet,
+  // and never so close that the drop can't be seen.
+  const GAP = 6;
+  const down = [-Math.sin(angle) * fh, Math.cos(angle) * fh];
+  const bottoms = [
+    [tl.left + down[0], tl.top + down[1]],
+    [tr.left + down[0], tr.top + down[1]],
+  ];
+  // Checked along the whole bottom edge, since the tab and the print rise above
+  // the glass.
+  const clear: number[] = [];
+  for (let i = 0; i <= 24; i++) {
+    const t = i / 24;
+    const x = bottoms[0][0] + (bottoms[1][0] - bottoms[0][0]) * t;
+    const y = bottoms[0][1] + (bottoms[1][1] - bottoms[0][1]) * t;
+    clear.push(y - (edgeAt(x) - GAP));
+  }
+  const lift = Math.max(28, ...clear);
+  const above: Pose = { ...onFile, y: onFile.y - lift };
+
+  const lerp = (p: Pose, q: Pose, t: number): Pose => ({
+    x: p.x + (q.x - p.x) * t,
+    y: p.y + (q.y - p.y) * t,
+    a: p.a + (q.a - p.a) * t,
+    k: p.k + (q.k - p.k) * t,
+    b: p.b + (q.b - p.b) * t,
+  });
+
+  // The pose as a keyframe. With `behindGlass`, the part of the card below the
+  // glass's edge is cut away too: the edge, taken into the card's own turned and
+  // scaled pixels, becomes the bottom of the clip wherever it is higher than
+  // the crop.
+  const frame = (p: Pose, behindGlass: boolean) => {
+    const cos = Math.cos(-p.a);
+    const sin = Math.sin(-p.a);
+    const local = ([vx, vy]: readonly [number, number]) => {
+      const ux = (vx - p.x) / p.k;
+      const uy = (vy - p.y) / p.k;
+      return [ux * cos - uy * sin, ux * sin + uy * cos];
+    };
+    const bottom = glass
+      .slice()
+      .reverse()
+      .map((v) => {
+        const [lx, ly] = local(v);
+        return `${lx.toFixed(1)}px ${(behindGlass ? Math.min(ly, p.b) : p.b).toFixed(1)}px`;
+      });
+    const right = local(glass[glass.length - 1])[0];
+    const left = local(glass[0])[0];
+    return {
+      transform: `translate(${(p.x - c.left).toFixed(1)}px, ${(p.y - c.top).toFixed(1)}px) rotate(${p.a.toFixed(5)}rad) scale(${p.k.toFixed(4)})`,
+      clipPath: `polygon(${left.toFixed(1)}px ${-PAD - 5000}px, ${right.toFixed(1)}px ${-PAD - 5000}px, ${bottom.join(', ')})`,
+    };
+  };
+
+  // Each stretch sampled with its own easing, so the cut stays on the glass the
+  // whole way.
+  const leg = (p: Pose, q: Pose, ease: (t: number) => number, steps: number, behindGlass: boolean) =>
+    Array.from({ length: steps + 1 }, (_, i) => frame(lerp(p, q, ease(i / steps)), behindGlass));
+  const timed = (legs: { frames: ReturnType<typeof frame>[]; share: number }[]) => {
+    const out: (ReturnType<typeof frame> & { offset: number })[] = [];
+    let start = 0;
+    legs.forEach(({ frames, share }, li) => {
+      frames.forEach((fr, i) => {
+        if (li > 0 && i === 0) return; // the joint is the last leg's end
+        out.push({ ...fr, offset: Math.min(1, start + (share * i) / (frames.length - 1)) });
+      });
+      start += share;
+    });
+    return out;
+  };
 
   return {
-    rest: clip(-PAD),
-    hover: { transform: at(hoverTop), clipPath: clip(onGlass(hoverTop)) },
-    inside: { transform: at(endTop), clipPath: clip(onGlass(endTop)) },
+    // Off the file and up, then out to full size.
+    open: timed([
+      { frames: leg(onFile, above, cubicBezier(0.2, 0, 0, 1), 10, true), share: 0.38 },
+      { frames: leg(above, rest, cubicBezier(0.22, 1, 0.36, 1), 18, false), share: 0.62 },
+    ]),
+    // Down to the file's shape just above it, then onto it, behind the glass.
+    close: timed([
+      { frames: leg(rest, above, cubicBezier(0.4, 0, 0.2, 1), 18, false), share: 0.62 },
+      { frames: leg(above, onFile, cubicBezier(0.5, 0, 0.9, 0.6), 10, true), share: 0.38 },
+    ]),
+  };
+}
+
+/** A CSS cubic-bezier easing as a function, for sampling a flight by hand. */
+function cubicBezier(x1: number, y1: number, x2: number, y2: number) {
+  const at = (t: number, a: number, b: number) => 3 * (1 - t) ** 2 * t * a + 3 * (1 - t) * t ** 2 * b + t ** 3;
+  return (x: number) => {
+    if (x <= 0 || x >= 1) return x;
+    let lo = 0;
+    let hi = 1;
+    for (let i = 0; i < 30; i++) {
+      const mid = (lo + hi) / 2;
+      if (at(mid, x1, x2) < x) lo = mid;
+      else hi = mid;
+    }
+    return at((lo + hi) / 2, y1, y2);
   };
 }
 
 type Flight = NonNullable<ReturnType<typeof pocketFlight>>;
 
-/** Out of the pocket, then up to full size. */
+/** Off the file, then up to full size. */
 function flyOut(card: HTMLElement | null, path: Flight) {
-  return card?.animate(
-    [
-      { ...path.inside, offset: 0, easing: 'cubic-bezier(0.2, 0, 0, 1)' },
-      { ...path.hover, offset: 0.38, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' },
-      { transform: 'none', clipPath: path.rest, offset: 1 },
-    ],
-    { duration: 640 },
-  );
+  return card?.animate(path.open, { duration: 640 });
 }
 
-/** Down to file size, then into the pocket. Resolves when it is inside. */
+/** Down to the file's shape, then onto it. Resolves when it has landed. */
 async function flyIn(card: HTMLElement | null, path: Flight) {
-  await card
-    ?.animate(
-      [
-        { transform: 'none', clipPath: path.rest, offset: 0, easing: 'cubic-bezier(0.4, 0, 0.2, 1)' },
-        { ...path.hover, offset: 0.62, easing: 'cubic-bezier(0.5, 0, 0.9, 0.6)' },
-        { ...path.inside, offset: 1 },
-      ],
-      { duration: 620, fill: 'forwards' },
-    )
-    .finished.catch(() => undefined);
+  await card?.animate(path.close, { duration: 620, fill: 'forwards' }).finished.catch(() => undefined);
 }
 
 /** The blur behind a reading card, faded rather than switched. */
@@ -540,13 +678,14 @@ function FolderPage({
   const closing = useRef(false);
   const titleId = useId();
 
-  /** The card's way in and out of the folder's pocket, over its top file. */
+  /** The card's way in and out of the folder, onto its top file. */
   function flight() {
     const root = rootRef.current;
     const card = cardRef.current;
     const file = root?.querySelector<HTMLElement>('[data-sf-file="0"]');
     const front = root?.querySelector<HTMLElement>('.sf-front');
-    return card && file && front ? pocketFlight(card, file, front) : null;
+    const print = root?.querySelector<HTMLElement>('.sf-print') ?? null;
+    return card && file && front ? pocketFlight(card, file, front, print) : null;
   }
 
   useLayoutEffect(() => {
@@ -565,7 +704,7 @@ function FolderPage({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shown]);
 
-  /** Back into the pocket, then close. `now` skips the flight. */
+  /** Back onto its file in the folder, then close. `now` skips the flight. */
   async function close(now = false) {
     const dialog = ref.current;
     if (!dialog || !dialog.open || closing.current) return;
@@ -705,13 +844,14 @@ function FileReader({
   const sheet = (i: number) =>
     rootRef.current?.querySelector<HTMLElement>(`[data-sf-file="${i}"]`) ?? null;
 
-  /** The card's way in and out of the folder's pocket, over the file it is.
-   *  The same flight as the phone's whole-folder card (pocketFlight). */
+  /** The card's way in and out of the folder, onto the file it is. The same
+   *  flight as the phone's whole-folder card (pocketFlight). */
   function flight(i: number) {
     const card = cardRef.current;
     const file = sheet(i);
     const front = rootRef.current?.querySelector<HTMLElement>('.sf-front');
-    return card && file && front ? pocketFlight(card, file, front) : null;
+    const print = rootRef.current?.querySelector<HTMLElement>('.sf-print') ?? null;
+    return card && file && front ? pocketFlight(card, file, front, print) : null;
   }
 
   useEffect(() => {
@@ -723,7 +863,7 @@ function FileReader({
     const dialog = ref.current;
     if (shown === null || !dialog || dialog.open) return;
     dialog.showModal();
-    // Out of the folder's pocket, as the file it is (A, 2026-11-20).
+    // Off its file in the folder, as the file it is (A, 2026-11-20).
     const path = reducedMotion() ? null : flight(shown);
     if (path) {
       flyOut(cardRef.current, path);
@@ -736,7 +876,7 @@ function FileReader({
     const dialog = ref.current;
     if (!dialog || closing.current || shown === null) return;
     closing.current = true;
-    // Back into the pocket, as the file it is.
+    // Back onto its file in the folder, as the file it is.
     const path = reducedMotion() ? null : flight(shown);
     if (path) {
       fadeBackdrop(dialog, 1, 0, 600);
