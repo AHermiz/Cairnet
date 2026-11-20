@@ -129,6 +129,8 @@ export const ProgressSlider: FC<{
   const [values, setValues] = useState<string[]>([]);
   const [paused, setPaused] = useState(false);
   const [stopped, setStopped] = useState(false);
+  const [inView, setInView] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
   const [progress] = useState(createProgress);
   const elapsed = useRef(0);
   const baseId = useId().replace(/:/g, '');
@@ -138,7 +140,7 @@ export const ProgressSlider: FC<{
   // useEntrance is false under prefers-reduced-motion, so the slider never
   // starts rotating for a reader who has asked for stillness.
   const mayAnimate = useEntrance();
-  const rotating = mayAnimate && !stopped && !paused && values.length > 1;
+  const rotating = mayAnimate && !stopped && !paused && inView && values.length > 1;
 
   // Panes register themselves in mount order, which is DOM order. The reference
   // read `child.type === SliderContent` off React.Children instead, which breaks
@@ -203,6 +205,24 @@ export const ProgressSlider: FC<{
     return () => cancelAnimationFrame(raf);
   }, [progress]);
 
+  /**
+   * It only counts down while it is on screen (A, 2026-11-20). It used to start on
+   * page load, so by the time a reader scrolled down to it, it was often part way
+   * through. Now it waits on step one, empty, until the reader gets there; scroll
+   * away and it holds, and it carries on from there when they come back.
+   */
+  useEffect(() => {
+    const el = rootRef.current;
+    if (!el || typeof IntersectionObserver === 'undefined') return;
+    // Counting once its top is a quarter of the way up the screen, so it starts
+    // when the reader can see it, not as its edge appears.
+    const io = new IntersectionObserver(([entry]) => setInView(entry.isIntersecting), {
+      rootMargin: '0px 0px -25% 0px',
+    });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
   // Picking a step by hand empties the bar; it is no longer counting down.
   useEffect(() => {
     if (stopped) progress.set(0);
@@ -216,6 +236,7 @@ export const ProgressSlider: FC<{
   return (
     <ProgressSliderContext.Provider value={ctx}>
       <div
+        ref={rootRef}
         className={cn('relative', className)}
         onMouseEnter={() => setPaused(true)}
         onMouseLeave={() => setPaused(false)}
