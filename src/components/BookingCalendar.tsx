@@ -1,6 +1,7 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
+import { flushSync } from 'react-dom';
 import { color } from '@/lib/tokens';
 import { book } from '@/lib/content';
 
@@ -21,8 +22,18 @@ import { book } from '@/lib/content';
  *
  * Charcoal is the calendar's brand colour, not Signal. The selected day, the
  * time slots and the confirm button all take it, and red on every slot would be
- * chrome. `#questions-call` in the URL opens the second tab, which is where the
- * service cards send people.
+ * chrome.
+ *
+ * The 15-minute call is the first tab and the default. `#questions-call` (also
+ * what the outreach emails link to) opens it, `#assessment` opens the assessment,
+ * and anything else, including no hash, opens the call. Nothing on the page has
+ * an id equal to either hash, on purpose: the browser's own jump to a matching id
+ * once landed about 500px below the tabs on a first load, and the tabs sit near
+ * the top of the page anyway. Links on the page that change the hash scroll the
+ * tabs into view themselves, only when they are not already on screen.
+ *
+ * What each tab says above its calendar (the price and terms, for the assessment)
+ * comes in as `intro`, so it is in the DOM but `hidden` until its tab is chosen.
  */
 
 const CAL_ORIGIN = 'https://app.cal.com';
@@ -35,7 +46,9 @@ const EVENTS = {
 
 type Kind = keyof typeof EVENTS;
 
-const HASH: Record<Kind, string> = { assessment: '', questions: '#questions-call' };
+const HASH: Record<Kind, string> = { questions: '#questions-call', assessment: '#assessment' };
+
+const kindFromHash = (hash: string): Kind => (hash === HASH.assessment ? 'assessment' : 'questions');
 
 type CalApi = ((...args: unknown[]) => void) & {
   loaded?: boolean;
@@ -89,9 +102,10 @@ function mount(kind: Kind) {
   });
 }
 
-export default function BookingCalendar() {
-  const [active, setActive] = useState<Kind>('assessment');
+export default function BookingCalendar({ intro }: { intro: Record<Kind, ReactNode> }) {
+  const [active, setActive] = useState<Kind>('questions');
   const mounted = useRef<Set<Kind>>(new Set());
+  const top = useRef<HTMLDivElement>(null);
 
   const show = useCallback((kind: Kind) => {
     setActive(kind);
@@ -104,10 +118,22 @@ export default function BookingCalendar() {
 
   useEffect(() => {
     loadCal();
-    const fromHash = () => show(window.location.hash === HASH.questions ? 'questions' : 'assessment');
-    fromHash();
-    window.addEventListener('hashchange', fromHash);
-    return () => window.removeEventListener('hashchange', fromHash);
+    show(kindFromHash(window.location.hash));
+    const onHashChange = () => {
+      // Flushed now, so the new panel's height is in the layout before measuring.
+      flushSync(() => show(kindFromHash(window.location.hash)));
+      // A link on the page (or the nav) changed the hash. If the tabs are under
+      // the nav or off the bottom of the screen, bring them into view.
+      const el = top.current;
+      if (!el) return;
+      const { top: y } = el.getBoundingClientRect();
+      if (y < 96 || y > window.innerHeight - 160) {
+        const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        el.scrollIntoView({ behavior: calm ? 'auto' : 'smooth', block: 'start' });
+      }
+    };
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
   }, [show]);
 
   const select = (kind: Kind) => {
@@ -116,10 +142,10 @@ export default function BookingCalendar() {
     window.history.replaceState(null, '', url);
   };
 
-  const tabs: Kind[] = ['assessment', 'questions'];
+  const tabs: Kind[] = ['questions', 'assessment'];
 
   return (
-    <div id="questions-call" className="scroll-mt-28">
+    <div ref={top} id="booking" className="scroll-mt-28">
       <div
         role="tablist"
         aria-label="What to book"
@@ -153,7 +179,7 @@ export default function BookingCalendar() {
           hidden={active !== kind}
           className="mt-6"
         >
-          <p className="mb-5 max-w-[60ch] text-base leading-body text-slate">{book.panels[kind]}</p>
+          {intro[kind]}
           <div
             id={`cal-${kind}`}
             className="min-h-[560px] w-full overflow-hidden rounded-brand border border-neutral-200"

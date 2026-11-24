@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { BOOK, CTA, nav, navCall } from '@/lib/content';
+import { ASSESSMENT, CTA, nav, navCall } from '@/lib/content';
 import MobileMenu, { MenuToggle } from './MobileMenu';
 
 /**
@@ -100,7 +100,7 @@ export default function Nav({ showCta = true }: { showCta?: boolean }) {
 
             {showCta && (
               <a
-                href={BOOK}
+                href={ASSESSMENT}
                 className="hidden whitespace-nowrap rounded-brand border border-stone px-3 py-2 lg:inline-block text-xs font-bold text-offwhite transition-[border-color,background-color,transform] duration-200 ease-state hover:border-offwhite hover:bg-surface active:scale-[0.97] sm:px-4 sm:text-sm"
               >
                 {CTA}

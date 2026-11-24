@@ -19,13 +19,16 @@ export const EMAIL = 'contact@cairnetint.com';
 
 /**
  * Booking, added 2026-11-02 (spec: projects/Cairnet/site-booking-spec.md in the
- * second brain). Every "Start with an assessment" button goes to the booking page,
- * where the assessment is booked and paid in one step. The service cards go to the
- * 15-minute questions call on the same page, because someone who already knows
- * what they want built has questions, not an assessment to book.
+ * second brain). Changed 2026-11-24: plain `/book` opens on the 15-minute call,
+ * and each button goes straight to its own tab by hash. Every "Start with an
+ * assessment" button goes to `#assessment`, where the assessment is booked and
+ * paid in one step. The service cards and the nav's "Book a call" go to
+ * `#questions-call`, because someone who already knows what they want built has
+ * questions, not an assessment to book. `#questions-call` is also what the
+ * outreach emails link to, so it must keep working.
  */
-export const BOOK = '/book/';
 export const QUESTIONS_CALL = '/book/#questions-call';
+export const ASSESSMENT = '/book/#assessment';
 
 /** One label per intent. This string is the only way the site asks for the sale. */
 export const CTA = 'Start with an assessment';
@@ -273,7 +276,7 @@ export const faq = {
     {
       q: 'What does it cost?',
       a: 'The assessment is a flat fee, and the number is on the booking page, so you see it before you book anything. Everything after it is quoted separately, and those prices are written into your report. So by the time we’re on the walkthrough call, you already know what you’re looking at.',
-      link: { text: 'booking page', href: BOOK },
+      link: { text: 'booking page', href: ASSESSMENT },
     },
     {
       q: 'Can I ask questions before I pay?',
@@ -309,7 +312,10 @@ export const footer = {
 };
 
 /**
- * The booking page. Price, what's included, the refund line, then the calendar.
+ * The booking page. Opens on the 15-minute call, which has no charge (A,
+ * 2026-11-24, for the outreach). The assessment is the second tab, and its price,
+ * what's included, the refund line and the recording notice show only when that
+ * tab is selected, so no price is visible on the call tab, the tab strip included.
  * The refund rule is A's (2026-11-05): a full refund with at least 24 hours'
  * notice, because A sets time aside to prep for each call. It replaces the
  * 2026-11-02 "any time before" rule and matches Cal.com's refund policy
@@ -317,9 +323,14 @@ export const footer = {
  * refundable. Recording is said up front because the intake is recorded by rule.
  */
 export const book = {
-  title: 'Book your assessment',
-  heading: 'Book your assessment.',
-  lede: 'Pick a time for the 30-minute conversation and pay when you book. No emails back and forth to find a slot.',
+  title: 'Book a call with us',
+  heading: 'Book a call with us.',
+  /** `link.text` inside `lede` becomes a link to the assessment tab. */
+  lede: 'Ask us anything in a 15-minute call, at no charge. Or book your assessment if you already know you want one.',
+  ledeLink: { text: 'book your assessment', href: ASSESSMENT },
+  /** The meta description. No price, so it is its own string. */
+  description:
+    'Book a 15-minute call with Cairnet at no charge and ask us anything, or book your assessment.',
   price: '$799.99',
   priceNote: 'CAD, one flat fee for the whole assessment.',
   refund: 'Cancel at least 24 hours before your 30-minute assessment conversation for a full refund, and reschedule as often as you need to, up to 24 hours before.',
@@ -327,28 +338,29 @@ export const book = {
     'Inside 24 hours, the fee isn’t refunded. Miss the call without telling us and we’ll book you in once more, at no extra cost. After a missed call, the fee isn’t refundable.',
     'We record the 30-minute conversation so the report gets your words right.',
   ],
-  questions: {
-    heading: 'Ask us anything.',
-    body: 'Book a 15-minute call and ask whatever’s on your mind: what Cairnet does, whether AI is worth it for a business like yours, something in your business you’ve been wondering about, or how the assessment works. It’s a conversation, not the assessment, so there’s no charge for it, and nothing gets booked or paid until you decide.',
-    cta: 'Book a 15-minute call',
-  },
   /**
    * The two things on the calendar are different in kind, not in length: one is
-   * the paid assessment, the other is a short call to ask anything. A's point
+   * a short call to ask anything, the other is the paid assessment. A's point
    * (2026-11-02) was that two tabs reading "30 minutes" and "15 minutes" look
-   * like the same call in two sizes, so each tab and panel says what it is and
-   * what it costs. The short call matches its Cal.com name, "Ask us anything"
-   * (A, 2026-11-04), and is open to any question, not only ones about the assessment.
+   * like the same call in two sizes, so each tab and panel says what it is. The
+   * short call matches its Cal.com name, "Ask us anything" (A, 2026-11-04), and is
+   * open to any question, not only ones about the assessment. The assessment's
+   * tab carries no price: the number shows once that tab is selected, in its panel.
    */
   tabs: {
-    assessment: { label: 'Book the assessment', note: '$799.99, starts with a 30-minute conversation' },
     questions: { label: 'Ask us anything', note: '15 minutes, no charge' },
+    assessment: { label: 'Book the assessment', note: 'Starts with a 30-minute conversation' },
   },
   panels: {
+    questions:
+      'Ask whatever’s on your mind: what Cairnet does, whether AI is worth it for a business like yours, something in your business you’ve been wondering about, or how the assessment works. It’s a conversation, not the assessment, so there’s no charge for it, and nothing gets booked or paid until you decide.',
     assessment:
       'This books and pays for the assessment. The 30-minute conversation is its first step, then your written report and a call to walk you through it.',
-    questions:
-      'A short call to ask us anything, whether or not you ever book the assessment. Nothing gets booked or paid on this one.',
+  },
+  /** A line under each panel's text pointing at the other tab. */
+  switchTo: {
+    questions: { lead: 'Ready for the assessment instead?', text: 'Book the assessment', href: ASSESSMENT },
+    assessment: { lead: 'Questions first? Ask us anything in a 15-minute call, at no charge.', text: 'Book a 15-minute call', href: QUESTIONS_CALL },
   },
   fallback: 'Calendar not loading?',
   fallbackLink: 'Open it on Cal.com',

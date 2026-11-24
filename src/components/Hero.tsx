@@ -1,6 +1,6 @@
 import { ArrowRight } from 'lucide-react';
 import HeroVideo from './HeroVideo';
-import { BOOK, CTA, hero } from '@/lib/content';
+import { ASSESSMENT, CTA, hero } from '@/lib/content';
 import WordsPullUp from './WordsPullUp';
 
 /**
@@ -244,7 +244,7 @@ export default function Hero() {
               style={{ animationDelay: '0.5s' }}
             >
               <a
-                href={BOOK}
+                href={ASSESSMENT}
                 className="group inline-flex items-center gap-3 rounded-brand bg-signal py-1.5 pl-6 pr-1.5 text-cta font-bold text-offwhite transition-[gap,filter,transform] duration-200 ease-state hover:gap-4 hover:brightness-95 active:scale-[0.98]"
               >
                 {CTA}

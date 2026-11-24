@@ -2,7 +2,7 @@
 
 import { cloneElement, useEffect, useRef } from 'react';
 import { ArrowRight } from 'lucide-react';
-import { BOOK, CTA, EMAIL, footer, nav, navCall } from '@/lib/content';
+import { ASSESSMENT, CTA, EMAIL, footer, nav, navCall } from '@/lib/content';
 
 /**
  * The phone menu. Below `md` the bar holds the lockup and this toggle and nothing
@@ -294,7 +294,7 @@ export default function MobileMenu({
 
           <div className="mt-auto space-y-5 pt-12">
             <a
-              href={BOOK}
+              href={ASSESSMENT}
               onClick={onClose}
               className="menu-fade group flex w-full items-center justify-between gap-3 rounded-brand bg-signal py-1.5 pl-6 pr-1.5 text-cta font-bold text-offwhite"
               style={{ '--i': 0 } as React.CSSProperties}
