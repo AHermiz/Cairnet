@@ -326,7 +326,7 @@ export const book = {
   title: 'Book a call with us',
   heading: 'Book a call with us.',
   /** `link.text` inside `lede` becomes a link to the assessment tab. */
-  lede: 'Ask us anything in a 15-minute call, at no charge. Or book your assessment if you already know you want one.',
+  lede: 'Ask us anything in a 15-minute call, at no charge. Or book your assessment if you’re ready.',
   ledeLink: { text: 'book your assessment', href: ASSESSMENT },
   /** The meta description. No price, so it is its own string. */
   description:
