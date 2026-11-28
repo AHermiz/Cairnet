@@ -144,11 +144,26 @@ p{margin:0}
 
 /* ---------- work ---------- */
 .work{padding:88px 0 40px}
-.work-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:32px}
-.work figure{margin:0}
-.work .ph{border-radius:12px;overflow:hidden;background:var(--paper-3);aspect-ratio:4/3}
-.work img{width:100%;height:100%;object-fit:cover;transform:scale(1.02)}
-.work figcaption{font-size:14.5px;color:var(--ink-soft);margin-top:10px;line-height:1.4}
+.carousel{margin-top:32px}
+.car-track{display:flex;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;list-style:none;margin:0;padding:4px 2px 22px;scrollbar-width:none;overscroll-behavior-x:contain}
+.car-track::-webkit-scrollbar{display:none}
+.car-track:focus-visible{outline:3px solid var(--water);outline-offset:4px;border-radius:16px}
+.car-track>li{flex:0 0 calc((100% - 40px) / 2.25);scroll-snap-align:start;display:flex}
+.shot{flex:1;margin:0;padding:10px 10px 0;background:#FFFDF9;border:1px solid rgba(91,58,34,.22);border-radius:16px;box-shadow:0 1px 2px rgba(51,36,26,.06),0 14px 30px -16px rgba(51,36,26,.35)}
+.shot .ph{overflow:hidden;border-radius:9px;outline:1px solid rgba(29,37,44,.12);outline-offset:-1px;background:var(--paper-3);aspect-ratio:4/3}
+.shot img{width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(.2,.7,.2,1)}
+.shot:hover img{transform:scale(1.03)}
+.shot figcaption{position:relative;padding:14px 6px 15px 30px;font-size:15.5px;line-height:1.35;font-weight:600;color:var(--ink)}
+.shot figcaption::before{content:"";position:absolute;left:8px;top:23px;width:14px;height:3px;border-radius:2px;background:var(--copper)}
+.car-bar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:4px}
+.car-count{font:400 20px/1 var(--display);color:var(--ink);font-variant-numeric:tabular-nums}
+.car-count small{font:500 14px var(--body);color:var(--ink-soft);margin-left:4px}
+.car-btns{display:flex;gap:10px}
+.car-btn{width:48px;height:48px;display:grid;place-items:center;border-radius:50%;border:1.5px solid var(--ink);background:transparent;color:var(--ink);cursor:pointer;transition:background .2s,color .2s,opacity .2s}
+.car-btn:hover:not(:disabled){background:var(--ink);color:var(--paper)}
+.car-btn:focus-visible{outline:3px solid var(--water);outline-offset:2px}
+.car-btn:disabled{opacity:.3;cursor:default}
+.car-btn svg{width:18px;height:18px}
 .src{font-size:13.5px;color:var(--ink-soft);margin-top:14px}
 .src a{text-underline-offset:3px}
 
@@ -229,7 +244,6 @@ details p{margin-top:10px;max-width:60em}
   .proof li:nth-child(4){border-left:0}
   .proof li{border-top:1px solid var(--line)}
   .proof li:nth-child(-n+3){border-top:0}
-  .work-grid{grid-template-columns:repeat(2,1fr)}
   .steps{grid-template-columns:1fr}
   .f6 .svc{columns:2}
   footer .wrap{grid-template-columns:1fr 1fr}
@@ -260,7 +274,8 @@ details p{margin-top:10px;max-width:60em}
   .floor{padding:48px 0 56px}
   .floor .wrap{padding-left:calc(16px + var(--rail) + 8px)}
   .svc,.f6 .svc{columns:1}
-  .work-grid{grid-template-columns:1fr 1fr;gap:10px}
+  .car-track>li{flex-basis:84%}
+  .car-track{gap:14px}
   .rv-grid{grid-template-columns:1fr}
   .rv:nth-child(1){grid-row:auto}
   .rv blockquote,.rv:nth-child(1) blockquote{font-size:19.5px}
@@ -274,6 +289,9 @@ details p{margin-top:10px;max-width:60em}
 @media (prefers-reduced-motion:reduce){
   *{scroll-behavior:auto!important}
   .btn,.fit{transition:none}
+  .car-track{scroll-behavior:auto}
+  .shot img{transition:none}
+  .shot:hover img{transform:none}
 }
 </style>
 </head>
@@ -513,11 +531,20 @@ details p{margin-top:10px;max-width:60em}
 <section class="work" aria-labelledby="work-h">
   <div class="wrap">
     <h2 id="work-h" class="sec-h">Some of our work, behind the walls and below ground.</h2>
-    <div class="work-grid">
-      <figure><div class="ph"><img src="assets/job-9.webp" width="500" height="375" loading="lazy" alt="New red and blue water supply lines run through open floor joists"></div><figcaption>New water supply lines</figcaption></figure>
-      <figure><div class="ph"><img src="assets/job-16.webp" width="500" height="375" loading="lazy" alt="Black drain and vent pipes installed in a framed wall"></div><figcaption>Drain and vent piping, before the walls go up</figcaption></figure>
-      <figure><div class="ph"><img src="assets/job-19.webp" width="500" height="375" loading="lazy" alt="Excavated foundation wall coated with a black waterproofing membrane"></div><figcaption>Outside foundation waterproofing</figcaption></figure>
-      <figure><div class="ph"><img src="assets/job-20.webp" width="500" height="375" loading="lazy" alt="Dimpled drainage membrane fixed to a foundation wall"></div><figcaption>Drainage membrane on a foundation wall</figcaption></figure>
+    <div class="carousel" data-carousel>
+      <ul class="car-track" tabindex="0" aria-label="Job photos, scroll sideways for more" data-lenis-prevent>
+        <li><figure class="shot"><div class="ph"><img src="assets/job-9.webp" width="500" height="375" loading="lazy" alt="New red and blue water supply lines run through open floor joists"></div><figcaption>New water supply lines</figcaption></figure></li>
+        <li><figure class="shot"><div class="ph"><img src="assets/job-16.webp" width="500" height="375" loading="lazy" alt="Black drain and vent pipes installed in a framed wall"></div><figcaption>Drain and vent piping, before the walls go up</figcaption></figure></li>
+        <li><figure class="shot"><div class="ph"><img src="assets/job-19.webp" width="500" height="375" loading="lazy" alt="Excavated foundation wall coated with a black waterproofing membrane"></div><figcaption>Outside foundation waterproofing</figcaption></figure></li>
+        <li><figure class="shot"><div class="ph"><img src="assets/job-20.webp" width="500" height="375" loading="lazy" alt="Dimpled drainage membrane fixed to a foundation wall"></div><figcaption>Drainage membrane on a foundation wall</figcaption></figure></li>
+      </ul>
+      <div class="car-bar">
+        <p class="car-count" aria-live="polite"><span data-car-now>1</span><small>of <span data-car-total>4</span></small></p>
+        <div class="car-btns">
+          <button class="car-btn" type="button" data-car-prev aria-label="Previous photo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></button>
+          <button class="car-btn" type="button" data-car-next aria-label="Next photo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></button>
+        </div>
+      </div>
     </div>
     <p class="src">More photos on our <a href="https://homestars.com/companies/2778342-a-and-y-plumbing" target="_blank" rel="noopener">HomeStars profile</a>.</p>
   </div>
@@ -668,6 +695,33 @@ details p{margin-top:10px;max-width:60em}
   });
 })();
 
+// job photo carousel
+(function(){
+  document.querySelectorAll('[data-carousel]').forEach(function(c){
+    var track=c.querySelector('.car-track'), items=[].slice.call(track.children);
+    var prev=c.querySelector('[data-car-prev]'), next=c.querySelector('[data-car-next]'), now=c.querySelector('[data-car-now]');
+    c.querySelector('[data-car-total]').textContent=items.length;
+    function step(){return items.length>1?items[1].offsetLeft-items[0].offsetLeft:track.clientWidth;}
+    function update(){
+      var x=track.scrollLeft, max=track.scrollWidth-track.clientWidth-2;
+      prev.disabled=x<=2; next.disabled=x>=max;
+      var l=x-2, r=x+track.clientWidth+2, vis=[];
+      items.forEach(function(it,j){var a=it.offsetLeft-items[0].offsetLeft; if(a>=l&&a+it.offsetWidth<=r) vis.push(j+1);});
+      if(!vis.length) vis=[Math.min(items.length,Math.round(x/step())+1)];
+      now.textContent=vis.length>1?vis[0]+'\u2013'+vis[vis.length-1]:vis[0];
+    }
+    prev.addEventListener('click',function(){track.scrollBy({left:-step()});});
+    next.addEventListener('click',function(){track.scrollBy({left:step()});});
+    track.addEventListener('keydown',function(e){
+      if(e.key==='ArrowRight'){e.preventDefault();next.click();}
+      if(e.key==='ArrowLeft'){e.preventDefault();prev.click();}
+    });
+    track.addEventListener('scroll',update,{passive:true});
+    addEventListener('resize',update); addEventListener('load',update);
+    update();
+  });
+})();
+
 window.addEventListener('DOMContentLoaded',function(){
   var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
   var JUMP=new URLSearchParams(location.search).get('jump');
@@ -761,7 +815,7 @@ window.addEventListener('DOMContentLoaded',function(){
   gsap.utils.toArray('.floor .wrap>*:not(.floor-tag)').forEach(function(el){
     gsap.from(el,{y:22,opacity:0,duration:.7,ease:'power3.out',scrollTrigger:{trigger:el,start:'top 88%',once:true}});
   });
-  gsap.utils.toArray('.work figure,.rv,.steps li').forEach(function(el,i){
+  gsap.utils.toArray('.carousel,.rv,.steps li').forEach(function(el,i){
     gsap.from(el,{y:26,opacity:0,duration:.7,ease:'power3.out',delay:(i%4)*0.06,scrollTrigger:{trigger:el,start:'top 90%',once:true}});
   });
 
@@ -775,7 +829,7 @@ window.addEventListener('DOMContentLoaded',function(){
     window.scrollTo(0,+JUMP);
     ScrollTrigger.refresh();
     ScrollTrigger.getAll().forEach(function(st){ if(st.animation&&st.vars.once&&st.progress>0) st.animation.progress(1); });
-    gsap.utils.toArray('.floor .wrap>*,.work figure,.rv,.steps li').forEach(function(el){
+    gsap.utils.toArray('.floor .wrap>*,.carousel,.rv,.steps li').forEach(function(el){
       if(el.getBoundingClientRect().top<innerHeight) gsap.set(el,{clearProps:'all'});
     });
     setProgress(pipeST.progress);
