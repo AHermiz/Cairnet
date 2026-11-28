@@ -165,7 +165,7 @@ section{position:relative}
 .car-track{display:flex;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;scroll-padding-inline:0;padding:6px 2px 18px;margin:0;list-style:none;scrollbar-width:none;overscroll-behavior-x:contain}
 .car-track::-webkit-scrollbar{display:none}
 .car-track:focus-visible{outline:3px solid var(--ember);outline-offset:4px;border-radius:18px}
-.car-track>li{flex:0 0 clamp(260px,34vw,400px);scroll-snap-align:start;display:flex}
+.car-track>li{flex:0 0 calc((100% - 40px) / 2.25);scroll-snap-align:start;display:flex}
 .shot{flex:1;margin:0;padding:10px 10px 0;background:#fff;border:1px solid var(--frost-3);border-radius:18px;box-shadow:0 1px 2px rgba(13,27,42,.06),0 10px 28px -12px rgba(13,27,42,.22)}
 .shot .frame{overflow:hidden;border-radius:10px;outline:1px solid var(--line);outline-offset:-1px;background:var(--frost-3)}
 .shot img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover;transition:transform .6s cubic-bezier(.2,.7,.2,1)}
@@ -850,8 +850,10 @@ footer a:hover{color:#fff;text-decoration:underline}
     function update(){
       var max=track.scrollWidth-track.clientWidth-2, x=track.scrollLeft;
       prev.disabled = x<=2; next.disabled = x>=max;
-      var i=x>=max ? items.length-1 : Math.round(x/step());
-      now.textContent=Math.min(items.length, i+1);
+      var l=x-2, r=x+track.clientWidth+2, vis=[];
+      items.forEach(function(it,j){ var a=it.offsetLeft-items[0].offsetLeft; if(a>=l && a+it.offsetWidth<=r) vis.push(j+1); });
+      if(!vis.length) vis=[Math.min(items.length, Math.round(x/step())+1)];
+      now.textContent = vis.length>1 ? vis[0]+'\u2013'+vis[vis.length-1] : vis[0];
     }
     prev.addEventListener('click',function(){ track.scrollBy({left:-step()}); });
     next.addEventListener('click',function(){ track.scrollBy({left:step()}); });
@@ -861,6 +863,8 @@ footer a:hover{color:#fff;text-decoration:underline}
     });
     track.addEventListener('scroll',update,{passive:true});
     window.addEventListener('resize',update);
+    window.addEventListener('load',update);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(update);
     update();
   });
 })();
