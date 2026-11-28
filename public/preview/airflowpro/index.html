@@ -1,0 +1,824 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AirFlowPro | Heating &amp; Cooling Repair in Toronto and Mississauga</title>
+<meta name="description" content="Furnace, AC, heat pump and water heater repair and installation in Toronto and Mississauga. 24/7 emergency line, call or text 416-518-1512. 4.9 stars from 109 Google reviews.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0B1622">
+<link rel="preload" href="poster.jpg" as="image">
+<link rel="preload" href="fonts/archivo-var.woff2" as="font" type="font/woff2" crossorigin>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"HVACBusiness","name":"AirFlowPro Inc.","telephone":"+1-416-518-1512","email":"airflowprogta@gmail.com","url":"https://airflowpro.ca/","areaServed":["Toronto","Mississauga","Greater Toronto Area"],"address":[{"@type":"PostalAddress","streetAddress":"169 Jameson Ave #508","addressLocality":"Toronto","addressRegion":"ON","postalCode":"M6K 2Y6","addressCountry":"CA"},{"@type":"PostalAddress","streetAddress":"150 Lakeshore Rd W #1711","addressLocality":"Mississauga","addressRegion":"ON","postalCode":"L5H 3R2","addressCountry":"CA"}],"sameAs":["https://www.instagram.com/airflowpro_gta/","https://www.facebook.com/AirFlowPro.ca"]}
+</script>
+<style>
+@font-face{font-family:"Archivo";src:url(fonts/archivo-var.woff2) format("woff2");font-weight:100 900;font-stretch:62% 125%;font-display:swap}
+@font-face{font-family:"Atkinson Next";src:url(fonts/atkinson-400.woff2) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Atkinson Next";src:url(fonts/atkinson-700.woff2) format("woff2");font-weight:700;font-display:swap}
+:root{
+  --night:#0B1622; --night-2:#112237; --night-3:#1A3150; --steel:#8FA3B8;
+  --frost:#F1F5F8; --frost-2:#E3EAF0; --frost-3:#CFDAE3;
+  --ink:#0D1B2A; --ink-soft:#44566A;
+  --ember:#F4A340; --ember-hi:#FFC46E; --ember-deep:#B8650F;
+  --red:#C8202A; --red-hi:#A9171F;
+  --line:rgba(13,27,42,.12); --line-dark:rgba(241,245,248,.14);
+  --display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --body:"Atkinson Next",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --wrap:1180px;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;background:var(--night)}
+body{margin:0;background:var(--frost);color:var(--ink);font:400 17px/1.6 var(--body);text-rendering:optimizeLegibility}
+img{max-width:100%;display:block}
+a{color:inherit}
+p{margin:0}
+h1,h2,h3{margin:0;font-family:var(--display);font-stretch:78%;font-weight:800;line-height:.98;letter-spacing:-.005em;text-wrap:balance}
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 24px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+:focus-visible{outline:3px solid var(--ember);outline-offset:3px;border-radius:6px}
+.eyebrow{font:700 13px/1.2 var(--body);letter-spacing:.14em;text-transform:uppercase}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:54px;padding:0 24px;border-radius:12px;font:700 16.5px/1 var(--body);text-decoration:none;border:2px solid transparent;transition:transform .18s cubic-bezier(.2,.7,.2,1),background-color .18s,border-color .18s,color .18s;white-space:nowrap;cursor:pointer}
+.btn:active{transform:scale(.97)}
+.btn svg{width:19px;height:19px;flex:none}
+.btn-call{background:var(--red);color:#fff}
+.btn-call:hover{background:var(--red-hi)}
+.btn-text{background:transparent;color:var(--frost);border-color:rgba(241,245,248,.55)}
+.btn-text:hover{background:var(--frost);color:var(--night);border-color:var(--frost)}
+.btn-dark{background:var(--night);color:var(--frost)}
+.btn-dark:hover{background:var(--night-3)}
+.btn-line{border-color:var(--ink);color:var(--ink)}
+.btn-line:hover{background:var(--ink);color:var(--frost)}
+
+/* preview banner */
+.pv{position:relative;z-index:60;background:#05101A;color:var(--steel);font-size:13.5px;line-height:1.4;text-align:center;padding:8px 16px}
+.pv b{color:var(--frost);font-weight:700}
+
+/* header */
+.top{position:fixed;left:0;right:0;top:var(--pv-h,0px);z-index:50;color:var(--frost);transition:background-color .3s,color .3s,box-shadow .3s,top .2s}
+.top.solid{top:0;background:rgba(241,245,248,.96);color:var(--ink);box-shadow:0 1px 0 var(--line);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;height:76px;gap:16px}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;min-width:0}
+.seal{width:50px;height:50px;border-radius:50%;background:#fff;flex:none;box-shadow:0 0 0 2px rgba(255,255,255,.25)}
+.brand-name{font:800 22px/1 var(--display);font-stretch:85%;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
+.brand-name small{display:block;font:400 12.5px/1.3 var(--body);letter-spacing:.02em;text-transform:none;opacity:.8;margin-top:4px}
+.top-cta{display:flex;align-items:center;gap:18px}
+.top-phone{text-decoration:none;text-align:right;line-height:1.15}
+.top-phone span{display:block;font-size:12.5px;opacity:.8}
+.top-phone b{font:800 21px/1 var(--display);font-stretch:85%;letter-spacing:.02em}
+.top .btn{min-height:46px;padding:0 18px;font-size:15px}
+@media (max-width:860px){.top-phone{display:none}}
+@media (max-width:560px){.brand-name small{display:none}.top .btn{display:none}.brand-name{font-size:19px}.seal{width:44px;height:44px}}
+
+/* film hero */
+.film{position:relative;height:230vh;background:var(--night)}
+.film.static{height:auto}
+.stage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;background:var(--night)}
+.film.static .stage{position:relative}
+.stage canvas,.stage .poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:48% 60%}
+.stage canvas{transform-origin:48% 58%;will-change:transform}
+.stage #snow{transform:none;pointer-events:none}
+.shade{position:absolute;inset:0;pointer-events:none;background:
+  linear-gradient(90deg,rgba(8,17,27,.86) 0%,rgba(8,17,27,.62) 34%,rgba(8,17,27,.12) 62%,rgba(8,17,27,0) 78%),
+  linear-gradient(180deg,rgba(8,17,27,.55) 0%,rgba(8,17,27,0) 22%,rgba(8,17,27,0) 70%,rgba(11,22,34,.92) 100%)}
+.beat{position:absolute;left:0;right:0;bottom:0;top:0;display:flex;align-items:center;pointer-events:none}
+.beat .wrap{width:100%}
+.beat-in{max-width:600px;pointer-events:auto;color:var(--frost)}
+.beat h1{font-size:clamp(44px,6.4vw,86px);margin:16px 0 18px;text-shadow:0 2px 30px rgba(5,12,20,.5)}
+.beat h1 em{font-style:normal;color:var(--ember-hi)}
+.beat .lede{font-size:clamp(18px,1.6vw,21px);max-width:31em;color:#DCE6EE}
+.eyebrow.on-film{color:var(--ember-hi)}
+.rating{display:inline-flex;align-items:center;gap:10px;margin-top:22px;font-size:16px;color:#E8EEF3}
+.stars{display:inline-flex;gap:2px;color:var(--ember)}
+.stars svg{width:17px;height:17px}
+.rating b{color:#fff}
+.cta-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+.beat-2 .beat-in{max-width:560px}
+.beat-2 h2{font-size:clamp(40px,5.2vw,72px);margin:14px 0 16px}
+.beat-2 p{font-size:19px;color:#DCE6EE;max-width:28em}
+.scroll-hint{position:absolute;left:50%;bottom:28px;transform:translateX(-50%);color:rgba(241,245,248,.75);font-size:13px;letter-spacing:.12em;text-transform:uppercase;display:flex;flex-direction:column;align-items:center;gap:8px}
+.scroll-hint i{display:block;width:1px;height:34px;background:linear-gradient(var(--frost),transparent);animation:drip 1.8s ease-in-out infinite}
+@keyframes drip{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+.film.static .scroll-hint{display:none}
+@media (max-width:768px){
+  .film{height:190vh}
+  .shade{background:linear-gradient(180deg,rgba(8,17,27,.5) 0%,rgba(8,17,27,.15) 30%,rgba(8,17,27,.55) 55%,rgba(8,17,27,.93) 100%)}
+  .beat{align-items:flex-end;padding-bottom:calc(150px + env(safe-area-inset-bottom))}
+  .beat h1{font-size:clamp(38px,10.5vw,52px)}
+  .beat .lede{font-size:17px}
+  .cta-row .btn{flex:1 1 0;padding:0 14px}
+  .beat-1 .cta-row{display:none} /* the sticky call bar carries the same two buttons on phones */
+  .scroll-hint{display:none}
+}
+
+/* proof strip */
+.proof{background:var(--night);color:var(--frost);border-top:1px solid var(--line-dark)}
+.proof ul{list-style:none;margin:0;padding:26px 0;display:grid;grid-template-columns:repeat(5,auto);justify-content:space-between;gap:18px 28px}
+.proof li{display:flex;align-items:center;gap:12px;font-size:15.5px;line-height:1.3;color:#C9D5E0}
+.proof li b{display:block;color:#fff;font:800 22px/1.05 var(--display);font-stretch:85%;letter-spacing:.01em}
+.proof svg{width:26px;height:26px;color:var(--ember);flex:none}
+@media (max-width:980px){.proof ul{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:420px){.proof ul{grid-template-columns:1fr}}
+
+/* generic sections */
+section{position:relative}
+.sec{padding:110px 0}
+.sec-head{max-width:760px;margin-bottom:52px}
+.sec-head h2{font-size:clamp(38px,4.6vw,62px);margin:14px 0 18px}
+.sec-head p{font-size:19px;color:var(--ink-soft);max-width:36em}
+.eyebrow.amber{color:var(--ember-deep)}
+@media (max-width:768px){.sec{padding:76px 0}.sec-head{margin-bottom:36px}}
+
+/* when it breaks */
+.breaks{background:linear-gradient(180deg,var(--night) 0%,var(--night-2) 100%);color:var(--frost);overflow:hidden}
+.breaks .sec-head p{color:#B9C7D4}
+.breaks .eyebrow{color:var(--ember-hi)}
+.timeline{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;position:relative}
+.moment{position:relative;background:rgba(241,245,248,.04);border:1px solid var(--line-dark);border-radius:18px;padding:30px 28px 28px;display:flex;flex-direction:column}
+.moment .when{display:flex;align-items:center;gap:10px;font:800 15px/1 var(--display);font-stretch:90%;letter-spacing:.14em;text-transform:uppercase;color:var(--ember-hi)}
+.moment .when i{width:10px;height:10px;border-radius:50%;background:var(--ember);box-shadow:0 0 0 0 rgba(244,163,64,.55);animation:pulse 2.4s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(244,163,64,.5)}70%{box-shadow:0 0 0 12px rgba(244,163,64,0)}100%{box-shadow:0 0 0 0 rgba(244,163,64,0)}}
+.moment h3{font-size:30px;margin:18px 0 14px;font-stretch:80%}
+.moment blockquote{margin:0 0 18px;font-size:17px;color:#D6E0E9;flex:1}
+.moment cite{font-style:normal;font-size:14.5px;color:var(--steel)}
+.breaks-cta{display:flex;flex-wrap:wrap;align-items:center;gap:18px 28px;margin-top:44px;padding-top:34px;border-top:1px solid var(--line-dark)}
+.breaks-cta p{font:800 clamp(26px,2.6vw,34px)/1.1 var(--display);font-stretch:82%}
+@media (max-width:900px){.timeline{grid-template-columns:1fr}}
+
+/* services */
+.services{background:var(--frost)}
+.svc-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+.svc{background:#fff;border:1px solid var(--line);border-radius:18px;padding:32px 30px;display:grid;grid-template-columns:56px 1fr;gap:6px 20px}
+.svc .ico{grid-row:span 3;width:56px;height:56px;border-radius:14px;background:var(--night);color:var(--ember);display:grid;place-items:center}
+.svc .ico svg{width:28px;height:28px}
+.svc h3{font-size:30px;font-stretch:80%}
+.svc ul{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.svc li{font-size:14.5px;line-height:1;padding:9px 12px;border-radius:999px;background:var(--frost);border:1px solid var(--line)}
+.svc p{color:var(--ink-soft);margin-top:12px;font-size:16.5px}
+@media (max-width:860px){.svc-grid{grid-template-columns:1fr}.svc{grid-template-columns:1fr}.svc .ico{grid-row:auto}}
+
+/* work */
+.work{background:var(--frost-2)}
+.gallery{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto auto;gap:16px}
+.shot{position:relative;margin:0;border-radius:16px;overflow:hidden;background:var(--frost-3)}
+.shot img{width:100%;height:100%;object-fit:cover;aspect-ratio:4/5;transition:transform .6s cubic-bezier(.2,.7,.2,1)}
+.shot:hover img{transform:scale(1.03)}
+.shot.big{grid-row:span 2}
+.shot.big img{aspect-ratio:auto;height:100%}
+.shot.wide img{aspect-ratio:4/3;object-position:50% 45%}
+.gallery .shot:not(.big) img{aspect-ratio:4/3}
+.shot figcaption{position:absolute;left:12px;bottom:12px;right:12px;font-size:14px;line-height:1.3;color:#fff;background:rgba(11,22,34,.78);padding:8px 12px;border-radius:10px;width:max-content;max-width:calc(100% - 24px)}
+@media (max-width:860px){.gallery{grid-template-columns:1fr}.shot.big{grid-row:auto}.shot.big img{aspect-ratio:4/5}}
+
+/* jp */
+.jp{background:var(--frost)}
+.jp-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
+.jp-photo{border-radius:20px;overflow:hidden;position:relative}
+.jp-photo img{width:100%;aspect-ratio:4/5;object-fit:cover;object-position:50% 70%;filter:contrast(1.05)}
+.jp-photo::after{content:"";position:absolute;inset:0;box-shadow:inset 0 0 0 1px rgba(13,27,42,.08);border-radius:20px}
+.jp h2{font-size:clamp(40px,4.8vw,64px);margin:14px 0 20px}
+.jp p{font-size:18.5px;color:var(--ink-soft);margin-bottom:16px;max-width:32em}
+.jp .tag{font:800 italic 22px/1.3 var(--display);font-stretch:90%;color:var(--ink);margin-top:24px}
+@media (max-width:860px){.jp-grid{grid-template-columns:1fr;gap:32px}.jp-photo img{aspect-ratio:4/3}}
+
+/* reviews */
+.reviews{background:var(--night);color:var(--frost)}
+.reviews .sec-head p{color:#B9C7D4}
+.reviews .eyebrow{color:var(--ember-hi)}
+.rv-head{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap;margin-bottom:44px}
+.rv-head .sec-head{margin-bottom:0}
+.score{display:flex;align-items:center;gap:16px}
+.score b{font:800 64px/1 var(--display);font-stretch:80%;color:#fff}
+.score span{font-size:15px;color:#B9C7D4;line-height:1.4}
+.rv-grid{columns:3 320px;column-gap:20px}
+.rv{break-inside:avoid;margin:0 0 20px;background:var(--night-2);border:1px solid var(--line-dark);border-radius:16px;padding:26px 24px}
+.rv .stars{margin-bottom:14px}
+.rv blockquote{margin:0 0 16px;font-size:16.5px;line-height:1.6;color:#E1E9F0}
+.rv figcaption{font-size:14.5px;color:var(--steel)}
+.rv figcaption b{color:#fff;font-weight:700}
+.rv-more{margin-top:12px}
+.rv-more a{color:var(--ember-hi);font-weight:700}
+
+/* how */
+.how{background:var(--frost)}
+.steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:20px;counter-reset:s}
+.steps li{counter-increment:s;padding:30px 28px;border-radius:18px;background:#fff;border:1px solid var(--line)}
+.steps li::before{content:"0" counter(s);display:block;font:800 52px/1 var(--display);font-stretch:75%;color:var(--ember-deep);margin-bottom:18px}
+.steps h3{font-size:28px;font-stretch:82%;margin-bottom:10px}
+.steps p{color:var(--ink-soft)}
+.steps .src{display:block;margin-top:14px;font-size:14px;color:var(--ink-soft);font-style:italic}
+@media (max-width:860px){.steps{grid-template-columns:1fr}}
+
+/* area + form */
+.area{background:var(--frost-2)}
+.area-grid{display:grid;grid-template-columns:1fr 1.1fr;gap:48px;align-items:start}
+.facts{display:grid;gap:16px}
+.fact{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px 24px}
+.fact h3{font-size:24px;font-stretch:85%;margin-bottom:8px}
+.fact p{color:var(--ink-soft)}
+.fact dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:6px 18px}
+.fact dt{font-weight:700}
+.fact dd{margin:0;color:var(--ink-soft)}
+.form{background:var(--night);color:var(--frost);border-radius:20px;padding:36px 32px}
+.form h2{font-size:clamp(34px,3.6vw,46px);margin-bottom:10px}
+.form > p{color:#B9C7D4;margin-bottom:22px}
+.fld{display:block;margin-bottom:16px}
+.fld span{display:block;font-size:15px;font-weight:700;margin-bottom:7px}
+.fld span i{font-weight:400;font-style:normal;color:var(--steel)}
+.fld input,.fld textarea,.fld select{width:100%;min-height:52px;padding:13px 14px;border-radius:10px;border:1.5px solid rgba(241,245,248,.22);background:rgba(241,245,248,.06);color:#fff;font:400 16.5px/1.4 var(--body)}
+.fld select option{color:var(--ink)}
+.fld textarea{min-height:110px;resize:vertical}
+.fld input:focus,.fld textarea:focus,.fld select:focus{outline:none;border-color:var(--ember)}
+.fld input[type=file]{padding:12px;min-height:auto}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form .btn{width:100%;margin-top:6px}
+.form-msg{margin-top:14px;font-size:15px;color:var(--ember-hi);min-height:1em}
+.fine{margin-top:14px;font-size:13.5px;color:var(--steel)}
+@media (max-width:860px){.area-grid{grid-template-columns:1fr}.two{grid-template-columns:1fr}.form{padding:28px 20px}}
+
+/* footer */
+footer{background:#07111B;color:#B9C7D4;padding:64px 0 120px;font-size:15.5px}
+.ft{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:36px}
+footer h3{color:#fff;font-size:22px;font-stretch:85%;letter-spacing:.04em;text-transform:uppercase;margin-bottom:12px}
+footer ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+footer a{text-decoration:none}
+footer a:hover{color:#fff;text-decoration:underline}
+.ft-brand{display:flex;gap:16px;align-items:flex-start}
+.ft-brand .seal{width:64px;height:64px}
+.social{display:flex;gap:10px;margin-top:16px}
+.social a{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--line-dark)}
+.social svg{width:19px;height:19px;fill:currentColor}
+.legal{margin-top:40px;padding-top:24px;border-top:1px solid var(--line-dark);font-size:13.5px;color:#7E90A3}
+@media (max-width:860px){.ft{grid-template-columns:1fr}footer{padding-bottom:130px}}
+
+/* phone call bar */
+.callbar{position:fixed;left:0;right:0;bottom:0;z-index:70;display:none;gap:10px;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:rgba(7,17,27,.96);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-top:1px solid var(--line-dark)}
+.callbar .btn{flex:1;min-height:52px;font-size:16px}
+.callbar .btn-text{flex:.75}
+@media (max-width:768px){.callbar{display:flex}}
+
+/* reveals */
+.rv-up{opacity:0;transform:translateY(26px)}
+.no-js .rv-up,.reduced .rv-up{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.rv-up{opacity:1;transform:none}.moment .when i,.scroll-hint i{animation:none}}
+</style>
+</head>
+<body>
+<p class="pv" id="pv"><b>Preview:</b> a free redesign built for AirFlowPro by Cairnet Integrations. Not the live site.</p>
+
+<header class="top" id="top">
+  <div class="wrap">
+    <a class="brand" href="#main" aria-label="AirFlowPro, back to top">
+      <img class="seal" src="assets/afp-seal.png" alt="" width="50" height="50">
+      <span class="brand-name">Air Flow Pro<small>Heating · Ventilation · Air Conditioning</small></span>
+    </a>
+    <div class="top-cta">
+      <a class="top-phone" href="tel:+14165181512"><span>24/7 emergency line</span><b>416-518-1512</b></a>
+      <a class="btn btn-call" href="#quote">Get a quote</a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+<section class="film" id="film" aria-label="AirFlowPro, heating and cooling in Toronto and Mississauga">
+  <div class="stage" id="stage">
+    <img class="poster" id="poster" src="poster.jpg" alt="A red-brick house in the snow at dusk, its windows dark." fetchpriority="high">
+    <canvas id="cv" aria-hidden="true"></canvas>
+    <canvas id="snow" aria-hidden="true"></canvas>
+    <div class="shade"></div>
+
+    <div class="beat beat-1" id="b1" data-in="-0.1" data-peak="0" data-out="0.42">
+      <div class="wrap"><div class="beat-in">
+        <p class="eyebrow on-film">Heating &amp; cooling · Toronto &amp; Mississauga</p>
+        <h1>Heat out? <em>Call or text us.</em> Day or night.</h1>
+        <p class="lede">Furnace, AC, heat pump and water heater repairs and installs for homes and businesses. Our 24/7 emergency line takes calls and texts.</p>
+        <div class="rating"><span class="stars" aria-hidden="true"><svg viewBox="0 0 20 20"><use href="#star"/></svg><svg viewBox="0 0 20 20"><use href="#star"/></svg><svg viewBox="0 0 20 20"><use href="#star"/></svg><svg viewBox="0 0 20 20"><use href="#star"/></svg><svg viewBox="0 0 20 20"><use href="#star"/></svg></span><span><b>4.9</b> from 109 Google reviews</span></div>
+        <div class="cta-row">
+          <a class="btn btn-call" href="tel:+14165181512"><svg viewBox="0 0 24 24"><use href="#i-phone"/></svg>Call 416-518-1512</a>
+          <a class="btn btn-text" href="sms:+14165181512"><svg viewBox="0 0 24 24"><use href="#i-text"/></svg>Text us</a>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="beat beat-2" id="b2" data-in="0.58" data-peak="0.82" data-out="2" aria-hidden="true">
+      <div class="wrap"><div class="beat-in">
+        <p class="eyebrow on-film">AirFlowPro</p>
+        <h2>Keeping the heart of your home strong.</h2>
+        <p>The words on our logo, and what our customers write about: a warm house again, fast.</p>
+      </div></div>
+    </div>
+
+    <div class="scroll-hint" aria-hidden="true">Scroll<i></i></div>
+  </div>
+</section>
+
+<section class="proof" aria-label="Why people trust us">
+  <div class="wrap">
+    <ul>
+      <li><svg viewBox="0 0 24 24"><use href="#i-star-o"/></svg><span><b>4.9 stars</b>109 Google reviews</span></li>
+      <li><svg viewBox="0 0 24 24"><use href="#i-clock"/></svg><span><b>24/7</b>Emergency line, call or text</span></li>
+      <li><svg viewBox="0 0 24 24"><use href="#i-shield"/></svg><span><b>Insured</b>Full warranty on our work</span></li>
+      <li><svg viewBox="0 0 24 24"><use href="#i-badge"/></svg><span><b>BBB A+</b>No complaints in 3 years</span></li>
+      <li><svg viewBox="0 0 24 24"><use href="#i-home"/></svg><span><b>Homes &amp; business</b>Toronto and Mississauga</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="breaks sec" aria-labelledby="breaks-h">
+  <div class="wrap">
+    <div class="sec-head rv-up">
+      <p class="eyebrow">When it breaks</p>
+      <h2 id="breaks-h">It never breaks on a nice afternoon.</h2>
+      <p>Furnaces quit on Friday nights, the night before a storm, on Christmas. Here's what our customers say happened next, in their words.</p>
+    </div>
+    <div class="timeline">
+      <article class="moment rv-up">
+        <p class="when"><i></i>Friday night</p>
+        <h3>New furnace by Sunday</h3>
+        <blockquote>“I was in a tight spot, furnace broke Friday night, called AirFloPro and Jp showed up ten minutes later to diagnose! He and his guys had a new unit in by Sunday afternoon.”</blockquote>
+        <cite>Matthew Carlson, Google review</cite>
+      </article>
+      <article class="moment rv-up">
+        <p class="when"><i></i>Hours before a storm</p>
+        <h3>Fixed the same day</h3>
+        <blockquote>“With a winter storm hours away, JP directed his technicians from a commercial refrigerant job to diagnose our furnace… Issue was identified and part was ordered and installed by the end of the day.”</blockquote>
+        <cite>Peter Forrest, Google review</cite>
+      </article>
+      <article class="moment rv-up">
+        <p class="when"><i></i>Overnight</p>
+        <h3>Heat back by morning</h3>
+        <blockquote>“JP saved Christmas! Our furnace broke down overnight, and JP was able to fix it first thing in the morning.”</blockquote>
+        <cite>Juan, Google review</cite>
+      </article>
+    </div>
+    <div class="breaks-cta rv-up">
+      <p>No heat right now? Call or text 416-518-1512.</p>
+      <a class="btn btn-call" href="tel:+14165181512"><svg viewBox="0 0 24 24"><use href="#i-phone"/></svg>Call now</a>
+    </div>
+  </div>
+</section>
+
+<section class="services sec" id="services" aria-labelledby="svc-h">
+  <div class="wrap">
+    <div class="sec-head rv-up">
+      <p class="eyebrow amber">What we look after</p>
+      <h2 id="svc-h">Heating, cooling, hot water and air.</h2>
+      <p>From a furnace that won't light to a full system for a new build or a restaurant. We explain what's wrong before we fix it, so you know what you're paying for.</p>
+    </div>
+    <div class="svc-grid">
+      <article class="svc rv-up">
+        <span class="ico"><svg viewBox="0 0 24 24"><use href="#i-flame"/></svg></span>
+        <h3>Heating &amp; cooling</h3>
+        <ul><li>Furnaces</li><li>Air conditioners</li><li>Heat pumps</li><li>Ductless mini-splits</li><li>Boilers</li><li>In-floor radiant heat</li></ul>
+        <p>Repairs, tune-ups and new installs, with high-efficiency systems sized for your home.</p>
+      </article>
+      <article class="svc rv-up">
+        <span class="ico"><svg viewBox="0 0 24 24"><use href="#i-drop"/></svg></span>
+        <h3>Water heaters</h3>
+        <ul><li>Tankless</li><li>Hot water tanks</li></ul>
+        <p>No hot water? We repair or replace it. Tankless heaters free up space and heat water as you use it.</p>
+      </article>
+      <article class="svc rv-up">
+        <span class="ico"><svg viewBox="0 0 24 24"><use href="#i-wind"/></svg></span>
+        <h3>Air &amp; gas work</h3>
+        <ul><li>Ductwork</li><li>Gas lines for appliances &amp; BBQs</li><li>Kitchen &amp; bath fans</li><li>Gas fireplace inserts</li><li>Custom home build-outs</li></ul>
+        <p>Certified gas line installs and the ductwork and venting that keep air moving the way it should.</p>
+      </article>
+      <article class="svc rv-up">
+        <span class="ico"><svg viewBox="0 0 24 24"><use href="#i-building"/></svg></span>
+        <h3>Commercial</h3>
+        <ul><li>Rooftop units</li><li>Restaurant HVAC</li><li>Condo &amp; high-rise</li><li>Commercial heat pumps &amp; boilers</li><li>Kitchen hoods</li></ul>
+        <p>For buildings, restaurants and rentals, with custom sheet-metal fabrication through trusted partners.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="work sec" aria-labelledby="work-h">
+  <div class="wrap">
+    <div class="sec-head rv-up">
+      <p class="eyebrow amber">Our work</p>
+      <h2 id="work-h">Clean installs, real jobs.</h2>
+      <p>Photos from our own jobs, not stock pictures.</p>
+    </div>
+    <div class="gallery">
+      <figure class="shot big rv-up"><img src="assets/work-tankless-1.webp" alt="A white tankless water heater on a basement wall with neatly run copper and yellow gas piping." loading="lazy"><figcaption>Tankless water heater install</figcaption></figure>
+      <figure class="shot rv-up"><img src="assets/work-fireplace.webp" alt="A gas fireplace insert burning with a tall flame in a painted brick surround." loading="lazy"><figcaption>Gas fireplace insert</figcaption></figure>
+      <figure class="shot wide rv-up"><img src="assets/work-tankless-2.webp" alt="A second tankless water heater install with copper lines and a red gas valve on a white wall." loading="lazy"><figcaption>Tankless install, copper and gas lines</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<section class="jp sec" aria-labelledby="jp-h">
+  <div class="wrap jp-grid">
+    <div class="jp-photo rv-up"><img src="assets/team.webp" alt="The AirFlowPro team, in black and white, on a porch." loading="lazy"></div>
+    <div class="rv-up">
+      <p class="eyebrow amber">Who shows up</p>
+      <h2 id="jp-h">Ask for JP.</h2>
+      <p>Read our reviews and one name comes up again and again: JP. That's Jean-Paul Stavro, who runs AirFlowPro and still picks up the phone.</p>
+      <p>He and the crew come out, find the problem, show you what went wrong and what to do if it happens again, then clean up before they leave.</p>
+      <p class="tag">“It's a pleasure to work with someone who I feel is actually focused on delivering good work and not simply upselling me.” <span style="font:400 15px var(--body);color:var(--ink-soft)">Natalie Brunet</span></p>
+    </div>
+  </div>
+</section>
+
+<section class="reviews sec" id="reviews" aria-labelledby="rv-h">
+  <div class="wrap">
+    <div class="rv-head">
+      <div class="sec-head rv-up">
+        <p class="eyebrow">Reviews</p>
+        <h2 id="rv-h">105 five-star reviews, in their own words.</h2>
+      </div>
+      <div class="score rv-up"><b>4.9</b><span><span class="stars" aria-hidden="true"><svg viewBox="0 0 20 20"><use href="#star"/></svg><svg viewBox="0 0 20 20"><use href="#star"/></svg><svg viewBox="0 0 20 20"><use href="#star"/></svg><svg viewBox="0 0 20 20"><use href="#star"/></svg><svg viewBox="0 0 20 20"><use href="#star"/></svg></span><br>109 reviews on Google</span></div>
+    </div>
+    <div class="rv-grid">
+      <figure class="rv rv-up"><span class="stars" aria-label="5 stars"><svg viewBox="0 0 20 20"><use href="#star"/></svg><svg viewBox="0 0 20 20"><use href="#star"/></svg><svg viewBox="0 0 20 20"><use href="#star"/></svg><svg viewBox="0 0 20 20"><use href="#star"/></svg><svg viewBox="0 0 20 20"><use href="#star"/></svg></span>
+        <blockquote>“I had issues with the heating system in my apartment, where my heat was off during an extremely cold stretch of weather… He was not only able to fix my heat, but showed me what was wrong, how he fixed it, &amp; what to do should I face this issue again.”</blockquote>
+        <figcaption><b>Kevin O'Boyle</b> · Google</figcaption></figure>
+      <figure class="rv rv-up"><span class="stars" aria-label="5 stars"><svg viewBox="0 0 20 20"><use href="#star"/></svg><svg viewBox="0 0 20 20"><use href="#star"/></svg><svg viewBox="0 0 20 20"><use href="#star"/></svg><svg viewBox="0 0 20 20"><use href="#star"/></svg><svg viewBox="0 0 20 20"><use href="#star"/></svg></span>
+        <blockquote>“Jean Paul did a fantastic job on our various and complex HVAC issues in our old house. He got our a/c units and exhaust fan working again. Prompt, very pleasant to deal with and cleaned up after.”</blockquote>
+        <figcaption><b>Shelley Albert</b> · Google</figcaption></figure>
+      <figure class="rv rv-up"><span class="stars" aria-label="5 stars"><svg viewBox="0 0 20 20"><use href="#star"/></svg><svg viewBox="0 0 20 20"><use href="#star"/></svg><svg viewBox="0 0 20 20"><use href="#star"/></svg><svg viewBox="0 0 20 20"><use href="#star"/></svg><svg viewBox="0 0 20 20"><use href="#star"/></svg></span>
+        <blockquote>“My daughter had an emergency situation with HVAC and venting smells in her apartment. Spoke with JP about the situation and he immediately supported and responded to help.”</blockquote>
+        <figcaption><b>G Wood</b> · Google</figcaption></figure>
+      <figure class="rv rv-up"><span class="stars" aria-label="5 stars"><svg viewBox="0 0 20 20"><use href="#star"/></svg><svg viewBox="0 0 20 20"><use href="#star"/></svg><svg viewBox="0 0 20 20"><use href="#star"/></svg><svg viewBox="0 0 20 20"><use href="#star"/></svg><svg viewBox="0 0 20 20"><use href="#star"/></svg></span>
+        <blockquote>“I had the pleasure of working with JP from AirFloPro Inc. on my 8-unit building, and I couldn't be more impressed. JP delivered exceptional service from start to finish… professional, knowledgeable, and incredibly thorough.”</blockquote>
+        <figcaption><b>Dawson S</b> · Google</figcaption></figure>
+      <figure class="rv rv-up"><span class="stars" aria-label="5 stars"><svg viewBox="0 0 20 20"><use href="#star"/></svg><svg viewBox="0 0 20 20"><use href="#star"/></svg><svg viewBox="0 0 20 20"><use href="#star"/></svg><svg viewBox="0 0 20 20"><use href="#star"/></svg><svg viewBox="0 0 20 20"><use href="#star"/></svg></span>
+        <blockquote>“Professional, friendly, and efficient service from start to finish. Jean Paul got the job done quickly and made sure everything was working perfectly at a fair price.”</blockquote>
+        <figcaption><b>Dylan Estrada</b> · Google</figcaption></figure>
+      <figure class="rv rv-up"><span class="stars" aria-label="5 stars"><svg viewBox="0 0 20 20"><use href="#star"/></svg><svg viewBox="0 0 20 20"><use href="#star"/></svg><svg viewBox="0 0 20 20"><use href="#star"/></svg><svg viewBox="0 0 20 20"><use href="#star"/></svg><svg viewBox="0 0 20 20"><use href="#star"/></svg></span>
+        <blockquote>“The service technician JP at AirFlowPro, is fast and knowledgeable. I was impressed how fast he was able to convert my hot water tank to a tankless on demand system.”</blockquote>
+        <figcaption><b>Commercial Driver</b> · Google</figcaption></figure>
+    </div>
+    <p class="rv-more rv-up"><a href="https://www.google.com/maps/place/AirFlowPro+Inc./@43.6383453,-79.4358909,17z/data=!4m8!3m7!1s0x882b476b42f65401:0x6fe22d219f408e7d!8m2!3d43.6383453!4d-79.4358909!9m1!1b1" target="_blank" rel="noopener">Read all 109 reviews on Google →</a></p>
+  </div>
+</section>
+
+<section class="how sec" aria-labelledby="how-h">
+  <div class="wrap">
+    <div class="sec-head rv-up">
+      <p class="eyebrow amber">How it works</p>
+      <h2 id="how-h">Three steps, no runaround.</h2>
+    </div>
+    <ol class="steps">
+      <li class="rv-up"><h3>Call or text</h3><p>Tell us what's going on, any time. For an emergency, call the 24/7 line: 416-518-1512.</p><span class="src">“He was quick to respond.” Karen Kwan</span></li>
+      <li class="rv-up"><h3>We find the problem</h3><p>We diagnose it, explain it in plain words and give you your options before any work starts.</p><span class="src">“He explained things so that I could understand what was going on.” Gen Reynolds</span></li>
+      <li class="rv-up"><h3>Fixed and cleaned up</h3><p>We do the work with high-grade parts, clean up after ourselves, and back it with a full warranty.</p><span class="src">“Courteous, clean and reliable!” Shelly Dunphy</span></li>
+    </ol>
+  </div>
+</section>
+
+<section class="area sec" id="quote" aria-labelledby="quote-h">
+  <div class="wrap area-grid">
+    <div class="facts">
+      <div class="sec-head rv-up" style="margin-bottom:8px">
+        <p class="eyebrow amber">Where and when</p>
+        <h2>Toronto, Mississauga and across the GTA.</h2>
+      </div>
+      <div class="fact rv-up">
+        <h3>Hours</h3>
+        <dl><dt>Emergency line</dt><dd>24/7, call or text 416-518-1512</dd><dt>Office</dt><dd>Monday to Friday, 9 am to 5 pm</dd><dt>Weekends</dt><dd>By appointment</dd></dl>
+      </div>
+      <div class="fact rv-up">
+        <h3>Where we work</h3>
+        <p>Homes, rentals and businesses in Toronto and Mississauga and across the Greater Toronto Area, from downtown condos to new builds.</p>
+      </div>
+      <div class="fact rv-up">
+        <h3>Prefer email?</h3>
+        <p><a href="mailto:airflowprogta@gmail.com">airflowprogta@gmail.com</a></p>
+      </div>
+    </div>
+    <form class="form rv-up" id="q-form" novalidate>
+      <h2 id="quote-h">Get a quote</h2>
+      <p>Tell us what's going on and we'll get back to you. For no heat or a gas smell, call instead: 416-518-1512.</p>
+      <div class="two">
+        <label class="fld"><span>Your name</span><input name="name" autocomplete="name" required></label>
+        <label class="fld"><span>Phone</span><input name="phone" type="tel" autocomplete="tel" inputmode="tel" required></label>
+      </div>
+      <label class="fld"><span>Where are you?</span><select name="area"><option>Toronto</option><option>Mississauga</option><option>Elsewhere in the GTA</option></select></label>
+      <label class="fld"><span>What's going on?</span><textarea name="message" placeholder="e.g. furnace is running but blowing cold air" required></textarea></label>
+      <label class="fld"><span>Photo <i>(optional, e.g. your unit's label)</i></span><input name="photo" type="file" accept="image/*"></label>
+      <button class="btn btn-call" type="submit">Send my request</button>
+      <p class="form-msg" role="status" aria-live="polite"></p>
+      <p class="fine">We use what you send only to reply and do the work you ask for.</p>
+    </form>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="ft">
+      <div class="ft-brand">
+        <img class="seal" src="assets/afp-seal.png" alt="AirFlowPro logo" width="64" height="64" loading="lazy">
+        <div>
+          <h3>AirFlowPro Inc.</h3>
+          <p>Heating, ventilation and air conditioning for homes and businesses in Toronto and Mississauga.</p>
+          <div class="social">
+            <a href="https://www.instagram.com/airflowpro_gta/" target="_blank" rel="noopener" aria-label="AirFlowPro on Instagram"><svg viewBox="0 0 24 24"><path d="M12 7.3A4.7 4.7 0 1 0 12 16.7 4.7 4.7 0 0 0 12 7.3Zm0 7.7a3 3 0 1 1 0-6 3 3 0 0 1 0 6Zm6-7.9a1.1 1.1 0 1 1-2.2 0 1.1 1.1 0 0 1 2.2 0ZM21 8.1c-.1-1.5-.4-2.8-1.5-3.9S17 2.8 15.5 2.7C14 2.6 10 2.6 8.5 2.7 7 2.8 5.7 3.1 4.6 4.2S3.1 6.6 3 8.1C2.9 9.6 2.9 14.4 3 15.9c.1 1.5.4 2.8 1.5 3.9s2.4 1.4 3.9 1.5c1.5.1 5.5.1 7 0 1.5-.1 2.8-.4 3.9-1.5s1.4-2.4 1.5-3.9c.1-1.5.1-6.3 0-7.8Zm-1.9 9.4a3 3 0 0 1-1.7 1.7c-1.2.5-4 .4-5.4.4s-4.2.1-5.4-.4a3 3 0 0 1-1.7-1.7c-.5-1.2-.4-4-.4-5.5s-.1-4.3.4-5.5a3 3 0 0 1 1.7-1.7c1.2-.5 4-.4 5.4-.4s4.2-.1 5.4.4a3 3 0 0 1 1.7 1.7c.5 1.2.4 4 .4 5.5s.1 4.3-.4 5.5Z"/></svg></a>
+            <a href="https://www.facebook.com/AirFlowPro.ca" target="_blank" rel="noopener" aria-label="AirFlowPro on Facebook"><svg viewBox="0 0 24 24"><path d="M13.5 21v-8h2.7l.4-3.2h-3.1V7.8c0-.9.3-1.5 1.6-1.5h1.7V3.4c-.3 0-1.3-.1-2.5-.1-2.4 0-4.1 1.5-4.1 4.2v2.3H7.5V13h2.7v8h3.3Z"/></svg></a>
+          </div>
+        </div>
+      </div>
+      <div>
+        <h3>Contact</h3>
+        <ul>
+          <li><a href="tel:+14165181512">416-518-1512</a> (call or text)</li>
+          <li><a href="mailto:airflowprogta@gmail.com">airflowprogta@gmail.com</a></li>
+          <li>Emergency line: 24/7</li>
+          <li>Office: Mon–Fri, 9–5</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Locations</h3>
+        <ul>
+          <li>169 Jameson Ave #508<br>Toronto, ON M6K 2Y6</li>
+          <li>150 Lakeshore Rd W #1711<br>Mississauga, ON L5H 3R2</li>
+        </ul>
+      </div>
+    </div>
+    <p class="legal">© AirFlowPro Inc. Reviews quoted from Google. Preview site by Cairnet Integrations.</p>
+  </div>
+</footer>
+
+<nav class="callbar" aria-label="Contact AirFlowPro">
+  <a class="btn btn-call" href="tel:+14165181512"><svg viewBox="0 0 24 24"><use href="#i-phone"/></svg>Call 416-518-1512</a>
+  <a class="btn btn-text" href="sms:+14165181512"><svg viewBox="0 0 24 24"><use href="#i-text"/></svg>Text</a>
+</nav>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="star" viewBox="0 0 20 20"><path fill="currentColor" d="m10 1.6 2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.5l-5.1 2.8L6 11.6l-4.3-4 5.8-.7L10 1.6Z"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><path fill="currentColor" d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1L6.6 10.8Z"/></symbol>
+  <symbol id="i-text" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M4 5h16v11H9l-5 4V5Z"/><path fill="currentColor" d="M8 10h2v2H8zm3 0h2v2h-2zm3 0h2v2h-2z"/></symbol>
+  <symbol id="i-star-o" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" d="m12 3 2.8 5.8 6.2.8-4.6 4.3 1.2 6.2L12 17l-5.6 3.1 1.2-6.2L3 9.6l6.2-.8L12 3Z"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></g></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 3 4.5 6v5.5c0 4.6 3.2 8.2 7.5 9.5 4.3-1.3 7.5-4.9 7.5-9.5V6L12 3Z"/><path d="m8.8 12.2 2.2 2.2 4.4-4.6"/></g></symbol>
+  <symbol id="i-badge" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><circle cx="12" cy="9.5" r="6"/><path d="m8.6 14.4-1.6 6.6 5-2.4 5 2.4-1.6-6.6"/></g></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M3.5 11 12 4l8.5 7"/><path d="M6 9.5V20h12V9.5"/><path d="M10 20v-5h4v5"/></g></symbol>
+  <symbol id="i-flame" viewBox="0 0 24 24"><path fill="currentColor" d="M12.6 2.5c.4 3-1.2 4.6-2.7 6.2C8.4 10.3 7 11.9 7 14.6A5.2 5.2 0 0 0 12.2 20a5.6 5.6 0 0 0 5.8-5.6c0-2.3-1.1-3.8-2-5 .1 1.3-.4 2.4-1.4 2.9.4-2.9-.4-6.6-2-9.8Zm-.3 15.6a2.5 2.5 0 0 1-2.5-2.5c0-1.6 1.2-2.4 2-3.4.3 1.2 1.4 1.8 2 2.9a2.4 2.4 0 0 1-1.5 3Z"/></symbol>
+  <symbol id="i-drop" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2.8s-6.5 7.1-6.5 11.6a6.5 6.5 0 0 0 13 0C18.5 9.9 12 2.8 12 2.8Zm-2.2 15a.9.9 0 0 1-1.2-.4 4.6 4.6 0 0 1-.6-2.3.9.9 0 1 1 1.8 0c0 .5.1 1 .4 1.5a.9.9 0 0 1-.4 1.2Z"/></symbol>
+  <symbol id="i-wind" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 8h11a3 3 0 1 0-3-3"/><path d="M3 12h16a3 3 0 1 1-3 3"/><path d="M3 16h7"/></g></symbol>
+  <symbol id="i-building" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M4 21V4h10v17M14 9h6v12M2.5 21h19"/><path d="M7 7.5h1.5M10.5 7.5H12M7 11h1.5M10.5 11H12M7 14.5h1.5M10.5 14.5H12M16.5 12.5H18M16.5 16H18"/></g></symbol>
+</svg>
+
+<script src="vendor/gsap.min.js"></script>
+<script src="vendor/ScrollTrigger.min.js"></script>
+<script src="vendor/lenis.min.js"></script>
+<script>
+(function(){
+  'use strict';
+  var Q = new URLSearchParams(location.search);
+  var JUMP = Q.get('jump');
+  if (JUMP !== null) history.scrollRestoration = 'manual';
+  var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var conn = navigator.connection || {};
+  var slow = !!conn.saveData || /(^|-)(2g|3g)$/.test(conn.effectiveType || '');
+  var phone = matchMedia('(max-width: 768px)').matches;
+  if (reduced) document.documentElement.classList.add('reduced');
+
+  /* ---------- header + preview banner ---------- */
+  var top = document.getElementById('top'), pv = document.getElementById('pv');
+  function setPv(){ document.documentElement.style.setProperty('--pv-h', Math.max(0, pv.offsetHeight - scrollY) + 'px'); }
+  var film = document.getElementById('film');
+  function headerState(){
+    setPv();
+    var past = film.getBoundingClientRect().bottom < 90;
+    top.classList.toggle('solid', past);
+  }
+  addEventListener('scroll', headerState, {passive:true});
+  addEventListener('resize', headerState);
+  headerState();
+
+  /* ---------- preview form: never sends anything ---------- */
+  var f = document.getElementById('q-form');
+  f.addEventListener('submit', function(e){
+    e.preventDefault();
+    var m = f.querySelector('.form-msg');
+    if (!f.name.value.trim() || !f.phone.value.trim() || !f.message.value.trim()){
+      m.textContent = 'Please add your name, a phone number and what’s going on.'; return;
+    }
+    m.textContent = 'This is a preview, so nothing was sent. On the live site, this goes straight to AirFlowPro.';
+  });
+
+  /* ---------- film (scroll-scrubbed hero) ---------- */
+  var cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+  var poster = document.getElementById('poster');
+  var b1 = document.getElementById('b1'), b2 = document.getElementById('b2');
+  var beats = [b1, b2].map(function(el){ return {el:el, in:+el.dataset.in, peak:+el.dataset.peak, out:+el.dataset.out}; });
+  var useFilm = !reduced && !slow;
+  var FRAME_COUNT = 0, images = [], loaded = 0, current = 0, target = 0, displayed = -1, progress = 0;
+  var bitmaps = new Map(), decoding = new Set(), bmpCenter = -999, B_AHEAD = 18, B_KEEP = 28;
+  var dpr = Math.min(devicePixelRatio || 1, 1.5);
+
+  function beatAlpha(b, p){
+    if (p < b.in || p > b.out) return 0;
+    if (p < b.peak) return (p - b.in) / Math.max(1e-4, b.peak - b.in);
+    if (b.out > 1.5) return 1;
+    return 1 - (p - b.peak) / Math.max(1e-4, b.out - b.peak);
+  }
+  function paintBeats(p){
+    beats.forEach(function(b){
+      var a = beatAlpha(b, p);
+      b.el.style.opacity = a.toFixed(3);
+      b.el.style.transform = 'translateY(' + ((1 - a) * (p > b.peak ? -24 : 24)).toFixed(1) + 'px)';
+      b.el.style.visibility = a < 0.01 ? 'hidden' : 'visible';
+      b.el.setAttribute('aria-hidden', a < 0.5 ? 'true' : 'false');
+    });
+  }
+  function filmProgress(){
+    var r = film.getBoundingClientRect();
+    var span = r.height - innerHeight;
+    return span <= 0 ? 0 : Math.max(0, Math.min(1, -r.top / span));
+  }
+  function sizeCanvas(){
+    cv.width = Math.round(innerWidth * dpr); cv.height = Math.round(innerHeight * dpr);
+    displayed = -1;
+  }
+  function nearest(i){
+    for (var d = 0; d < FRAME_COUNT; d++){
+      if (images[i - d] && images[i - d].complete && images[i - d].naturalWidth) return i - d;
+      if (images[i + d] && images[i + d].complete && images[i + d].naturalWidth) return i + d;
+    }
+    return -1;
+  }
+  function drawFrame(i, force){
+    if (i === displayed && !force) return;
+    var src = bitmaps.get(i), idx = i;
+    if (!src){ idx = nearest(i); if (idx < 0) return; src = bitmaps.get(idx) || images[idx]; }
+    var iw = src.width || src.naturalWidth, ih = src.height || src.naturalHeight;
+    var cw = cv.width, ch = cv.height, s = Math.max(cw / iw, ch / ih);
+    var w = iw * s, h = ih * s, x = (cw - w) * 0.48, y = (ch - h) * 0.6;
+    ctx.drawImage(src, x, y, w, h);
+    displayed = (src === bitmaps.get(i)) ? i : -1;
+  }
+  function ensureBitmaps(center){
+    if (!window.createImageBitmap || Math.abs(center - bmpCenter) < 3) return;
+    bmpCenter = center;
+    var lo = Math.max(0, center - B_AHEAD), hi = Math.min(FRAME_COUNT - 1, center + B_AHEAD);
+    for (var i = lo; i <= hi; i++) (function(i){
+      var im = images[i];
+      if (bitmaps.has(i) || decoding.has(i) || !im || !im.complete || !im.naturalWidth) return;
+      decoding.add(i);
+      createImageBitmap(im).then(function(b){
+        decoding.delete(i);
+        if (Math.abs(i - bmpCenter) > B_KEEP){ b.close(); return; }
+        bitmaps.set(i, b);
+        if (i === Math.round(current)) drawFrame(i, true);
+      }).catch(function(){ decoding.delete(i); });
+    })(i);
+    Array.from(bitmaps.keys()).forEach(function(k){
+      if (k < center - B_KEEP || k > center + B_KEEP){ bitmaps.get(k).close(); bitmaps.delete(k); }
+    });
+  }
+  function tick(){
+    progress = filmProgress();
+    paintBeats(progress);
+    if (FRAME_COUNT){
+      target = progress * (FRAME_COUNT - 1);
+      current += (target - current) * 0.14;
+      if (Math.abs(target - current) < 0.01) current = target;
+      var i = Math.round(current);
+      ensureBitmaps(i);
+      drawFrame(i);
+      cv.style.transform = 'scale(' + (1 + 0.08 * progress).toFixed(4) + ')';
+    }
+  }
+  function loadFrames(cfg){
+    var dir = phone ? 'frames-mobile/' : 'frames/';
+    FRAME_COUNT = phone ? cfg.mobile : cfg.desktop;
+    if (!FRAME_COUNT) return Promise.resolve(false);
+    images = new Array(FRAME_COUNT);
+    var next = 0, inflight = 0, MAX = 8;
+    return new Promise(function(resolve){
+      var firstDone = false;
+      function pump(){
+        while (inflight < MAX && next < FRAME_COUNT){
+          (function(i){
+            inflight++;
+            var im = new Image();
+            im.decoding = 'async';
+            im.onload = im.onerror = function(){
+              inflight--; loaded++;
+              if (i === 0 && !firstDone){ firstDone = true; resolve(true); }
+              pump();
+            };
+            im.src = dir + 'f_' + String(i + 1).padStart(4, '0') + '.jpg';
+            images[i] = im;
+          })(next++);
+        }
+      }
+      pump();
+    });
+  }
+  function settle(){
+    if (JUMP !== null){ scrollTo(0, +JUMP || 0); }
+    progress = filmProgress(); current = target = progress * Math.max(0, FRAME_COUNT - 1);
+    paintBeats(progress); headerState();
+    if (FRAME_COUNT) { drawFrame(Math.round(current), true); cv.style.transform = 'scale(' + (1 + 0.08 * progress).toFixed(4) + ')'; }
+  }
+
+  function startFilm(){
+    if (!useFilm){
+      film.classList.add('static');
+      cv.style.display = 'none';
+      b2.style.display = 'none';
+      b1.style.opacity = 1;
+      return Promise.resolve();
+    }
+    sizeCanvas();
+    addEventListener('resize', function(){ sizeCanvas(); drawFrame(Math.round(current), true); });
+    return fetch('film.json', {cache:'no-cache'}).then(function(r){ return r.json(); }).then(loadFrames).then(function(ok){
+      if (!ok) throw 0;
+      drawFrame(0, true);
+      poster.style.visibility = 'hidden';
+      gsap.ticker.add(tick);
+      // wait for all frames when verifying, so captures are exact
+      if (JUMP === null) return;
+      return new Promise(function(res){ (function w(){ loaded >= FRAME_COUNT ? res() : setTimeout(w, 50); })(); });
+    }).catch(function(){
+      film.classList.add('static'); cv.style.display = 'none'; b2.style.display = 'none'; b1.style.opacity = 1;
+    });
+  }
+
+  /* ---------- soft snow layer over the film (free, pure code) ---------- */
+  (function(){
+    var sc = document.getElementById('snow');
+    if (reduced || !sc){ if (sc) sc.style.display = 'none'; return; }
+    var sx = sc.getContext('2d'), flakes = [], W = 0, H = 0, on = true;
+    var sprite = document.createElement('canvas'); sprite.width = sprite.height = 32;
+    var g = sprite.getContext('2d'), rg = g.createRadialGradient(16,16,0,16,16,16);
+    rg.addColorStop(0,'rgba(255,255,255,1)'); rg.addColorStop(.45,'rgba(255,255,255,.55)'); rg.addColorStop(1,'rgba(255,255,255,0)');
+    g.fillStyle = rg; g.fillRect(0,0,32,32);
+    function size(){
+      W = sc.width = Math.round(innerWidth * dpr); H = sc.height = Math.round(innerHeight * dpr);
+      var n = phone ? 38 : 70; flakes = [];
+      for (var i = 0; i < n; i++) flakes.push(mk(true));
+    }
+    function mk(any){
+      var z = Math.random();
+      return {x: Math.random() * W, y: any ? Math.random() * H : -20, r: (1.2 + z * 3.2) * dpr, v: (0.25 + z * 0.9) * dpr, a: 0.25 + z * 0.5, ph: Math.random() * 6.28};
+    }
+    new IntersectionObserver(function(e){ on = e[0].isIntersecting; }).observe(film);
+    size(); addEventListener('resize', size);
+    gsap.ticker.add(function(t){
+      if (!on) return;
+      sx.clearRect(0,0,W,H);
+      for (var i = 0; i < flakes.length; i++){
+        var f = flakes[i];
+        f.y += f.v; f.x += Math.sin(t * 0.6 + f.ph) * 0.25 * dpr;
+        if (f.y > H + 10) flakes[i] = f = mk(false);
+        sx.globalAlpha = f.a; sx.drawImage(sprite, f.x - f.r, f.y - f.r, f.r * 2, f.r * 2);
+      }
+      sx.globalAlpha = 1;
+    });
+  })();
+
+  /* ---------- smooth scroll + reveals ---------- */
+  gsap.registerPlugin(ScrollTrigger);
+  var lenis = null;
+  if (!reduced && JUMP === null && window.Lenis){
+    lenis = new Lenis({lerp:0.1, smoothWheel:true});
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add(function(t){ lenis.raf(t * 1000); });
+    gsap.ticker.lagSmoothing(0);
+    document.querySelectorAll('a[href^="#"]').forEach(function(a){
+      a.addEventListener('click', function(e){
+        var id = a.getAttribute('href'); if (id.length < 2) return;
+        var t = document.querySelector(id); if (!t) return;
+        e.preventDefault(); lenis.scrollTo(t, {offset: -84});
+      });
+    });
+  }
+  if (!reduced){
+    gsap.utils.toArray('.rv-up').forEach(function(el){
+      gsap.to(el, {opacity:1, y:0, duration:.8, ease:'power3.out',
+        scrollTrigger:{trigger:el, start:'top 88%', once:true}});
+    });
+  }
+
+  startFilm().then(function(){
+    if (JUMP !== null){
+      document.querySelectorAll('.rv-up').forEach(function(el){ el.style.opacity = 1; el.style.transform = 'none'; });
+      settle();
+      ScrollTrigger.update();
+      requestAnimationFrame(function(){ settle(); window.__ready = true; });
+    } else {
+      window.__ready = true;
+    }
+  });
+
+  /* jank meter (console only) */
+  if (Q.has('jank')){
+    var last = performance.now(), d = [];
+    (function m(t){ d.push(t - last); last = t; requestAnimationFrame(m); })(last);
+    setInterval(function(){ var s = d.slice().sort(function(a,b){return a-b}); console.log('[jank] p95', s[Math.floor(s.length*.95)|0].toFixed(1), 'max', s[s.length-1].toFixed(1)); d = []; }, 2000);
+  }
+})();
+</script>
+</body>
+</html>
