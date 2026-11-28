@@ -105,10 +105,11 @@ h1,h2,h3{margin:0;font-family:var(--display);font-stretch:78%;font-weight:800;li
 @media (max-width:768px){
   .film{height:190vh}
   .shade{background:linear-gradient(180deg,rgba(8,17,27,.5) 0%,rgba(8,17,27,.15) 30%,rgba(8,17,27,.55) 55%,rgba(8,17,27,.93) 100%)}
-  .beat{align-items:flex-end;padding-bottom:calc(96px + env(safe-area-inset-bottom))}
+  .beat{align-items:flex-end;padding-bottom:calc(150px + env(safe-area-inset-bottom))}
   .beat h1{font-size:clamp(38px,10.5vw,52px)}
   .beat .lede{font-size:17px}
   .cta-row .btn{flex:1 1 0;padding:0 14px}
+  .beat-1 .cta-row{display:none} /* the sticky call bar carries the same two buttons on phones */
   .scroll-hint{display:none}
 }
 
