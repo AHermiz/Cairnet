@@ -161,16 +161,27 @@ section{position:relative}
 
 /* work */
 .work{background:var(--frost-2)}
-.gallery{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto auto;gap:16px}
-.shot{position:relative;margin:0;border-radius:16px;overflow:hidden;background:var(--frost-3)}
-.shot img{width:100%;height:100%;object-fit:cover;aspect-ratio:4/5;transition:transform .6s cubic-bezier(.2,.7,.2,1)}
+.carousel{position:relative}
+.car-track{display:flex;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;scroll-padding-inline:0;padding:6px 2px 18px;margin:0;list-style:none;scrollbar-width:none;overscroll-behavior-x:contain}
+.car-track::-webkit-scrollbar{display:none}
+.car-track:focus-visible{outline:3px solid var(--ember);outline-offset:4px;border-radius:18px}
+.car-track>li{flex:0 0 clamp(260px,34vw,400px);scroll-snap-align:start;display:flex}
+.shot{flex:1;margin:0;padding:10px 10px 0;background:#fff;border:1px solid var(--frost-3);border-radius:18px;box-shadow:0 1px 2px rgba(13,27,42,.06),0 10px 28px -12px rgba(13,27,42,.22)}
+.shot .frame{overflow:hidden;border-radius:10px;outline:1px solid var(--line);outline-offset:-1px;background:var(--frost-3)}
+.shot img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover;transition:transform .6s cubic-bezier(.2,.7,.2,1)}
 .shot:hover img{transform:scale(1.03)}
-.shot.big{grid-row:span 2}
-.shot.big img{aspect-ratio:auto;height:100%}
-.shot.wide img{aspect-ratio:4/3;object-position:50% 45%}
-.gallery .shot:not(.big) img{aspect-ratio:4/3}
-.shot figcaption{position:absolute;left:12px;bottom:12px;right:12px;font-size:14px;line-height:1.3;color:#fff;background:rgba(11,22,34,.78);padding:8px 12px;border-radius:10px;width:max-content;max-width:calc(100% - 24px)}
-@media (max-width:860px){.gallery{grid-template-columns:1fr}.shot.big{grid-row:auto}.shot.big img{aspect-ratio:4/5}}
+.shot figcaption{display:flex;align-items:center;gap:10px;padding:13px 6px 14px;font-size:15px;line-height:1.3;color:var(--ink);font-weight:700}
+.shot figcaption::before{content:"";flex:0 0 8px;height:8px;border-radius:50%;background:var(--ember)}
+.car-bar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:6px}
+.car-count{font-size:14px;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+.car-btns{display:flex;gap:10px}
+.car-btn{width:46px;height:46px;display:grid;place-items:center;border-radius:50%;border:1px solid var(--frost-3);background:#fff;color:var(--ink);cursor:pointer;transition:background .2s,border-color .2s,opacity .2s}
+.car-btn:hover:not(:disabled){border-color:var(--ink);background:var(--frost)}
+.car-btn:focus-visible{outline:3px solid var(--ember);outline-offset:2px}
+.car-btn:disabled{opacity:.35;cursor:default}
+.car-btn svg{width:18px;height:18px}
+@media (max-width:860px){.car-track>li{flex-basis:82%}.car-track{gap:14px}}
+@media (prefers-reduced-motion:reduce){.car-track{scroll-behavior:auto}.shot img{transition:none}.shot:hover img{transform:none}}
 
 /* jp */
 .jp{background:var(--frost)}
@@ -404,10 +415,19 @@ footer a:hover{color:#fff;text-decoration:underline}
       <h2 id="work-h">Clean installs, real jobs.</h2>
       <p>Photos from our own jobs, not stock pictures.</p>
     </div>
-    <div class="gallery">
-      <figure class="shot big rv-up"><img src="assets/work-tankless-1.webp" alt="A white tankless water heater on a basement wall with neatly run copper and yellow gas piping." loading="lazy"><figcaption>Tankless water heater install</figcaption></figure>
-      <figure class="shot rv-up"><img src="assets/work-fireplace.webp" alt="A gas fireplace insert burning with a tall flame in a painted brick surround." loading="lazy"><figcaption>Gas fireplace insert</figcaption></figure>
-      <figure class="shot wide rv-up"><img src="assets/work-tankless-2.webp" alt="A second tankless water heater install with copper lines and a red gas valve on a white wall." loading="lazy"><figcaption>Tankless install, copper and gas lines</figcaption></figure>
+    <div class="carousel rv-up" data-carousel>
+      <ul class="car-track" tabindex="0" aria-label="Job photos, scroll sideways for more" data-lenis-prevent>
+        <li><figure class="shot"><div class="frame"><img src="assets/work-tankless-1.webp" alt="A white tankless water heater on a basement wall with neatly run copper and yellow gas piping." loading="lazy"></div><figcaption>Tankless water heater install</figcaption></figure></li>
+        <li><figure class="shot"><div class="frame"><img src="assets/work-fireplace.webp" alt="A gas fireplace insert burning with a tall flame in a painted brick surround." loading="lazy"></div><figcaption>Gas fireplace insert</figcaption></figure></li>
+        <li><figure class="shot"><div class="frame"><img src="assets/work-tankless-2.webp" alt="A second tankless water heater install with copper lines and a red gas valve on a white wall." loading="lazy"></div><figcaption>Tankless install, copper and gas lines</figcaption></figure></li>
+      </ul>
+      <div class="car-bar">
+        <p class="car-count" aria-live="polite"><span data-car-now>1</span> / <span data-car-total>3</span></p>
+        <div class="car-btns">
+          <button class="car-btn" type="button" data-car-prev aria-label="Previous photo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></button>
+          <button class="car-btn" type="button" data-car-next aria-label="Next photo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></button>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -818,6 +838,31 @@ footer a:hover{color:#fff;text-decoration:underline}
     (function m(t){ d.push(t - last); last = t; requestAnimationFrame(m); })(last);
     setInterval(function(){ var s = d.slice().sort(function(a,b){return a-b}); console.log('[jank] p95', s[Math.floor(s.length*.95)|0].toFixed(1), 'max', s[s.length-1].toFixed(1)); d = []; }, 2000);
   }
+})();
+</script>
+<script>
+(function(){
+  document.querySelectorAll('[data-carousel]').forEach(function(c){
+    var track=c.querySelector('.car-track'), items=[].slice.call(track.children);
+    var prev=c.querySelector('[data-car-prev]'), next=c.querySelector('[data-car-next]');
+    var now=c.querySelector('[data-car-now]'); c.querySelector('[data-car-total]').textContent=items.length;
+    function step(){ return items.length>1 ? items[1].offsetLeft-items[0].offsetLeft : track.clientWidth; }
+    function update(){
+      var max=track.scrollWidth-track.clientWidth-2, x=track.scrollLeft;
+      prev.disabled = x<=2; next.disabled = x>=max;
+      var i=x>=max ? items.length-1 : Math.round(x/step());
+      now.textContent=Math.min(items.length, i+1);
+    }
+    prev.addEventListener('click',function(){ track.scrollBy({left:-step()}); });
+    next.addEventListener('click',function(){ track.scrollBy({left:step()}); });
+    track.addEventListener('keydown',function(e){
+      if(e.key==='ArrowRight'){ e.preventDefault(); next.click(); }
+      if(e.key==='ArrowLeft'){ e.preventDefault(); prev.click(); }
+    });
+    track.addEventListener('scroll',update,{passive:true});
+    window.addEventListener('resize',update);
+    update();
+  });
 })();
 </script>
 </body>
