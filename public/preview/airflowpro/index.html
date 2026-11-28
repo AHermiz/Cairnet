@@ -156,11 +156,11 @@ section{position:relative}
 /* services */
 .services{background:var(--frost)}
 .svc-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
-.svc{background:#fff;border:1px solid var(--line);border-radius:18px;padding:32px 30px;display:grid;grid-template-columns:56px 1fr;gap:6px 20px}
+.svc{background:#fff;border:1px solid var(--line);border-radius:18px;padding:32px 30px;display:grid;grid-template-columns:56px 1fr;gap:6px 20px;align-content:start}
 .svc .ico{grid-row:span 3;width:56px;height:56px;border-radius:14px;background:var(--night);color:var(--ember);display:grid;place-items:center}
 .svc .ico svg{width:28px;height:28px}
 .svc h3{font-size:30px;font-stretch:80%}
-.svc ul{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.svc ul{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:8px;align-items:flex-start;align-content:flex-start}
 .svc li{font-size:14.5px;line-height:1;padding:9px 12px;border-radius:999px;background:var(--frost);border:1px solid var(--line)}
 .svc p{color:var(--ink-soft);margin-top:12px;font-size:16.5px}
 @media (max-width:860px){.svc-grid{grid-template-columns:1fr}.svc{grid-template-columns:1fr}.svc .ico{grid-row:auto}}
