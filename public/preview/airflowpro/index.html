@@ -79,6 +79,7 @@ h1,h2,h3{margin:0;font-family:var(--display);font-stretch:78%;font-weight:800;li
 .film.static .stage{position:relative}
 .stage canvas,.stage .poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:48% 60%}
 .stage canvas{transform-origin:48% 58%;will-change:transform}
+.stage #snow{transform:none;pointer-events:none}
 .shade{position:absolute;inset:0;pointer-events:none;background:
   linear-gradient(90deg,rgba(8,17,27,.86) 0%,rgba(8,17,27,.62) 34%,rgba(8,17,27,.12) 62%,rgba(8,17,27,0) 78%),
   linear-gradient(180deg,rgba(8,17,27,.55) 0%,rgba(8,17,27,0) 22%,rgba(8,17,27,0) 70%,rgba(11,22,34,.92) 100%)}
@@ -285,6 +286,7 @@ footer a:hover{color:#fff;text-decoration:underline}
   <div class="stage" id="stage">
     <img class="poster" id="poster" src="poster.jpg" alt="A red-brick house in the snow at dusk, its windows dark." fetchpriority="high">
     <canvas id="cv" aria-hidden="true"></canvas>
+    <canvas id="snow" aria-hidden="true"></canvas>
     <div class="shade"></div>
 
     <div class="beat beat-1" id="b1" data-in="-0.1" data-peak="0" data-out="0.42">
@@ -742,6 +744,39 @@ footer a:hover{color:#fff;text-decoration:underline}
       film.classList.add('static'); cv.style.display = 'none'; b2.style.display = 'none'; b1.style.opacity = 1;
     });
   }
+
+  /* ---------- soft snow layer over the film (free, pure code) ---------- */
+  (function(){
+    var sc = document.getElementById('snow');
+    if (reduced || !sc){ if (sc) sc.style.display = 'none'; return; }
+    var sx = sc.getContext('2d'), flakes = [], W = 0, H = 0, on = true;
+    var sprite = document.createElement('canvas'); sprite.width = sprite.height = 32;
+    var g = sprite.getContext('2d'), rg = g.createRadialGradient(16,16,0,16,16,16);
+    rg.addColorStop(0,'rgba(255,255,255,1)'); rg.addColorStop(.45,'rgba(255,255,255,.55)'); rg.addColorStop(1,'rgba(255,255,255,0)');
+    g.fillStyle = rg; g.fillRect(0,0,32,32);
+    function size(){
+      W = sc.width = Math.round(innerWidth * dpr); H = sc.height = Math.round(innerHeight * dpr);
+      var n = phone ? 38 : 70; flakes = [];
+      for (var i = 0; i < n; i++) flakes.push(mk(true));
+    }
+    function mk(any){
+      var z = Math.random();
+      return {x: Math.random() * W, y: any ? Math.random() * H : -20, r: (1.2 + z * 3.2) * dpr, v: (0.25 + z * 0.9) * dpr, a: 0.25 + z * 0.5, ph: Math.random() * 6.28};
+    }
+    new IntersectionObserver(function(e){ on = e[0].isIntersecting; }).observe(film);
+    size(); addEventListener('resize', size);
+    gsap.ticker.add(function(t){
+      if (!on) return;
+      sx.clearRect(0,0,W,H);
+      for (var i = 0; i < flakes.length; i++){
+        var f = flakes[i];
+        f.y += f.v; f.x += Math.sin(t * 0.6 + f.ph) * 0.25 * dpr;
+        if (f.y > H + 10) flakes[i] = f = mk(false);
+        sx.globalAlpha = f.a; sx.drawImage(sprite, f.x - f.r, f.y - f.r, f.r * 2, f.r * 2);
+      }
+      sx.globalAlpha = 1;
+    });
+  })();
 
   /* ---------- smooth scroll + reveals ---------- */
   gsap.registerPlugin(ScrollTrigger);
