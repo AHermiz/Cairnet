@@ -160,16 +160,16 @@ section{position:relative}
 
 /* work */
 .work{background:var(--frost-2)}
-.gallery{display:grid;grid-template-columns:1.25fr 1fr 1fr;grid-template-rows:auto auto;gap:16px}
+.gallery{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto auto;gap:16px}
 .shot{position:relative;margin:0;border-radius:16px;overflow:hidden;background:var(--frost-3)}
 .shot img{width:100%;height:100%;object-fit:cover;aspect-ratio:4/5;transition:transform .6s cubic-bezier(.2,.7,.2,1)}
 .shot:hover img{transform:scale(1.03)}
 .shot.big{grid-row:span 2}
 .shot.big img{aspect-ratio:auto;height:100%}
-.shot.wide{grid-column:span 2}
-.shot.wide img{aspect-ratio:16/7;object-position:50% 45%}
+.shot.wide img{aspect-ratio:4/3;object-position:50% 45%}
+.gallery .shot:not(.big) img{aspect-ratio:4/3}
 .shot figcaption{position:absolute;left:12px;bottom:12px;right:12px;font-size:14px;line-height:1.3;color:#fff;background:rgba(11,22,34,.78);padding:8px 12px;border-radius:10px;width:max-content;max-width:calc(100% - 24px)}
-@media (max-width:860px){.gallery{grid-template-columns:1fr 1fr}.shot.big{grid-column:span 2;grid-row:auto}.shot.big img{aspect-ratio:4/3}}
+@media (max-width:860px){.gallery{grid-template-columns:1fr}.shot.big{grid-row:auto}.shot.big img{aspect-ratio:4/5}}
 
 /* jp */
 .jp{background:var(--frost)}
@@ -405,7 +405,6 @@ footer a:hover{color:#fff;text-decoration:underline}
     </div>
     <div class="gallery">
       <figure class="shot big rv-up"><img src="assets/work-tankless-1.webp" alt="A white tankless water heater on a basement wall with neatly run copper and yellow gas piping." loading="lazy"><figcaption>Tankless water heater install</figcaption></figure>
-      <figure class="shot rv-up"><img src="assets/work-minisplit.webp" alt="An AirFlowPro technician kneeling beside a new ductless mini-split outdoor unit against a wooden wall." loading="lazy"><figcaption>Ductless mini-split install</figcaption></figure>
       <figure class="shot rv-up"><img src="assets/work-fireplace.webp" alt="A gas fireplace insert burning with a tall flame in a painted brick surround." loading="lazy"><figcaption>Gas fireplace insert</figcaption></figure>
       <figure class="shot wide rv-up"><img src="assets/work-tankless-2.webp" alt="A second tankless water heater install with copper lines and a red gas valve on a white wall." loading="lazy"><figcaption>Tankless install, copper and gas lines</figcaption></figure>
     </div>
