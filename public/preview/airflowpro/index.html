@@ -179,7 +179,14 @@ section{position:relative}
 .shot figcaption{display:flex;align-items:center;gap:10px;padding:13px 6px 14px;font-size:15px;line-height:1.3;color:var(--ink);font-weight:700}
 .shot figcaption::before{content:"";flex:0 0 8px;height:8px;border-radius:50%;background:var(--ember)}
 .car-bar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:6px}
-.car-count{font-size:14px;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+.car-count{margin:0;font-size:14px;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+.car-meta{display:flex;align-items:center;flex-wrap:wrap;gap:6px 22px}
+.car-src{display:inline-flex;align-items:center;gap:6px;font-weight:700;font-size:15px;color:var(--ink);text-decoration:underline;text-decoration-color:var(--ember);text-decoration-thickness:2px;text-underline-offset:4px}
+.car-src svg{width:16px;height:16px;flex:none}
+.car-src{white-space:nowrap}
+@media (max-width:560px){.car-src-long{display:none}}
+.car-src:hover{color:var(--ember-deep)}
+.car-src:focus-visible{outline:3px solid var(--ember);outline-offset:3px;border-radius:4px}
 .car-btns{display:flex;gap:10px}
 .car-btn{width:46px;height:46px;display:grid;place-items:center;border-radius:50%;border:1px solid var(--frost-3);background:#fff;color:var(--ink);cursor:pointer;transition:background .2s,border-color .2s,opacity .2s}
 .car-btn:hover:not(:disabled){border-color:var(--ink);background:var(--frost)}
@@ -188,10 +195,6 @@ section{position:relative}
 .car-btn svg{width:18px;height:18px}
 @media (max-width:860px){.car-track>li{flex-basis:82%}.car-track{gap:14px}}
 @media (prefers-reduced-motion:reduce){.car-track{scroll-behavior:auto}.shot img{transition:none}.shot:hover img{transform:none}}
-
-.work-more{margin:18px 0 0;font-size:15px;color:var(--ink-soft)}
-.work-more a{color:var(--ink);font-weight:700;text-decoration:underline;text-underline-offset:3px}
-.work-more a:hover{color:var(--ember-deep)}
 
 /* jp */
 .jp{background:var(--frost)}
@@ -428,18 +431,22 @@ footer a:hover{color:#fff;text-decoration:underline}
     <div class="carousel rv-up" data-carousel>
       <ul class="car-track" tabindex="0" aria-label="Job photos, scroll sideways for more" data-lenis-prevent>
         <li><figure class="shot"><div class="frame"><img src="assets/work-tankless-1.webp" alt="A white tankless water heater on a basement wall with neatly run copper and yellow gas piping." loading="lazy"></div><figcaption>Tankless water heater install</figcaption></figure></li>
+        <li><figure class="shot"><div class="frame"><img src="assets/work-rooftop-service.webp" alt="A technician kneeling on a flat roof, working inside an open commercial rooftop unit." loading="lazy"></div><figcaption>Rooftop unit service</figcaption></figure></li>
         <li><figure class="shot"><div class="frame"><img src="assets/work-fireplace.webp" alt="A gas fireplace insert burning with a tall flame in a painted brick surround." loading="lazy"></div><figcaption>Gas fireplace insert</figcaption></figure></li>
+        <li><figure class="shot"><div class="frame"><img src="assets/work-rooftop-open.webp" alt="A commercial rooftop unit opened up, with fresh filters in place and the city skyline behind." loading="lazy"></div><figcaption>Rooftop unit, new filters in</figcaption></figure></li>
+        <li><figure class="shot"><div class="frame"><img src="assets/work-condensers-three.webp" alt="Three air conditioner condensers in a row along a red-brick wall, with shrubs in front." loading="lazy"></div><figcaption>Three condensers, side by side</figcaption></figure></li>
         <li><figure class="shot"><div class="frame"><img src="assets/work-tankless-2.webp" alt="A second tankless water heater install with copper lines and a red gas valve on a white wall." loading="lazy"></div><figcaption>Tankless install, copper and gas lines</figcaption></figure></li>
+        <li><figure class="shot"><div class="frame"><img src="assets/work-rooftop-unit.webp" alt="A large commercial rooftop unit on a flat roof, with gas piping running alongside." loading="lazy"></div><figcaption>Commercial rooftop unit</figcaption></figure></li>
+        <li><figure class="shot"><div class="frame"><img src="assets/work-rooftop-blower.webp" alt="The blower and coil inside an open rooftop unit." loading="lazy"></div><figcaption>Blower and coil, rooftop unit</figcaption></figure></li>
       </ul>
       <div class="car-bar">
-        <p class="car-count" aria-live="polite"><span data-car-now>1</span> / <span data-car-total>3</span></p>
+        <div class="car-meta"><p class="car-count" aria-live="polite"><span data-car-now>1</span> / <span data-car-total>8</span></p><a class="car-src" href="https://www.instagram.com/airflowpro_gta/" target="_blank" rel="noopener">See more<span class="car-src-long"> of our work</span> on Instagram<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div>
         <div class="car-btns">
           <button class="car-btn" type="button" data-car-prev aria-label="Previous photo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></button>
           <button class="car-btn" type="button" data-car-next aria-label="Next photo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></button>
         </div>
       </div>
     </div>
-    <p class="work-more rv-up">More of our work on <a href="https://www.instagram.com/airflowpro_gta/" target="_blank" rel="noopener">our Instagram</a>.</p>
   </div>
 </section>
 
